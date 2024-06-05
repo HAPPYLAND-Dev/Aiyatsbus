@@ -8,6 +8,9 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.isPrimaryThread
 import taboolib.common.platform.function.submit
@@ -35,9 +38,12 @@ object Actions {
     fun instanceOfParser() = combinationParser {
         it.group(any(), command("is", then = text())).apply(it) { obj, cast ->
             now {
-                // 缓存
-                val clazz = cache.computeIfAbsent(cast) { Class.forName(cast) }
-                clazz.isInstance(obj)
+                // 尝试避免 ClassNotFoundException
+                kotlin.runCatching {
+                    // 缓存
+                    val clazz = cache.computeIfAbsent(cast) { Class.forName(cast) }
+                    clazz.isInstance(obj)
+                }.getOrElse { false }
             }
         }
     }
@@ -49,9 +55,12 @@ object Actions {
     fun castParser() = combinationParser {
         it.group(any(), command("to", then = text())).apply(it) { obj, cast ->
             now {
-                // 缓存
-                val clazz = cache.computeIfAbsent(cast) { Class.forName(cast) }
-                clazz.cast(obj)
+                // 尝试避免 ClassNotFoundException
+                kotlin.runCatching {
+                    // 缓存
+                    val clazz = cache.computeIfAbsent(cast) { Class.forName(cast) }
+                    clazz.cast(obj)
+                }.getOrElse { obj }
             }
         }
     }
@@ -169,6 +178,43 @@ object Actions {
                     target.velocity = vector
                 }
             }
+        }
+    }
+
+    @KetherParser(["drop-item"], shared = true)
+    fun actionDropItem() = combinationParser {
+        it.group(type<ItemStack>(), command("at", then = type<Location>()), command("naturally", then = bool()).option()).apply(it) { item, loc, naturally ->
+            now {
+                if (naturally == true) {
+                    loc.world.dropItemNaturally(loc, item)
+                } else {
+                    loc.world.dropItem(loc, item)
+                }
+            }
+        }
+    }
+
+    @KetherParser(["add-potion-effect"], shared = true)
+    fun actionAddPotionEffect() = combinationParser {
+        it.group(
+            text(),
+            command("on", then = type<LivingEntity>()),
+            command("duration", then = int()),
+            command("amplifier", then = int()),
+            command("ambient", then = bool()).option(),
+            command("particles", then = bool()).option(),
+            command("icon", then = bool()).option()
+        ).apply(it) { type, entity, duration, amplifier, ambient, particles, icon ->
+            now {
+                entity.addPotionEffect(PotionEffect(PotionEffectType.getByName(type) ?: return@now, duration, amplifier, ambient ?: true, particles ?: true, icon ?: true))
+            }
+        }
+    }
+
+    @KetherParser(["near-by-entities"], shared = true)
+    fun actionNearByEntities() = combinationParser {
+        it.group(type<Entity>(), command("in", then = double()), double(), double()).apply(it) { entity, r1, r2, r3 ->
+            now { entity.getNearbyEntities(r1, r2, r3) }
         }
     }
 }

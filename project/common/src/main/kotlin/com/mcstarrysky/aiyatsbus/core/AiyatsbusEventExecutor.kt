@@ -1,6 +1,6 @@
 package com.mcstarrysky.aiyatsbus.core
 
-import com.mcstarrysky.aiyatsbus.core.trigger.TriggerSlots
+import com.mcstarrysky.aiyatsbus.core.data.trigger.TriggerSlots
 import taboolib.common.platform.event.EventPriority
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Config
@@ -35,8 +35,8 @@ interface AiyatsbusEventExecutor {
         }
 
         @delegate:ConfigNode("mappings")
-        val slots: Map<String, TriggerSlots> by conversion<ConfigurationSection, Map<String, TriggerSlots>> {
-            getKeys(false).associateWith { TriggerSlots.valueOf(this["$it.slot"] as? String ?: return@associateWith TriggerSlots.ALL) }
+        val slots: Map<String, TriggerSlots?> by conversion<ConfigurationSection, Map<String, TriggerSlots?>> {
+            getKeys(false).associateWith { TriggerSlots.valueOf(this["$it.slot"] as? String ?: return@associateWith null) }
         }
 
         @delegate:ConfigNode("mappings")
@@ -47,6 +47,11 @@ interface AiyatsbusEventExecutor {
         @delegate:ConfigNode("mappings")
         val eventPriorities: Map<String, List<EventPriority>> by conversion<ConfigurationSection, Map<String, List<EventPriority>>> {
             getKeys(false).associateWith { (this["$it.priorities"] as? List<String>)?.map(EventPriority::valueOf) ?: listOf(EventPriority.HIGHEST) }
+        }
+
+        @delegate:ConfigNode("mappings")
+        val itemReferences: Map<String, String?> by conversion<ConfigurationSection, Map<String, String?>> {
+            getKeys(false).associateWith { this["$it.itemReference"] as? String }
         }
     }
 }

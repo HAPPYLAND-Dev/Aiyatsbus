@@ -1,8 +1,9 @@
 package com.mcstarrysky.aiyatsbus.core
 
 import com.mcstarrysky.aiyatsbus.core.data.*
-import com.mcstarrysky.aiyatsbus.core.data.Target
-import com.mcstarrysky.aiyatsbus.core.trigger.Trigger
+import com.mcstarrysky.aiyatsbus.core.data.registry.Target
+import com.mcstarrysky.aiyatsbus.core.data.registry.Rarity
+import com.mcstarrysky.aiyatsbus.core.data.trigger.Trigger
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import taboolib.module.configuration.Configuration
@@ -16,7 +17,7 @@ import taboolib.module.configuration.Configuration
  */
 class AiyatsbusEnchantmentBase(
     override val id: String,
-    private val config: Configuration
+    override val config: Configuration
 ) : AiyatsbusEnchantment {
 
     override val enchantmentKey: NamespacedKey = NamespacedKey.minecraft(id)
@@ -24,6 +25,8 @@ class AiyatsbusEnchantmentBase(
     override val basicData: BasicData = BasicData(config.getConfigurationSection("basic")!!)
 
     override val alternativeData: AlternativeData = AlternativeData(config.getConfigurationSection("alternative"))
+
+    override val dependencies: Dependencies = Dependencies(config.getConfigurationSection("dependencies"))
 
     override lateinit var enchantment: Enchantment
 

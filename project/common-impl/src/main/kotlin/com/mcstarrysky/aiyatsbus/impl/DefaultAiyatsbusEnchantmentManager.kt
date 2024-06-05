@@ -1,9 +1,11 @@
 package com.mcstarrysky.aiyatsbus.impl
 
 import com.mcstarrysky.aiyatsbus.core.*
+import com.mcstarrysky.aiyatsbus.core.compat.EnchantRegistrationHooks
 import com.mcstarrysky.aiyatsbus.core.util.Reloadable
 import com.mcstarrysky.aiyatsbus.core.util.FileWatcher.unwatch
 import com.mcstarrysky.aiyatsbus.core.util.FileWatcher.watch
+import com.mcstarrysky.aiyatsbus.core.util.YamlUpdater
 import com.mcstarrysky.aiyatsbus.core.util.deepRead
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
@@ -11,10 +13,7 @@ import taboolib.common.io.newFolder
 import taboolib.common.io.runningResourcesInJar
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
-import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.info
-import taboolib.common.platform.function.registerLifeCycleTask
-import taboolib.common.platform.function.releaseResourceFile
+import taboolib.common.platform.function.*
 import taboolib.module.configuration.Configuration
 import taboolib.platform.util.onlinePlayers
 import java.io.File
@@ -33,6 +32,7 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
     private val BY_NAME = ConcurrentHashMap<String, AiyatsbusEnchantment>()
 
     private val FILES = ConcurrentHashMap<String, File>()
+    private val watching = linkedSetOf<String>()
 
     override fun getByIDs(): Map<String, AiyatsbusEnchantment> {
         return BY_ID
@@ -63,8 +63,8 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
             if (AiyatsbusSettings.autoReleaseEnchants) {
                 runningResourcesInJar.keys.filter {
                     it.endsWith(".yml")
-                            && it.startsWith("enchants/")
-                            && it.count { c -> c == '/' } >= 2
+                            && it.startsWith("enchants" + File.separator)
+                            && it.count { c -> c == File.separatorChar } >= 2
                 }.forEach { releaseResourceFile(it) }
             }
         }
@@ -76,38 +76,59 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
             .map { it.deepRead("yml") }
             .map{ it.toList() }
             .flatten()
-            .forEach { file ->
-                val config = Configuration.loadFromFile(file)
-                val id = config["basic.id"].toString()
+            .let { files ->
+                for (file in files) {
+                    val path = file.path.substring(file.path.indexOf("enchants" + File.separator), file.path.length)
+                    val config = YamlUpdater.loadFromFile(path, AiyatsbusSettings.enableUpdater, AiyatsbusSettings.updateContents)
+                    val id = config["basic.id"].toString()
 
-                file.watch {
-                    val time0 = System.currentTimeMillis()
+                    val enchant = AiyatsbusEnchantmentBase(id, config)
+                    if (!enchant.dependencies.checkAvailable()) continue
 
-                    val enchantName = BY_ID[id]?.basicData?.name
-                    BY_ID[id]!!.trigger.onDisable()
-                    Aiyatsbus.api().getEnchantmentRegisterer().unregister(BY_ID[id]!!)
-                    BY_ID.remove(id)
-                    BY_NAME.remove(enchantName)
-
-                    val enchant = AiyatsbusEnchantmentBase(id, Configuration.loadFromFile(it))
                     val enchantment = Aiyatsbus.api().getEnchantmentRegisterer().register(enchant) as AiyatsbusEnchantment
+
                     BY_ID[id] = enchantment
                     BY_NAME[enchantment.basicData.name] = enchantment
+                    FILES[id] = file
 
-                    onlinePlayers.forEach(Player::updateInventory)
+                    file.watch {
+                        if (watching.contains(path)) {
+                            watching -= path
+                            return@watch
+                        }
+                        val resourceStream = javaClass.classLoader.getResourceAsStream(path)
+                        if (AiyatsbusSettings.enableUpdater && resourceStream != null) {
+                            console().sendLang("enchantment-reload-failed", id)
+                            watching += path
+                            YamlUpdater.loadFromFile(path, AiyatsbusSettings.enableUpdater, AiyatsbusSettings.updateContents, Configuration.loadFromInputStream(resourceStream))
+                            return@watch
+                        }
+                        val time0 = System.currentTimeMillis()
 
-                    info("Auto-reloaded changes for enchantment $id in ${System.currentTimeMillis() - time0}ms")
+                        val enchantName = BY_ID[id]?.basicData?.name
+                        BY_ID[id]!!.trigger.onDisable()
+                        Aiyatsbus.api().getEnchantmentRegisterer().unregister(BY_ID[id]!!)
+                        BY_ID.remove(id)
+                        BY_NAME.remove(enchantName)
+
+                        val newEnchant = AiyatsbusEnchantmentBase(id, Configuration.loadFromFile(it))
+                        if (!newEnchant.dependencies.checkAvailable()) return@watch
+
+                        val newEnchantment = Aiyatsbus.api().getEnchantmentRegisterer().register(newEnchant) as AiyatsbusEnchantment
+                        BY_ID[id] = newEnchantment
+                        BY_NAME[newEnchantment.basicData.name] = newEnchantment
+
+                        onlinePlayers.forEach(Player::updateInventory)
+
+                        console().sendLang("enchantment-reload", id, System.currentTimeMillis() - time0)
+                        EnchantRegistrationHooks.unregisterHooks()
+                        EnchantRegistrationHooks.registerHooks()
+                    }
                 }
-
-                val enchant = AiyatsbusEnchantmentBase(id, config)
-                val enchantment = Aiyatsbus.api().getEnchantmentRegisterer().register(enchant) as AiyatsbusEnchantment
-
-                BY_ID[id] = enchantment
-                BY_NAME[enchantment.basicData.name] = enchantment
-                FILES[id] = file
             }
 
-        info("Loaded ${BY_ID.size} enchantments in ${System.currentTimeMillis() - time}ms")
+        console().sendLang("loading-enchantments", BY_ID.size, System.currentTimeMillis() - time)
+        EnchantRegistrationHooks.registerHooks()
     }
 
     override fun clearEnchantments() {

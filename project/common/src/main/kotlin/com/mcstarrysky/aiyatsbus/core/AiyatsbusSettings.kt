@@ -77,6 +77,12 @@ object AiyatsbusSettings {
     var enableKetherPreheat = true
 
     /**
+     * 是否开启性能检测工具
+     */
+    @ConfigNode("Settings.enable-performance-tool")
+    var enablePerformanceTool = false
+
+    /**
      * 是否显示性能监控的详情信息
      */
     @ConfigNode("Settings.show-performance-details")
@@ -93,6 +99,18 @@ object AiyatsbusSettings {
      */
     @ConfigNode("Settings.cool-down-in-actionbar")
     var coolDownInActionBar = false
+
+    /**
+     * 是否启用平衡性自动更新的功能
+     */
+    @ConfigNode("Settings.updater.enable")
+    var enableUpdater = true
+
+    /**
+     * 附魔平衡性+语言修正调整自动获取官方最新
+     */
+    @ConfigNode("Settings.updater.contents")
+    var updateContents = emptyList<String>()
 }
 
 const val AIYATSBUS_PREFIX = "&8[&{#D8D8FA}Aiyatsbus&8]&7"

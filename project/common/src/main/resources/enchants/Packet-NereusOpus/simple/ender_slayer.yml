@@ -26,7 +26,7 @@ display:
 
 variables:
   leveled:
-    伤害: "点:1+0.5*{level}"
+    伤害: "倍:1+0.5*{level}"
 
 mechanisms:
   listeners:

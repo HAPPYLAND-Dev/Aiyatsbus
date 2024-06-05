@@ -1,13 +1,14 @@
 package com.mcstarrysky.aiyatsbus.core
 
 import com.mcstarrysky.aiyatsbus.core.data.*
-import com.mcstarrysky.aiyatsbus.core.data.Target
-import com.mcstarrysky.aiyatsbus.core.trigger.Trigger
+import com.mcstarrysky.aiyatsbus.core.data.registry.Target
+import com.mcstarrysky.aiyatsbus.core.data.registry.Rarity
+import com.mcstarrysky.aiyatsbus.core.data.trigger.Trigger
 import com.mcstarrysky.aiyatsbus.core.util.roman
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
-import taboolib.module.chat.colored
+import taboolib.module.configuration.Configuration
 
 /**
  * Aiyatsbus
@@ -29,6 +30,11 @@ interface AiyatsbusEnchantment {
     val enchantmentKey: NamespacedKey
 
     /**
+     * 附魔的配置
+     */
+    val config: Configuration
+
+    /**
      * 附魔的基本数据
      */
     val basicData: BasicData
@@ -37,6 +43,11 @@ interface AiyatsbusEnchantment {
      * 附魔的额外数据
      */
     val alternativeData: AlternativeData
+
+    /**
+     * 附魔的依赖信息, 包括必须为 MC 哪个版本才能使用, 必须安装哪些数据包, 必须安装哪些插件
+     */
+    val dependencies: Dependencies
 
     /**
      * Bukkit 附魔实例, 在注册后赋值, 一般是 CraftEnchantment
@@ -77,7 +88,7 @@ interface AiyatsbusEnchantment {
     val trigger: Trigger
 
     fun conflictsWith(other: Enchantment): Boolean {
-        return false
+        return limitations.conflictsWith(other)
     }
 
     /**

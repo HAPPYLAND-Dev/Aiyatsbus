@@ -1,7 +1,8 @@
 package com.mcstarrysky.aiyatsbus.core
 
 import com.mcstarrysky.aiyatsbus.core.data.*
-import com.mcstarrysky.aiyatsbus.core.data.Target
+import com.mcstarrysky.aiyatsbus.core.data.registry.*
+import com.mcstarrysky.aiyatsbus.core.data.registry.Target
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import org.bukkit.inventory.meta.ItemMeta
+import taboolib.common.platform.ProxyCommandSender
 import taboolib.common5.RandomList
 import taboolib.platform.util.modifyMeta
 
@@ -47,6 +49,34 @@ fun CommandSender.asLang(node: String, vararg args: Any): String {
  */
 fun CommandSender.asLangList(node: String, vararg args: Any): List<String> {
     return Aiyatsbus.api().getLanguage().getLangList(this, node, *args)
+}
+
+/**
+ * 使用 AiyatsbusLanguage 发送语言文件
+ */
+fun ProxyCommandSender.sendLang(node: String, vararg args: Any) {
+    cast<CommandSender>().sendLang(node, *args)
+}
+
+/**
+ * 使用 AiyatsbusLanguage 获取语言文件
+ */
+fun ProxyCommandSender.asLangOrNull(node: String, vararg args: Any): String? {
+    return cast<CommandSender>().asLangOrNull(node, *args)
+}
+
+/**
+ * 使用 AiyatsbusLanguage 获取语言文件
+ */
+fun ProxyCommandSender.asLang(node: String, vararg args: Any): String {
+    return cast<CommandSender>().asLang(node, *args)
+}
+
+/**
+ * 使用 AiyatsbusLanguage 获取语言文件
+ */
+fun ProxyCommandSender.asLangList(node: String, vararg args: Any): List<String> {
+    return cast<CommandSender>().asLangList(node, *args)
 }
 
 /**
@@ -232,29 +262,29 @@ val Player.cooldown get() = Aiyatsbus.api().getPlayerDataHandler().get(this).coo
 /**
  * 所有分组
  */
-val aiyatsbusGroups = GroupLoader.groups
+val aiyatsbusGroups = GroupLoader
 
 /**
  * 获取分组
  */
-fun aiyatsbusGroup(identifier: String): Group? = GroupLoader.groups[identifier]
+fun aiyatsbusGroup(identifier: String): Group? = GroupLoader[identifier]
 
 /**
  * 所有品质
  */
-val aiyatsbusRarities = RarityLoader.rarities
+val aiyatsbusRarities = RarityLoader
 
 /**
  * 获取品质
  */
-fun aiyatsbusRarity(identifier: String): Rarity? = RarityLoader.rarities[identifier] ?: RarityLoader.rarities.values.firstOrNull { it.name == identifier }
+fun aiyatsbusRarity(identifier: String): Rarity? = RarityLoader[identifier] ?: RarityLoader.values.firstOrNull { it.name == identifier }
 
 /**
  * 所有对象
  */
-val aiyatsbusTargets = TargetLoader.targets
+val aiyatsbusTargets = TargetLoader
 
 /**
  * 获取对象
  */
-fun aiyatsbusTarget(identifier: String): Target? = TargetLoader.targets[identifier] ?: TargetLoader.targets.values.firstOrNull { it.name == identifier }
+fun aiyatsbusTarget(identifier: String): Target? = TargetLoader[identifier] ?: TargetLoader.values.firstOrNull { it.name == identifier }
