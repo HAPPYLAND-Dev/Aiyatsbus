@@ -7,7 +7,7 @@ import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.PermissionDefault
 import taboolib.common.platform.command.mainCommand
 
-@CommandHeader("enchants")
+@CommandHeader("enchants", permissionDefault = PermissionDefault.TRUE)
 object AiyatsbusMenuCommand {
     @CommandBody(permissionDefault = PermissionDefault.TRUE)
     val sub = mainCommand {

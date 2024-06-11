@@ -1,6 +1,7 @@
 repositories {
     maven("https://repo.codemc.org/repository/maven-public/") // BentoBox
     maven("https://repo.essentialsx.net/releases/") // EssentialsX
+    mavenLocal()
 }
 
 dependencies {
@@ -10,6 +11,7 @@ dependencies {
     compileOnly("public:Residence:minimize") // Residence, 为维护作者权益已去除所有逻辑代码
     compileOnly("public:CMILib:1.4.7.2:minimize") // CMILib, 为维护作者权益已去除所有逻辑代码
     compileOnly("net.essentialsx:EssentialsX:2.19.7") // EssentialsX
+    compileOnly("me.xiaozhangup:SlimeCargoNext:1.0.0:api") // SlimeCargoNext
 }
 
 // 子模块
