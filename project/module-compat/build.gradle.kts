@@ -1,7 +1,6 @@
 repositories {
     maven("https://repo.codemc.org/repository/maven-public/") // BentoBox
     maven("https://repo.essentialsx.net/releases/") // EssentialsX
-    mavenLocal()
 }
 
 dependencies {
