@@ -11,6 +11,7 @@ dependencies {
     compileOnly("public:CMILib:1.4.7.2:minimize") // CMILib, 为维护作者权益已去除所有逻辑代码
     compileOnly("net.essentialsx:EssentialsX:2.19.7") // EssentialsX
     compileOnly("me.xiaozhangup:SlimeCargoNext:1.0.0:api") // SlimeCargoNext
+    compileOnly("me.xiaozhangup:OrangDomain:1.0.0:api") // OrangDomain
 }
 
 // 子模块
