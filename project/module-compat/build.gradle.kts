@@ -14,6 +14,8 @@ dependencies {
     compileOnly("public:QuickShop-Reremake:5.1.2.5") // QuickShop-Reremake
     compileOnly("public:CitizensAPI:2.0.35") // Citizens
     compileOnly("ink.ptms:um:1.0.9")
+    compileOnly("me.xiaozhangup:SlimeCargoNext:1.0.0:api") // SlimeCargoNext
+    compileOnly("me.xiaozhangup:OrangDomain:1.0.0:api") // OrangDomain
 }
 
 // 子模块
