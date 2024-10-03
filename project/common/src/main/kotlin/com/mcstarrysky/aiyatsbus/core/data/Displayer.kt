@@ -9,6 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.chat.colored
+import taboolib.module.chat.uncolored
 
 /**
  * 附魔显示
@@ -24,9 +25,22 @@ data class Displayer(
     /** 附魔显示的后半部分, 一般是描述并且换行写 */
     val subsequent: String = root.getString("format.subsequent", "{default_subsequent}")!!,
     /** 描述 */
-    val generalDescription: String = root.getString("description.general", "&7")!!,
+    val generalDescription: String = root.getString("description.general", "&7")!!.let {
+        "&8${it.replace("&7", "&8").replace("&a", "&7")}" // 直接取代
+    }, // 特殊显示, 直接内部格式化
     /** 一般有变量的描述会用这个替换变量, 这个不写默认为普通描述 */
-    val specificDescription: String = root.getString("description.specific", generalDescription)!!
+    val specificDescription: String = root.getString("description.specific")?.let {
+        // 特殊显示
+        var raw = it.replace("&a", "*7*").colored().uncolored() // 移除所有自带的颜色字符, 但是保留一部分
+        "&8${
+            raw
+                .replace(" {", "{")
+                .replace("} ", "}") // 去除可能的莫名空格
+                .replace("{", "&7{")
+                .replace("}", "}&8")
+                .replace("*7*", "&7")
+        }" // 强制格式化
+    } ?: generalDescription
 ) {
 
     private val displayManagerSettings = Aiyatsbus.api().getDisplayManager().getSettings()
