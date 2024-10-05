@@ -46,15 +46,7 @@ data class Displayer(
     }, // 特殊显示, 直接内部格式化
     /** 一般有变量的描述会用这个替换变量, 这个不写默认为普通描述 */
     val specificDescription: String = root.getString("description.specific")?.let {
-        // 特殊显示
-        var raw = it.colored().uncolored() // 移除所有自带的颜色字符, 但是保留一部分
-        "&8${
-            raw
-                .replace(" {", "{")
-                .replace("} ", "}") // 去除可能的莫名空格
-                .replace("{", "&7{")
-                .replace("}", "}&8")
-        }" // 强制格式化
+        "&8${it.replace("&7", "&8").replace("&a", "&7")}" // 直接取代
     } ?: generalDescription
 ) {
 
