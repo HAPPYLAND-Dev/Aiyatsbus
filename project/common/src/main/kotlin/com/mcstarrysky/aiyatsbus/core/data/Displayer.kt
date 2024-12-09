@@ -119,6 +119,7 @@ data class Displayer(
         tmp["rarity_display"] = enchant.rarity.displayName()
         tmp["enchant_display"] = enchant.displayName()
         tmp["enchant_display_roman"] = enchant.displayName(lv)
+        tmp["enchant_display_number"] = enchant.displayName(lv, false)
         tmp["enchant_display_lore"] = display(tmp).replacePlaceholder(player)
         tmp["description"] = specificDescription.replace(tmp).colored().replacePlaceholder(player)
         return tmp
