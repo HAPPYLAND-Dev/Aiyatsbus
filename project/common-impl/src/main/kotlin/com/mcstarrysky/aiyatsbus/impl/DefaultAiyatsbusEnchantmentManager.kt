@@ -30,6 +30,7 @@ import com.mcstarrysky.aiyatsbus.impl.enchant.InternalAiyatsbusEnchantment
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
+import taboolib.common.UnsupportedVersionException
 import taboolib.common.io.newFolder
 import taboolib.common.io.runningResourcesInJar
 import taboolib.common.platform.Awake
@@ -161,12 +162,12 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
         @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AiyatsbusEnchantmentManager>(DefaultAiyatsbusEnchantmentManager())
-            val registerer = if (MinecraftVersion.majorLegacy >= 12100) {
-                nmsProxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12100_nms.DefaultModernEnchantmentRegisterer")
-            } else if (MinecraftVersion.majorLegacy >= 12003) {
-                nmsProxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12004_nms.DefaultModernEnchantmentRegisterer")
-            } else {
-                return
+            val registerer: ModernEnchantmentRegisterer = when {
+                MinecraftVersion.versionId >= 12102 -> nmsProxy("com.mcstarrysky.aiyatsbus.impl.registration.v12103_nms.DefaultModernEnchantmentRegisterer")
+                MinecraftVersion.versionId >= 12100 -> nmsProxy("com.mcstarrysky.aiyatsbus.impl.registration.v12100_nms.DefaultModernEnchantmentRegisterer")
+                MinecraftVersion.versionId >= 12005 -> throw UnsupportedVersionException()
+                MinecraftVersion.versionId >= 12003 -> nmsProxy("com.mcstarrysky.aiyatsbus.impl.registration.v12004_nms.DefaultModernEnchantmentRegisterer")
+                else -> return
             }
             registerer.replaceRegistry()
             registerLifeCycleTask(LifeCycle.ACTIVE) {

@@ -20,6 +20,7 @@ import com.mcstarrysky.aiyatsbus.core.*
 import com.mcstarrysky.aiyatsbus.core.registration.AiyatsbusEnchantmentRegisterer
 import com.mcstarrysky.aiyatsbus.core.registration.modern.ModernEnchantmentRegisterer
 import com.mcstarrysky.aiyatsbus.impl.registration.legacy.DefaultLegacyEnchantmentRegisterer
+import taboolib.common.UnsupportedVersionException
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.info
 import taboolib.module.nms.MinecraftVersion
@@ -46,12 +47,15 @@ class DefaultAiyatsbusAPI : AiyatsbusAPI {
     private val playerDataHandler = PlatformFactory.getAPI<AiyatsbusPlayerDataHandler>()
 
     private val enchantmentRegisterer0: AiyatsbusEnchantmentRegisterer by lazy {
-        if (MinecraftVersion.majorLegacy <= 12002) {
-            DefaultLegacyEnchantmentRegisterer
-        } else if (MinecraftVersion.majorLegacy >= 12100) {
-            proxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12100_nms.DefaultModernEnchantmentRegisterer")
-        } else {
-            proxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12004_nms.DefaultModernEnchantmentRegisterer")
+        when {
+            MinecraftVersion.versionId >= 12102 ->
+                proxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12103_nms.DefaultModernEnchantmentRegisterer")
+            MinecraftVersion.versionId >= 12100 ->
+                proxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12100_nms.DefaultModernEnchantmentRegisterer")
+            MinecraftVersion.versionId >= 12005 -> throw UnsupportedVersionException()
+            MinecraftVersion.versionId >= 12003 ->
+                proxy<ModernEnchantmentRegisterer>("com.mcstarrysky.aiyatsbus.impl.registration.v12004_nms.DefaultModernEnchantmentRegisterer")
+            else -> DefaultLegacyEnchantmentRegisterer
         }
     }
 

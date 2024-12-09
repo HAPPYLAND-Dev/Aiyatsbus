@@ -123,7 +123,10 @@ interface AiyatsbusEnchantment {
     /**
      * 显示名称
      */
-    fun displayName(level: Int? = null): String {
-        return rarity.displayName(basicData.name + (level?.roman(basicData.maxLevel == 1, true) ?: ""))
+    fun displayName(level: Int? = null, roman: Boolean = true): String {
+        return rarity.displayName(
+            basicData.name + if (roman) (level?.roman(basicData.maxLevel == 1, true)
+                ?: "") else if (basicData.maxLevel == 1) "" else level
+        )
     }
 }
