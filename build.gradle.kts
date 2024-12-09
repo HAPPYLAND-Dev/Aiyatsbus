@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
     java
     id("io.izzel.taboolib") version "2.0.18"
-    id("org.jetbrains.kotlin.jvm") version "1.8.22"
+    id("org.jetbrains.kotlin.jvm") version "1.9.25"
 }
 
 subprojects {
@@ -42,10 +42,10 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven("https://jitpack.io")
+        maven("https://maven.citizensnpcs.co/repo")
+        maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.papermc.io/repository/maven-public/")
-        maven("http://mcstarrysky.com:8081/repository/releases/") {
-            isAllowInsecureProtocol = true
-        }
     }
     // 全局依赖
     dependencies {
@@ -56,15 +56,15 @@ subprojects {
     // 编译配置
     java {
         withSourcesJar()
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "21"
             freeCompilerArgs = listOf("-Xjvm-default=all", "-Xextended-compiler-checks")
         }
     }
