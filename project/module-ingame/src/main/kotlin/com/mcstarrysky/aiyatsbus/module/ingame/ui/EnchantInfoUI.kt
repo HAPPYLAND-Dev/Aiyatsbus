@@ -274,7 +274,14 @@ object EnchantInfoUI {
             if (enchant.alternativeData.isDiscoverable &&
                 enchant.alternativeData.weight > 0 &&
                 enchant.rarity.weight > 0
-            ) attainWays += player.asLang("ui-enchant-info-other-attain-ways-discoverable-enchantable")
+            ) {
+                attainWays += player.asLang("ui-enchant-info-other-attain-ways-discoverable")
+
+                if (!enchant.alternativeData.isTreasure) {
+                    if (attainWays.isNotBlank()) attainWays += " "
+                    attainWays += player.asLang("ui-enchant-info-other-attain-ways-enchantable")
+                }
+            }
             if (enchant.alternativeData.isTradeable &&
                 enchant.enchantment.isInGroup(VillagerSupport.tradeGroup)
             ) {
