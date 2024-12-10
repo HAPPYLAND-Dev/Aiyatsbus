@@ -5,7 +5,7 @@
 
 Settings:
   # 是否在管理员登录游戏时发送鸣谢信息
-  send-thank-messages: true
+  send-thank-messages: false
   # 若第一次启动, 则自动释放所有内置附魔
   auto-release-enchants: true
   # 默认附魔品质
@@ -49,7 +49,7 @@ Settings:
   # 对于附魔的挖掘放置攻击生物等操作, OP 是否无视领地等保护
   anti-grief-ignore-op: true
   # 若没有特殊设置, 将冷却消息显示在动作栏而不是聊天框
-  cool-down-in-actionbar: false
+  cool-down-in-actionbar: true
   # 参数数值保留小数点后几位数字
   variable-rounding-scale: 2
   # 参数数值的舍位模式
@@ -72,7 +72,6 @@ Settings:
       - "basic.max_level"
       - "alternative"
       - "dependencies"
-      - "rarity"
       - "targets"
       - "limitations"
       - "display"

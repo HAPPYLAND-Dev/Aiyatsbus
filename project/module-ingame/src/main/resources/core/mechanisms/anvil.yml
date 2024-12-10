@@ -22,7 +22,7 @@ limit:
   enchant: 16
 
 # 是否启用原版铁砧的累积惩罚机制
-use_rework_penalty: false
+use_rework_penalty: true
 # 累积惩罚公式(计算出来要是整数), 默认给的就是原版公式
 rework_penalty: "({repairCost}+1)*2-1"
 

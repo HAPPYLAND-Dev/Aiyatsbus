@@ -15,7 +15,7 @@ enable: true
 #   附魔出来的产物完全根据概率+等级计算随机出货
 #   因为关闭后鼠标悬停不会有任何内容, 所以请提前告知玩家避免玩家对此感到困惑
 # 默认关闭 (推荐)
-vanilla_mode: false
+vanilla_mode: true
 # 一次性附魔得到的附魔个数对应的概率
 # 可用变量：{button}
 more_enchant_chance:

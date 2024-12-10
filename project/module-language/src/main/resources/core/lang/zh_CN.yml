@@ -3,7 +3,7 @@
 #         Powered by TabooLib 6.2         #
 
 
-prefix: '&8\[&{#D8D8FA}Aiyatsbus&8\]'
+prefix: '&8\[&{#D8D8FA}附魔&8\]'
 
 loading-rarities: '{prefix} &a良好 &8| &a{0} &3个附魔品质已加载 &8({1} ms)'
 loading-targets: '{prefix} &a良好 &8| &a{0} &3个附魔对象已加载 &8({1} ms)'
