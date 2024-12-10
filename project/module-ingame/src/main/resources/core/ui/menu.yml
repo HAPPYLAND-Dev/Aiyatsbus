@@ -6,7 +6,7 @@
 title: "扩展附魔指引"
 shape:
   - 'FFFFFFFFF'
-  - ' A B C D '
+  - ' A  B  C '
   - 'FFFFFFFFF'
 
 template:
@@ -46,12 +46,3 @@ template:
         texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjkyZDVkZjgwNWMyMzkwMjJmZTFiNDVmOTQwODgyYmY0MGI1NTk2NzE5MzdkYzcxZmJjOTZmNjMwMjUwZWJjNCJ9fX0="
       - ==: Functional
         keyword: Menu:anvil
-  'D':
-    material: PLAYER_HEAD
-    name: "&5附魔台的机制改变"
-    lore:
-      - "&7附魔台不会再告知出现的附魔"
-      - "&7一切都将&e根据等级随机出现"
-    feature:
-      - ==: Head
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc2MmExNWIwNDY5MmEyZTRiM2ZiMzY2M2JkNGI3ODQzNGRjZTE3MzJiOGViMWM3YTlmN2MwZmJmNmYifX19"
