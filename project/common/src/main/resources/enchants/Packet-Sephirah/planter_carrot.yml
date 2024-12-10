@@ -8,7 +8,7 @@ basic:
   name: "胡萝卜播种机"
   max_level: 3
 
-rarity: 精良
+rarity: 珍奇
 targets:
   - 锄
 
