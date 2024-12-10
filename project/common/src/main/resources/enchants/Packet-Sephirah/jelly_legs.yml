@@ -8,7 +8,7 @@ basic:
   name: "弹跳鞋"
   max_level: 3
 
-rarity: 传奇
+rarity: 精良
 targets:
   - 靴子
 
