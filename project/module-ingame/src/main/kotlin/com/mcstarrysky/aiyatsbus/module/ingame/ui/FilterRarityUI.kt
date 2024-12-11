@@ -66,7 +66,13 @@ object FilterRarityUI {
             rows(shape.rows)
             val slots = shape["FilterRarity:filter"].toList()
             slots(slots)
-            elements { aiyatsbusRarities.values.toList() }
+            elements {
+                aiyatsbusRarities.values.filter {
+                    aiyatsbusEts(it).isNotEmpty()
+                }.sortedBy {
+                    it.weight
+                }
+            }
 
             load(shape, templates, player, "FilterRarity:filter", "Previous", "Next")
             pages(shape, templates)
