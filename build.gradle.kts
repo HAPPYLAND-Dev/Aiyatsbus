@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `maven-publish`
     java
-    id("io.izzel.taboolib") version "2.0.18"
+    id("io.izzel.taboolib") version "2.0.22"
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
 }
 
@@ -34,7 +34,7 @@ subprojects {
         }
         version {
             coroutines = null
-            taboolib = "6.2.0-beta15"
+            taboolib = "6.2.1-f095116"
         }
     }
 

@@ -43,17 +43,19 @@ fun File.deepRead(extension: String): List<File> {
 
 object FileWatcher {
 
-    private val fileWatcher = FileWatcher()
+    private val fileWatcher = FileWatcher.INSTANCE
+    private val fileListeners = LinkedHashSet<File>()
     private val watching = LinkedHashSet<File>()
 
     /**
      * 监听文件改动
      */
     fun File.watch(callback: (File) -> Unit) {
-        if (!fileWatcher.hasListener(this)) {
+        if (!hasListener) {
             fileWatcher.addSimpleListener(this) {
                 callback(this)
             }
+            hasListener = true
         }
     }
 
@@ -61,8 +63,9 @@ object FileWatcher {
      * 取消监听
      */
     fun File.unwatch() {
-        if (fileWatcher.hasListener(this)) {
+        if (hasListener) {
             fileWatcher.removeListener(this)
+            hasListener = false
         }
     }
 
@@ -70,8 +73,14 @@ object FileWatcher {
      * 检测文件是否正在被监听器处理
      */
     var File.isProcessingByWatcher: Boolean
-        get() = this in watching && fileWatcher.hasListener(this)
+        get() = this in watching && hasListener
         set(value) {
             if (value) watching += this else watching -= this
+        }
+
+    private var File.hasListener: Boolean
+        get() = this in fileListeners
+        set(value) {
+            if (value) fileListeners += this else fileListeners -= this
         }
 }

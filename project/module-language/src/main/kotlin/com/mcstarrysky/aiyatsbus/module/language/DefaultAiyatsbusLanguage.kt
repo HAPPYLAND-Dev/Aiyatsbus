@@ -65,6 +65,8 @@ class DefaultAiyatsbusLanguage : AiyatsbusLanguage {
             Language.releasePath = "plugins/{0}/core/lang/{1}"
             // 启用行内复合文本支持
             Language.enableSimpleComponent = true
+            // 启用文件监听(注: 于 2024/11/20 起，不再默认启用)
+            Language.enableFileWatcher = true
         }
     }
 }
