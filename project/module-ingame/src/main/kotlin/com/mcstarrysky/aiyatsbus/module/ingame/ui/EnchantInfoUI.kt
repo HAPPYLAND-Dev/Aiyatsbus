@@ -270,31 +270,32 @@ object EnchantInfoUI {
         onBuild { (_, _, _, _, icon, args) ->
             val enchant = args["enchant"] as AiyatsbusEnchantment
             val player = args["player"] as Player
-            var attainWays = ""
-            if (enchant.alternativeData.isDiscoverable &&
-                enchant.alternativeData.weight > 0 &&
-                enchant.rarity.weight > 0
-            ) {
-                attainWays += player.asLang("ui-enchant-info-other-attain-ways-discoverable")
+            var attainWays = mutableListOf<String>()
 
-                if (!enchant.alternativeData.isTreasure) {
-                    if (attainWays.isNotBlank()) attainWays += " "
+            val alternativeData = enchant.alternativeData
+            if (alternativeData.weight > 0 && enchant.rarity.weight > 0) {
+                if (alternativeData.isDiscoverable) {
+                    attainWays += player.asLang("ui-enchant-info-other-attain-ways-discoverable")
+                }
+
+                if (!alternativeData.isTreasure) {
                     attainWays += player.asLang("ui-enchant-info-other-attain-ways-enchantable")
                 }
             }
-            if (enchant.alternativeData.isTradeable &&
+
+            if (alternativeData.isTradeable &&
                 enchant.enchantment.isInGroup(VillagerSupport.tradeGroup)
             ) {
-                if (attainWays.isNotBlank()) attainWays += " "
                 attainWays += player.asLang("ui-enchant-info-other-attain-ways-tradeable")
             }
+
             icon.variables {
                 listOf(
                     when (it) {
-                        "attain_ways" -> attainWays
-                        "grindstoneable" -> player.asLang("ui-enchant-info-other-grindstoneable-${enchant.alternativeData.grindstoneable}")
-                        "treasure" -> player.asLang("ui-enchant-info-other-treasure-${enchant.alternativeData.isTreasure}")
-                        "curse" -> player.asLang("ui-enchant-info-other-curse-${enchant.alternativeData.isCursed}")
+                        "attain_ways" -> attainWays.joinToString(" ")
+                        "grindstoneable" -> player.asLang("ui-enchant-info-other-grindstoneable-${alternativeData.grindstoneable}")
+                        "treasure" -> player.asLang("ui-enchant-info-other-treasure-${alternativeData.isTreasure}")
+                        "curse" -> player.asLang("ui-enchant-info-other-curse-${alternativeData.isCursed}")
                         else -> ""
                     }
                 )
