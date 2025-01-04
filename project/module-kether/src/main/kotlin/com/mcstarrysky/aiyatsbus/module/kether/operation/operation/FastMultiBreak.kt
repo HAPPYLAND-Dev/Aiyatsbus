@@ -20,6 +20,7 @@ import com.mcstarrysky.aiyatsbus.core.compat.AntiGriefChecker
 import com.mcstarrysky.aiyatsbus.core.util.coerceInt
 import com.mcstarrysky.aiyatsbus.core.util.doBreakBlock
 import com.mcstarrysky.aiyatsbus.core.util.serialized
+import me.xiaozhangup.domain.utils.getPoly
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
@@ -58,7 +59,8 @@ object FastMultiBreak {
                     continue
                 }
 
-                if (!AntiGriefChecker.canBreak(player, block.location)) continue
+                // 领地范围不允许立方生效
+                if (!AntiGriefChecker.canBreak(player, block.location) || block.location.getPoly() != null) continue
                 player.doBreakBlock(block)
             }
         }
