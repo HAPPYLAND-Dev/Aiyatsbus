@@ -54,7 +54,7 @@ add: 'Add'
 remove: 'Remove'
 
 ui-type-anvil: 'Anvil emulator'
-ui-type-enchant_info: 'Enchantment Info of {0}'
+ui-type-enchant_info: 'Enchantment Info of {info}'
 ui-type-enchant_search: 'Enchantment List'
 ui-type-filter_group: 'Filter of Groups'
 ui-type-filter_rarity: 'Filter of Rarities'

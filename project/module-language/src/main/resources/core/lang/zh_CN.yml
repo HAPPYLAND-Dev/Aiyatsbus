@@ -54,7 +54,7 @@ add: '添加'
 remove: '移除'
 
 ui-type-anvil: '铁砧模拟器'
-ui-type-enchant_info: '附魔详情 {0}'
+ui-type-enchant_info: '附魔详情 {info}'
 ui-type-enchant_search: '附魔大全'
 ui-type-filter_group: '类型定位筛选器' # 筛选器的名称相较于 3.0 有所不同
 ui-type-filter_rarity: '品质筛选器'
