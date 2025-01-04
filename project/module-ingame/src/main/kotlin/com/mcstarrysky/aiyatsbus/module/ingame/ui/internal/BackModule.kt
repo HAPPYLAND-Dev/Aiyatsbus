@@ -55,7 +55,7 @@ fun Player.last(): String {
     return type.display(this)?.replaceWithOrder(when (type) {
         UIType.ENCHANT_INFO -> (params["enchant"] as AiyatsbusEnchantment).displayName(params["level"] as Int)
         else -> ""
-    }) ?: UIType.UNKNOWN.display(this) ?: "N/A"
+    } to "info") ?: UIType.UNKNOWN.display(this) ?: "N/A"
 }
 
 fun forceLast(type: UIType, sender: CommandSender): String {

@@ -38,6 +38,9 @@ mechanisms:
           exit
         }
         if check &event[attacker.attackCooldown] >= 0.8 then {
+          if not anti-grief can-break &player &event[entity.location] then {
+            exit
+          }
           if check random2 0 to 100 <= type double &概率 then {
             set cd to a-cd check &enchant &player type double &冷却 false
             if &cd then {
