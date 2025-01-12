@@ -34,6 +34,7 @@ import taboolib.common.platform.function.warning
  * @since 2024/3/10 15:34
  */
 object FastMultiBreak {
+    private var hasPoly = true
 
     @Suppress("UNCHECKED_CAST")
     fun fastMultiBreak(args: List<Any?>?) {
@@ -60,9 +61,19 @@ object FastMultiBreak {
                 }
 
                 // 领地范围不允许立方生效
-                if (!AntiGriefChecker.canBreak(player, block.location) || block.location.getPoly() != null) continue
+                if (!AntiGriefChecker.canBreak(player, block.location) || inPoly(player, loc)) continue
                 player.doBreakBlock(block)
             }
+        }
+    }
+
+    private fun inPoly(player: Player, loc: Location) : Boolean {
+        if (!hasPoly) return false
+        return try {
+            return loc.getPoly() != null
+        } catch (_: Throwable) {
+            hasPoly = false
+            false
         }
     }
 }
