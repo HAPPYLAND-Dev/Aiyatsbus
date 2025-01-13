@@ -33,6 +33,7 @@ import org.bukkit.entity.Projectile
 import org.bukkit.event.Event
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockDamageEvent
+import org.bukkit.event.block.BlockDropItemEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
@@ -98,6 +99,7 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
                 if (event.from.world == event.to.world && event.from.distance(event.to) < 1e-1) return@EventResolver
             }
         )
+        resolvers += BlockDropItemEvent::class.java to EventResolver<BlockDropItemEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += BlockDamageEvent::class.java to EventResolver<BlockDamageEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += BlockPlaceEvent::class.java to EventResolver<BlockPlaceEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += BlockBreakEvent::class.java to EventResolver<BlockBreakEvent>({ event, _ -> event.player.checkedIfIsNPC() })
@@ -186,8 +188,10 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
     }
 
     private fun processEvent(listen: String, event: Event, eventMapping: EventMapping, eventPriority: EventPriority) {
+        // NOTICE 不要删除下面的调试信息, 关键时刻能救命
 //        println("我是 $listen, 我的优先级是 ${eventPriority.name}")
         val resolver = getResolver(event) ?: return
+//        println("我的事件处理器是 $resolver")
         /* 特殊事件处理 */
         resolver.eventResolver.apply(event)
 
@@ -196,12 +200,16 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         if (entity == null && !entityResolved) {
             entity = event.invokeMethodDeep<LivingEntity>(eventMapping.playerReference ?: return) ?: return
         }
+//        println("尝试锁定生物: $entity")
         if (entity == null) return
+//        println("锁定生物: $entity")
 
         if (entity.checkIfIsNPC()) return
+//        println("NPC 检测通过")
 
         if (eventMapping.slots.isNotEmpty()) {
             eventMapping.slots.forEach { slot ->
+//                println("检测槽位: $slot")
                 val item: ItemStack?
                 try {
                     item = entity.equipment?.getItem(slot)
@@ -210,15 +218,15 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
                     // java.lang.NullPointerException: player.inventory.getItem(slot) must not be null
                     return@forEach
                 }
+//                println("尝试锁定物品: $item")
 
                 if (item.isNull) return@forEach
+
+//                println("锁定物品: $item")
 
                 item!!.triggerEts(listen, event, entity, slot, false)
             }
         } else {
-            // NOTICE 不要删除下面的调试信息, 关键时刻能救命
-//            println("我是 $listen")
-//            println("我的 EventResolver 是 $resolver")
             var (item, itemResolved) = resolver.itemResolver.apply(event, eventMapping.itemReference, entity)
 //            println("我尝试使用 resolver 获取物品, 结果是: $item")
             if (item.isAir && !itemResolved) {
@@ -246,6 +254,7 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
                 .entries
                 .sortedBy { it.value.priority }
                 .forEach { (_, executor) ->
+//                    println("执行事件: $executor")
                     val vars = mutableMapOf(
                         "triggerSlot" to slot?.name,
                         "trigger-slot" to slot?.name,

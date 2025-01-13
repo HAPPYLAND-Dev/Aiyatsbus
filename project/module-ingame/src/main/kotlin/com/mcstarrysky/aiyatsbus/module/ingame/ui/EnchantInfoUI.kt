@@ -273,20 +273,25 @@ object EnchantInfoUI {
             var attainWays = mutableListOf<String>()
 
             val alternativeData = enchant.alternativeData
-            if (alternativeData.weight > 0 && enchant.rarity.weight > 0) {
-                if (alternativeData.isDiscoverable) {
-                    attainWays += player.asLang("ui-enchant-info-other-attain-ways-discoverable")
+
+            if (enchant.inaccessible) {
+                attainWays += player.asLang("ui-enchant-info-other-attain-ways-inaccessible")
+            } else {
+                if (alternativeData.weight > 0 && enchant.rarity.weight > 0) {
+                    if (alternativeData.isDiscoverable) {
+                        attainWays += player.asLang("ui-enchant-info-other-attain-ways-discoverable")
+                    }
+
+                    if (!alternativeData.isTreasure) {
+                        attainWays += player.asLang("ui-enchant-info-other-attain-ways-enchantable")
+                    }
                 }
 
-                if (!alternativeData.isTreasure) {
-                    attainWays += player.asLang("ui-enchant-info-other-attain-ways-enchantable")
+                if (alternativeData.isTradeable &&
+                    enchant.enchantment.isInGroup(VillagerSupport.tradeGroup)
+                ) {
+                    attainWays += player.asLang("ui-enchant-info-other-attain-ways-tradeable")
                 }
-            }
-
-            if (alternativeData.isTradeable &&
-                enchant.enchantment.isInGroup(VillagerSupport.tradeGroup)
-            ) {
-                attainWays += player.asLang("ui-enchant-info-other-attain-ways-tradeable")
             }
 
             icon.variables {

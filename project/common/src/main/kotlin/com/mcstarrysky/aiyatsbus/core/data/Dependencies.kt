@@ -42,7 +42,7 @@ class Dependencies(
     val supportsRange = supportsLowest..supportsHighest
 
     fun checkAvailable(): Boolean {
-        return MinecraftVersion.majorLegacy in supportsRange &&
+        return MinecraftVersion.versionId in supportsRange &&
                 datapacks.all { pack -> Bukkit.getDatapackManager().enabledPacks.any { it.name == pack } } &&
                 plugins.all { Bukkit.getPluginManager().getPlugin(it) != null }
     }

@@ -74,7 +74,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
         // 首先确保物品必须存在
         if (item == null) return emptyList()
         // 整理附魔
-        val sortedEnchants = item.fixedEnchants.ifEmpty { return emptyList() }.let(::sortEnchants)
+        val sortedEnchants = item.fixedEnchants.ifEmpty { return emptyList() }.filter { it.key.displayer.display }.let(::sortEnchants)
         return buildList {
             // 如果合并模式已打开, 且达到附魔数量的最低要求
             if (settings.combine && sortedEnchants.size >= settings.combineMinimal) {

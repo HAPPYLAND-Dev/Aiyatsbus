@@ -59,7 +59,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
 
     init {
         // 预热
-        if (MinecraftVersion.majorLegacy >= 12005) {
+        if (MinecraftVersion.versionId >= 12005) {
             NMS12005.instance
         }
     }
@@ -69,7 +69,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
 
     override fun getRepairCost(item: ItemStack): Int {
         return if (MinecraftVersion.isUniversal) {
-            if (MinecraftVersion.majorLegacy >= 12005) {
+            if (MinecraftVersion.versionId >= 12005) {
                 NMS12005.instance.getRepairCost(item)
             } else {
                 (asNMSCopy(item) as NMSItemStack).baseRepairCost
@@ -79,7 +79,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
 
     override fun setRepairCost(item: ItemStack, cost: Int) {
         if (MinecraftVersion.isUniversal) {
-            if (MinecraftVersion.majorLegacy >= 12005) {
+            if (MinecraftVersion.versionId >= 12005) {
                 NMS12005.instance.setRepairCost(item, cost)
             } else {
                 (asNMSCopy(item) as NMSItemStack).setRepairCost(cost)
@@ -91,7 +91,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
 
     override fun createItemStack(material: String, tag: String?): ItemStack {
         return try {
-            if (MinecraftVersion.majorLegacy >= 11802) {
+            if (MinecraftVersion.versionId >= 11802) {
                 Bukkit.getItemFactory().createItemStack(material + tag)
             } else {
                 val mat = material.split(":")[1].uppercase()
@@ -117,7 +117,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
 
     override fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player): Any {
 
-        if (MinecraftVersion.majorLegacy >= 12005) {
+        if (MinecraftVersion.versionId >= 12005) {
             return NMS12005.instance.adaptMerchantRecipe(merchantRecipeList, player)
         }
 
@@ -235,7 +235,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
             nmsStack as NMSItemStack
             // 1.20.4 -> hurtAndBreak(int, EntityLiving, Consumer<EntityLiving>)
             // 1.20.5, 1.21 -> hurtAndBreak(int, EntityLiving, EnumItemSlot), 自动广播事件
-            if (MinecraftVersion.majorLegacy >= 12005) {
+            if (MinecraftVersion.versionId >= 12005) {
                 NMS12005.instance.hurtAndBreak(nmsStack, amount, entity)
             } else {
                 nmsStack.hurtAndBreak(amount, (entity as CraftLivingEntity20).handle) { entityLiving ->
@@ -251,7 +251,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
     }
 
     override fun hideBookEnchants(item: ItemMeta) {
-        if (MinecraftVersion.majorLegacy >= 12005) {
+        if (MinecraftVersion.versionId >= 12005) {
             NMS12005.instance.hideBookEnchants(item)
         } else {
             item.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS)
@@ -259,13 +259,13 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
     }
 
     override fun isBookEnchantsHidden(item: ItemMeta): Boolean {
-        return if (MinecraftVersion.majorLegacy >= 12005) {
+        return if (MinecraftVersion.versionId >= 12005) {
             NMS12005.instance.isBookEnchantsHidden(item)
         } else item.hasItemFlag(ItemFlag.HIDE_POTION_EFFECTS)
     }
 
     override fun removeBookEnchantsHidden(item: ItemMeta) {
-        if (MinecraftVersion.majorLegacy >= 12005) {
+        if (MinecraftVersion.versionId >= 12005) {
             NMS12005.instance.removeBookEnchantsHidden(item)
         } else {
             item.removeItemFlags(ItemFlag.HIDE_POTION_EFFECTS)
