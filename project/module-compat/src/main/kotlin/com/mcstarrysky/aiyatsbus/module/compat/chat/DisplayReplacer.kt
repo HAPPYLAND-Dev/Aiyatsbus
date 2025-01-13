@@ -38,7 +38,7 @@ interface DisplayReplacer {
     companion object {
 
         val inst by unsafeLazy {
-            if (MinecraftVersion.majorLegacy >= 12005) {
+            if (MinecraftVersion.versionId >= 12005) {
                 DisplayReplacerDataComponents
             } else {
                 DisplayReplacerNBT

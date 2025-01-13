@@ -38,7 +38,7 @@ object PacketSystemChat {
         // 1.19 +
         if (e.packet.name == "ClientboundSystemChatPacket") {
             // 1.20.2 + 取消了 adventure$content, 所以要直接修改 IChatBaseComponent
-            if (MinecraftVersion.majorLegacy > 12002) {
+            if (MinecraftVersion.versionId > 12002) {
                 val content = e.packet.source.getProperty<Any>("content") ?: return
                 e.packet.source.setProperty("content", DisplayReplacer.inst.apply(content, player))
             } else {

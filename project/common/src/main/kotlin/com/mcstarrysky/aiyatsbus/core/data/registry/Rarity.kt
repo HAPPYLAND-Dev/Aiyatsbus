@@ -46,6 +46,7 @@ data class Rarity @JvmOverloads constructor(
     val color: String = root.getString("color")!!,
     val weight: Int = root.getInt("weight", 100),
     val skull: String = root.getString("skull", "")!!,
+    val inaccessible: Boolean = root.getBoolean("inaccessible", false),
     val dependencies: Dependencies = Dependencies(root.getConfigurationSection("dependencies"))
 ) {
 

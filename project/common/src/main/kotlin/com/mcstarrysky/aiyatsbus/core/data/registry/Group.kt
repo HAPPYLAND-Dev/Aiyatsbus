@@ -50,6 +50,7 @@ data class Group @JvmOverloads constructor(
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRiODlhZDA2ZDMxOGYwYWUxZWVhZjY2MGZlYTc4YzM0ZWI1NWQwNWYwMWUxY2Y5OTlmMzMxZmIzMmQzODk0MiJ9fX0="
     )!!,
     val maxCoexist: Int = root.getInt("max_coexist", 1),
+    val inaccessible: Boolean = root.getBoolean("inaccessible", false),
     val dependencies: Dependencies = Dependencies(root.getConfigurationSection("dependencies"))
 )
 

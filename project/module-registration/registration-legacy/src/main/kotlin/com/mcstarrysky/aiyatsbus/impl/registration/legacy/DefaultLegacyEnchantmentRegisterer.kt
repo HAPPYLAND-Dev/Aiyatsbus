@@ -37,14 +37,14 @@ object DefaultLegacyEnchantmentRegisterer : AiyatsbusEnchantmentRegisterer {
 
     @Awake(LifeCycle.CONST)
     fun init() {
-        if (MinecraftVersion.majorLegacy <= 12002) {
+        if (MinecraftVersion.versionId <= 12002) {
             Enchantment::class.java.setProperty("acceptingNew", value = true, isStatic = true)
         }
     }
 
     @Awake(LifeCycle.DISABLE)
     fun exit() {
-        if (MinecraftVersion.majorLegacy <= 12002) {
+        if (MinecraftVersion.versionId <= 12002) {
             Enchantment::class.java.setProperty("acceptingNew", value = false, isStatic = true)
         }
     }

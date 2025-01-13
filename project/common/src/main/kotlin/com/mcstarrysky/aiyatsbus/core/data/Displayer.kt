@@ -36,6 +36,7 @@ import taboolib.module.chat.uncolored
 data class Displayer(
     private val root: ConfigurationSection,
     private val enchant: AiyatsbusEnchantment,
+    val display: Boolean = root.getBoolean("display", true),
     /** 附魔显示的前半部分, 一般是名称和等级 */
     val previous: String = root.getString("format.previous", "{default_previous}")!!,
     /** 附魔显示的后半部分, 一般是描述并且换行写 */

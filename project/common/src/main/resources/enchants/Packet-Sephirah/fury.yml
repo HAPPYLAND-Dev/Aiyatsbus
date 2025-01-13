@@ -41,7 +41,7 @@ mechanisms:
         
           if all [
             type boolean &only_player
-            &creature[type] != PLAYER
+            check &creature[type.name] != PLAYER
           ] then {
             exit
           }
@@ -50,8 +50,8 @@ mechanisms:
         
           for entity in near-by-entities &player in &range &range &range then {
         
-            if instance-of &entity is org.bukkit.entity.Mob then {
-              set &entity[target] to &player
+            if instance-of &entity is org.bukkit.entity.Monster then {
+              set &entity[target] to &creature
             }
         
           }

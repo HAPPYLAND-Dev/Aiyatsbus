@@ -45,7 +45,7 @@ import java.util.*
  */
 infix fun ItemStack.textured(headBase64: String): ItemStack {
     return modifyMeta<SkullMeta> {
-        if (MinecraftVersion.majorLegacy >= 12000) {
+        if (MinecraftVersion.versionId >= 12000) {
             val profile = Bukkit.createProfile(UUID.randomUUID(), "TabooLib")
             val textures = profile.textures
             textures.skin = URL(getTextureURLFromBase64(headBase64))

@@ -30,6 +30,7 @@ import org.bukkit.enchantments.EnchantmentOffer
 import org.bukkit.entity.Player
 import org.bukkit.event.enchantment.EnchantItemEvent
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
@@ -41,6 +42,7 @@ import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.conversion
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketSendEvent
+import taboolib.module.ui.InventoryViewProxy
 
 @ConfigNode(bind = "core/mechanisms/enchanting_table.yml")
 object EnchantingTableSupport {
@@ -113,14 +115,17 @@ object EnchantingTableSupport {
          * Spigot.Deobf -> PacketPlayerOutWindowData
          * Paper -> ClientboundContainerSetDataPacket
          *
+         * NOTICE 2025/01/07 以下注释有误，containerId 实际为自增数值。
+         * 由于不确定该内容在未来是否仍具有一定参考价值，该段注释暂时保留。
          * containerId (Enchanting Table):
          * Field:
          *   1.16 -> a
          *   1.17 -> 1.21.1 -> containerId
          *   paper (universal craftbukkit) -> containerId (remap = false)
          * Value:
-         *   1.16 ~ 1.20.2 -> 12 https://wiki.vg/index.php?title=Inventory&oldid=16948
-         *   1.20.3 ~ 1.21.2 -> 13 (+ Crafter since 23w42a) https://wiki.vg/index.php?title=Inventory&oldid=18722
+         *   1.16 ~ 1.20.2 -> 12 https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Inventory?oldid=2765391
+         *   1.20.3 ~ 1.21.2 -> 13 (+ Crafter since 23w42a) https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Inventory?oldid=2765394
+         * 以上注释有误。
          *
          * id:
          * 1.16 -> b
@@ -136,8 +141,8 @@ object EnchantingTableSupport {
          */
         if (e.packet.name == "PacketPlayOutWindowData" || e.packet.name == "ClientboundContainerSetDataPacket") {
             try {
-                val containerId = e.packet.read<Int>(if (MinecraftVersion.isUniversal) "containerId" else "a", MinecraftVersion.isUniversal)
-                if (!checkEnchantingTable(containerId)) return
+//                val containerId = e.packet.read<Int>(if (MinecraftVersion.isUniversal) "containerId" else "a", MinecraftVersion.isUniversal)
+                if (InventoryViewProxy.getTopInventory(e.player.openInventory).type != InventoryType.ENCHANTING) return
                 val id = e.packet.read<Int>(if (MinecraftVersion.isUniversal) "id" else "b", MinecraftVersion.isUniversal)
                 if (id in 4..6) {
                     e.packet.write(if (MinecraftVersion.isUniversal) "value" else "c", -1)
@@ -148,10 +153,10 @@ object EnchantingTableSupport {
         }
     }
 
-    private fun checkEnchantingTable(containerId: Int?): Boolean {
-        return MinecraftVersion.versionId <= 12002 && containerId == 12 ||
-                MinecraftVersion.versionId >= 12003 && containerId == 13
-    }
+//    private fun checkEnchantingTable(containerId: Int?): Boolean {
+//        return MinecraftVersion.versionId <= 12002 && containerId == 12 ||
+//                MinecraftVersion.versionId >= 12003 && containerId == 13
+//    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun prepareEnchant(event: PrepareItemEnchantEvent) {

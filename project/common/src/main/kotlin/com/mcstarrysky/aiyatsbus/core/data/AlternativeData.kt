@@ -37,6 +37,7 @@ data class AlternativeData(
     val tradeMaxLevel: Int = root?.getInt("trade_max_level", -1).coerceInt(-1),
     val enchantMaxLevel: Int = root?.getInt("enchant_max_level", -1).coerceInt(-1),
     val lootMaxLevel: Int = root?.getInt("loot_max_level", -1).coerceInt(-1),
+    val inaccessible: Boolean = root?.getBoolean("inaccessible", false).coerceBoolean(false),
     /** 3.0 的检测原版附魔的方法有点弱智, 把检测原版放到这里其实是更好的选择 */
     val isVanilla: Boolean = root?.getBoolean("is_vanilla", false).coerceBoolean(false)
 ) {

@@ -28,6 +28,7 @@ import taboolib.common.platform.function.warning
 import taboolib.library.reflex.ClassMethod
 import taboolib.library.reflex.ReflexClass
 import taboolib.module.kether.Kether
+import taboolib.module.kether.KetherLoader
 import taboolib.module.kether.ScriptActionParser
 
 /**
@@ -78,9 +79,15 @@ object AiyatsbusKetherRegistry : ClassInjector() {
             method.invokeStatic() as ScriptActionParser<*>
         }
 
-        // 注册语句 私有
-        for (name in values) {
-            Kether.scriptRegistry.registerAction("aiyatsbus", name.toString(), parser)
+        val shared = annotation.property("shared", false)
+        if (shared) {
+            // 注册语句 公有
+            KetherLoader.registerParser(parser, values.map { it.toString() }.toTypedArray(), "aiyatsbus", shared)
+        } else {
+            // 注册语句 私有
+            for (name in values) {
+                Kether.scriptRegistry.registerAction("aiyatsbus", name.toString(), parser)
+            }
         }
     }
 
