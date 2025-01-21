@@ -36,6 +36,7 @@ import taboolib.platform.util.nextChat
 import taboolib.module.ui.type.PageableChest
 import com.mcstarrysky.aiyatsbus.module.ingame.ui.internal.UIType
 import com.mcstarrysky.aiyatsbus.module.ingame.ui.internal.record
+import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -105,8 +106,13 @@ object EnchantSearchUI {
             val player = args["player"] as Player
             val holders = enchant.displayer.holders(enchant.basicData.maxLevel, player, enchant.book())
             icon.variables { variable -> listOf(holders[variable] ?: "") }
-                .modifyMeta<ItemMeta> { lore = lore.toBuiltComponent().map(Source::toLegacyText) }
-                .skull(enchant.rarity.skull)
+                .modifyMeta<ItemMeta> {
+                    lore = lore.toBuiltComponent().map(Source::toLegacyText)
+                    if (enchant.rarity.isCustomModelUIEnabled && !hasCustomModelData()) {
+                        setCustomModelData(enchant.rarity.customModelUI)
+                    }
+                }
+                .also { if (it.type == Material.PLAYER_HEAD) it.skull(enchant.rarity.skull) }
         }
         onClick { (_, _, _, event, args) ->
             EnchantInfoUI.open(event.clicker, args["element"] as AiyatsbusEnchantment)

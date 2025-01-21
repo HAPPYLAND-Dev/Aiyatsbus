@@ -47,8 +47,16 @@ data class Rarity @JvmOverloads constructor(
     val weight: Int = root.getInt("weight", 100),
     val skull: String = root.getString("skull", "")!!,
     val inaccessible: Boolean = root.getBoolean("inaccessible", false),
-    val dependencies: Dependencies = Dependencies(root.getConfigurationSection("dependencies"))
+    val dependencies: Dependencies = Dependencies(root.getConfigurationSection("dependencies")),
+    val customModelUI: Int = root.getInt("custom_model_ui"), // 菜单中的自定义模型
+    val customModelBook: Int = root.getInt("custom_model_book") // 玩家附魔书的自定义模型
 ) {
+
+    val isCustomModelUIEnabled: Boolean
+        get() = customModelUI != -1
+
+    val isCustomModelBookEnabled: Boolean
+        get() = customModelBook != -1
 
     /**
      * 显示名称

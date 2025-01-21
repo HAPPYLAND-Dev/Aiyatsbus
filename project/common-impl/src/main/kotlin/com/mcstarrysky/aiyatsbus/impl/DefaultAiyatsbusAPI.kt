@@ -23,6 +23,7 @@ import com.mcstarrysky.aiyatsbus.impl.registration.legacy.DefaultLegacyEnchantme
 import taboolib.common.UnsupportedVersionException
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.info
+import taboolib.common.util.t
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsProxy
 import java.util.concurrent.CompletableFuture
@@ -112,7 +113,11 @@ class DefaultAiyatsbusAPI : AiyatsbusAPI {
     private inline fun <reified T> proxy(bind: String, vararg parameter: Any): T {
         val time = System.currentTimeMillis()
         val proxy = nmsProxy(T::class.java, bind, *parameter)
-        info("Generated ${T::class.java.simpleName} in ${System.currentTimeMillis() - time}ms")
+        val cost = System.currentTimeMillis() - time
+        info("""
+            代理类 ${T::class.java.simpleName} 已生成，用时 $cost 毫秒。
+            Generated ${T::class.java.simpleName} in ${System.currentTimeMillis() - time}ms
+        """.t())
         return proxy
     }
 

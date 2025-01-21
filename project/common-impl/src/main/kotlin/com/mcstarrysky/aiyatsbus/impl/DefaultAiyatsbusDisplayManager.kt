@@ -163,6 +163,12 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             }
             // 设置显示 Lore
             lore = result
+            if (!hasCustomModelData()) {
+                val rarity = item.fixedEnchants.minBy { it.key.rarity.weight }.key.rarity
+                if (rarity.isCustomModelBookEnabled) {
+                    setCustomModelData(rarity.customModelBook)
+                }
+            }
             this["lore_index", PersistentDataType.INTEGER_ARRAY] = intArrayOf(firstIndex, lastIndex)
             // 加附魔序列化数据
             // TODO: 尝试减少字符串的拼接与分割操作
