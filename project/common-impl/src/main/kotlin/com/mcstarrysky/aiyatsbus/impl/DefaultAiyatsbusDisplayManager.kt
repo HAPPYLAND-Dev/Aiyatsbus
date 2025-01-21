@@ -167,6 +167,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
                 val rarity = item.fixedEnchants.minBy { it.key.rarity.weight }.key.rarity
                 if (rarity.isCustomModelBookEnabled) {
                     setCustomModelData(rarity.customModelBook)
+                    this["custom_book", PersistentDataType.BOOLEAN] = true // 记录这物品被打上了自定义模型
                 }
             }
             this["lore_index", PersistentDataType.INTEGER_ARRAY] = intArrayOf(firstIndex, lastIndex)
@@ -192,6 +193,10 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             removeItemFlags(ItemFlag.HIDE_ENCHANTS)
             if (item.isEnchantedBook) Aiyatsbus.api().getMinecraftAPI().removeBookEnchantsHidden(this)
 
+            // 清理掉打上的自定义模型
+            val custom = this["custom_book", PersistentDataType.BOOLEAN] == true
+            if (custom) setCustomModelData(null)
+
             // 创造模式的额外处理，需要重新给物品附魔
             // 这是因为创造模式下客户端会重新设置背包物品，而重新设置的物品中非原版附魔会消失
             // 这是由于客户端没有注册更多附魔
@@ -208,6 +213,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             lore = lore!!.subList(first, last)
             remove("enchants_serialized")
             remove("lore_index")
+            remove("custom_book")
         }
     }
 
