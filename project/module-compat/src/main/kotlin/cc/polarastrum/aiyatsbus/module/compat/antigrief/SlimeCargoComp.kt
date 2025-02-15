@@ -1,7 +1,7 @@
-package com.mcstarrysky.aiyatsbus.module.compat.antigrief
+package cc.polarastrum.aiyatsbus.module.compat.antigrief
 
-import com.mcstarrysky.aiyatsbus.core.compat.AntiGrief
-import com.mcstarrysky.aiyatsbus.core.compat.AntiGriefChecker
+import cc.polarastrum.aiyatsbus.core.compat.AntiGrief
+import cc.polarastrum.aiyatsbus.core.compat.AntiGriefChecker
 import me.xiaozhangup.slimecargo.SlimeCargoNext.slimeProtect
 import me.xiaozhangup.slimecargo.objects.enums.ProtectType
 import me.xiaozhangup.slimecargo.protect.SlimeProtect

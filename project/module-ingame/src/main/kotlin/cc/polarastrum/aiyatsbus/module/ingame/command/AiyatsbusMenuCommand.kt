@@ -1,6 +1,6 @@
-package com.mcstarrysky.aiyatsbus.module.ingame.command
+package cc.polarastrum.aiyatsbus.module.ingame.command
 
-import com.mcstarrysky.aiyatsbus.module.ingame.ui.MainMenuUI
+import cc.polarastrum.aiyatsbus.module.ingame.ui.MainMenuUI
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader

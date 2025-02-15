@@ -1,15 +1,10 @@
-package com.mcstarrysky.aiyatsbus.module.compat.antigrief
+package cc.polarastrum.aiyatsbus.module.compat.antigrief
 
-import com.mcstarrysky.aiyatsbus.core.compat.AntiGrief
-import com.mcstarrysky.aiyatsbus.core.compat.AntiGriefChecker
+import cc.polarastrum.aiyatsbus.core.compat.AntiGrief
+import cc.polarastrum.aiyatsbus.core.compat.AntiGriefChecker
 import me.xiaozhangup.domain.utils.getPoly
-import me.xiaozhangup.slimecargo.SlimeCargoNext.slimeProtect
-import me.xiaozhangup.slimecargo.objects.enums.ProtectType
-import me.xiaozhangup.slimecargo.protect.SlimeProtect
 import org.bukkit.Location
-import org.bukkit.entity.Animals
 import org.bukkit.entity.Entity
-import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
