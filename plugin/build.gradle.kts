@@ -25,8 +25,8 @@ taboolib {
         bukkitApi("1.16")
     }
 
-    relocate("ink.ptms.um", "com.mcstarrysky.aiyatsbus.module.compat.library.um")
-    relocate("redempt", "com.mcstarrysky.aiyatsbus.library")
+    relocate("ink.ptms.um", "cc.polarastrum.aiyatsbus.module.compat.library.um")
+    relocate("redempt", "cc.polarastrum.aiyatsbus.library")
 }
 
 dependencies {

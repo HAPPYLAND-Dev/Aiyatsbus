@@ -30,3 +30,6 @@ include("project:module-registration:registration-v12100-vanilla")
 // 1.21.3 (1.20.2) 自定义附魔注册器
 include("project:module-registration:registration-v12103-paper")
 include("project:module-registration:registration-v12103-vanilla")
+// 1.21.4 自定义附魔注册器
+include("project:module-registration:registration-v12104-paper")
+include("project:module-registration:registration-v12104-vanilla")

@@ -37,6 +37,10 @@ mechanisms:
           set loc to &event[block.location.clone]
           set y to &loc[y]
           set &loc[y] to calc "y + 1"
+          
+          if not instance-of &loc[block.blockData] is org.bukkit.block.data.Ageable then {
+            exit
+          }
           set age to &loc[block.blockData.age]
 
           if check &age >= 2 then {

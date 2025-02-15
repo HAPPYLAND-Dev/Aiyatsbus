@@ -34,7 +34,7 @@ subprojects {
         }
         version {
             coroutines = null
-            taboolib = "6.2.2"
+            taboolib = "6.2.3"
         }
     }
 
@@ -97,7 +97,7 @@ fun PublishingExtension.applyToSub(subProject: Project) {
     publications {
         create<MavenPublication>("maven") {
             artifactId = subProject.name
-            groupId = "com.mcstarrysky.aiyatsbus"
+            groupId = "cc.polarastrum.aiyatsbus"
             version = project.version.toString()
             artifact(subProject.tasks["kotlinSourcesJar"])
             artifact(subProject.tasks["jar"])

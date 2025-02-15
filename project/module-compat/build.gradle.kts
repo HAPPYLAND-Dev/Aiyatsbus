@@ -13,6 +13,7 @@ dependencies {
     compileOnly("public:QuickShop-Hikari:6.2.0.6") // QuickShop-Hikari
     compileOnly("public:QuickShop-Reremake:5.1.2.5") // QuickShop-Reremake
     compileOnly("net.citizensnpcs:citizensapi:2.0.37-SNAPSHOT") // Citizens
+    compileOnly("public:BlockLocker:1.13") // BlockLocker
     compileOnly("ink.ptms:um:1.0.9")
     compileOnly("me.xiaozhangup:SlimeCargoNext:1.0.0:api") // SlimeCargoNext
     compileOnly("me.xiaozhangup:OrangDomain:1.0.0:api") // OrangDomain
