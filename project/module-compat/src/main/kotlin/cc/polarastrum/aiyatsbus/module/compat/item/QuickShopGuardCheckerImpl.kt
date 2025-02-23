@@ -17,6 +17,7 @@
 package cc.polarastrum.aiyatsbus.module.compat.item
 
 import cc.polarastrum.aiyatsbus.core.compat.GuardItemChecker
+import org.bukkit.entity.Item
 import org.bukkit.inventory.ItemStack
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -30,8 +31,8 @@ import taboolib.common.platform.Awake
  */
 object QuickShopGuardCheckerHikariImpl : GuardItemChecker {
 
-    override fun checkIsGuardItem(itemStack: ItemStack): Boolean {
-        return AbstractDisplayItemHikari.checkIsGuardItemStack(itemStack)
+    override fun checkIsGuardItem(item: Item): Boolean {
+        return AbstractDisplayItemHikari.checkIsGuardItemStack(item.itemStack)
     }
 
     @Awake(LifeCycle.ACTIVE)
@@ -46,8 +47,8 @@ object QuickShopGuardCheckerHikariImpl : GuardItemChecker {
 
 object QuickShopGuardCheckerReremakeImpl : GuardItemChecker {
 
-    override fun checkIsGuardItem(itemStack: ItemStack): Boolean {
-        return AbstractDisplayItemReremake.checkIsGuardItemStack(itemStack)
+    override fun checkIsGuardItem(item: Item): Boolean {
+        return AbstractDisplayItemReremake.checkIsGuardItemStack(item.itemStack)
     }
 
     @Awake(LifeCycle.ACTIVE)

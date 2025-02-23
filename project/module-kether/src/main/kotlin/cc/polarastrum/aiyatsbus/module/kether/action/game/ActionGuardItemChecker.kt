@@ -17,6 +17,7 @@
 package cc.polarastrum.aiyatsbus.module.kether.action.game
 
 import cc.polarastrum.aiyatsbus.core.compat.GuardItemChecker
+import org.bukkit.entity.Item
 import org.bukkit.inventory.ItemStack
 import taboolib.module.kether.KetherParser
 import taboolib.module.kether.combinationParser
@@ -32,6 +33,6 @@ object ActionGuardItemChecker {
 
     @KetherParser(["is-guard-item"], shared = true)
     fun guardItemParser() = combinationParser {
-        it.group(type<ItemStack>()).apply(it) { item -> now { GuardItemChecker.checkIsGuardItem(item) } }
+        it.group(type<Item>()).apply(it) { item -> now { GuardItemChecker.checkIsGuardItem(item, null) } }
     }
 }

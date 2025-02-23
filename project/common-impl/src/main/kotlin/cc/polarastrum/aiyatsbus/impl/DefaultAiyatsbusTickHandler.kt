@@ -70,90 +70,97 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
     }
 
     private fun onTick() {
-        counter++
         routine.cellSet() // 无需判断这里 trigger 是否为 null, 因为只有 Trigger 初始化时才会往这里扔 enchant
             .filter { counter % it.value == 0L }
             .sortedBy { it.rowKey.trigger!!.tickerPriority }
             .forEach {
-            val ench = it.rowKey
-            val id = it.columnKey
-            val slots = ench.targets.flatMap { it.activeSlots }.toSet()
+                val ench = it.rowKey
+                val id = it.columnKey
+                val slots = ench.targets.flatMap { it.activeSlots }.toSet()
 
-            onlinePlayers.forEach { player ->
-                var flag = false
-                val record = recorder.computeIfAbsent(player.uniqueId) { mutableSetOf() }
+                onlinePlayers.forEach { player ->
+                    var flag = false
+                    val record = recorder.computeIfAbsent(player.uniqueId) { mutableSetOf() }
 
-                // 一般能存在 routine 里的, trigger 和 tickers 必不为 null
-                val ticker = ench.trigger!!.tickers[id] ?: error("Unknown ticker $id for enchantment ${ench.basicData.id}")
+                    // 一般能存在 routine 里的, trigger 和 tickers 必不为 null
+                    val ticker =
+                        ench.trigger!!.tickers[id] ?: error("Unknown ticker $id for enchantment ${ench.basicData.id}")
 
-                val variables = mutableMapOf(
-                    "player" to player,
-                    "enchant" to ench,
-                    "mirror" to Mirror.MirrorStatus()
-                )
+                    val variables = mutableMapOf(
+                        "player" to player,
+                        "enchant" to ench,
+                        "mirror" to Mirror.MirrorStatus()
+                    )
 
-                slots.forEach slot@{ slot ->
-                    val item: ItemStack
-                    try {
-                        item = player.inventory.getItem(slot)
-                    } catch (_: Throwable) {
-                        // 离谱的低版本报错:
-                        // java.lang.NullPointerException: player.inventory.getItem(slot) must not be null
-                        return@slot
-                    }
-                    if (item.isNull) return@slot
+                    slots.forEach slot@{ slot ->
+                        val item: ItemStack
+                        try {
+                            item = player.inventory.getItem(slot)
+                        } catch (_: Throwable) {
+                            // 离谱的低版本报错:
+                            // java.lang.NullPointerException: player.inventory.getItem(slot) must not be null
+                            return@slot
+                        }
+                        if (item.isNull) return@slot
 
-                    val level = item.etLevel(ench)
+                        val level = item.etLevel(ench)
 
-                    if (level > 0) {
-                        if (ench.limitations.checkAvailable(CheckType.USE, item, player, slot).isFailure) return@slot
-                        flag = true
+                        if (level > 0) {
+                            if (ench.limitations.checkAvailable(
+                                    CheckType.USE,
+                                    item,
+                                    player,
+                                    slot
+                                ).isFailure
+                            ) return@slot
+                            flag = true
 
-                        val vars = variables.toMutableMap()
-                        vars += mapOf(
-                            "triggerSlot" to slot.name,
-                            "trigger-slot" to slot.name,
-                            "item" to item,
-                            "level" to level,
-                        )
+                            val vars = variables.toMutableMap()
+                            vars += mapOf(
+                                "triggerSlot" to slot.name,
+                                "trigger-slot" to slot.name,
+                                "item" to item,
+                                "level" to level,
+                            )
 
-                        vars += ench.variables.variables(level, item, false)
+                            vars += ench.variables.variables(level, item, false)
 
-                        if (!record.contains(id)) {
-                            record += id
-                            if (AiyatsbusSettings.enablePerformanceTool) {
-                                mirrorNow("Enchantment:Tick:PreHandle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
-                                    vars += "mirror" to it
+                            if (!record.contains(id)) {
+                                record += id
+                                if (AiyatsbusSettings.enablePerformanceTool) {
+                                    mirrorNow("Enchantment:Tick:PreHandle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
+                                        vars += "mirror" to it
+                                        Aiyatsbus.api().getKetherHandler().invoke(ticker.preHandle, player, vars)
+                                    }
+                                } else {
                                     Aiyatsbus.api().getKetherHandler().invoke(ticker.preHandle, player, vars)
                                 }
-                            } else {
-                                Aiyatsbus.api().getKetherHandler().invoke(ticker.preHandle, player, vars)
                             }
-                        }
 
-                        if (AiyatsbusSettings.enablePerformanceTool) {
-                            mirrorNow("Enchantment:Tick:Handle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
-                                vars += "mirror" to it
+                            if (AiyatsbusSettings.enablePerformanceTool) {
+                                mirrorNow("Enchantment:Tick:Handle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
+                                    vars += "mirror" to it
+                                    Aiyatsbus.api().getKetherHandler().invoke(ticker.handle, player, vars)
+                                }
+                            } else {
                                 Aiyatsbus.api().getKetherHandler().invoke(ticker.handle, player, vars)
                             }
-                        } else {
-                            Aiyatsbus.api().getKetherHandler().invoke(ticker.handle, player, vars)
                         }
                     }
-                }
-                if (!flag && record.contains(id)) {
-                    record -= id
-                    if (AiyatsbusSettings.enablePerformanceTool) {
-                        mirrorNow("Enchantment:Tick:PostHandle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
-                            variables += "mirror" to it
+                    if (!flag && record.contains(id)) {
+                        record -= id
+                        if (AiyatsbusSettings.enablePerformanceTool) {
+                            mirrorNow("Enchantment:Tick:PostHandle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
+                                variables += "mirror" to it
+                                Aiyatsbus.api().getKetherHandler().invoke(ticker.postHandle, player, variables)
+                            }
+                        } else {
                             Aiyatsbus.api().getKetherHandler().invoke(ticker.postHandle, player, variables)
                         }
-                    } else {
-                        Aiyatsbus.api().getKetherHandler().invoke(ticker.postHandle, player, variables)
                     }
                 }
             }
-        }
+        counter++
     }
 
     companion object {
