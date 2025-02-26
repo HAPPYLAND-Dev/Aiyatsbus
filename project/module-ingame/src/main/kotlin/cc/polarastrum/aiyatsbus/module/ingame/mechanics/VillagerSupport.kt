@@ -97,8 +97,7 @@ object VillagerSupport {
                 villagerExperience,
                 priceMultiplier,
                 shouldIgnoreDiscounts()
-            ))
-                .run new@{ this@new.ingredients = this@origin.ingredients; this }
+            )).also { it.ingredients = this@origin.ingredients }
         }
     }
 }
