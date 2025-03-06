@@ -36,7 +36,7 @@ abstract class NMS12005 {
 
     abstract fun setRepairCost(item: ItemStack, cost: Int)
 
-    abstract fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player): Any
+    abstract fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player)
 
     abstract fun hurtAndBreak(nmsItem: Any, amount: Int, entity: LivingEntity)
 

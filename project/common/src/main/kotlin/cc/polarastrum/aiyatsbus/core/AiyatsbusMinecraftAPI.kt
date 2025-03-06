@@ -50,7 +50,7 @@ interface AiyatsbusMinecraftAPI {
     fun createItemStack(material: String, tag: String?): ItemStack
 
     /** 为原版的 MerchantRecipeList 的物品显示更多附魔 */
-    fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player): Any
+    fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player)
 
     /** 将 Json 转成 IChatBaseComponent */
     fun componentFromJson(json: String): Any

@@ -31,7 +31,7 @@ object ChargeListener {
      * 处理接收到的数据包事件。
      * 此方法负责处理与蓄力相关的数据包，包括开始蓄力和释放蓄力。
      */
-    @SubscribeEvent
+//    @SubscribeEvent
     private fun onReceive(e: PacketReceiveEvent) {
         when (e.packet.nameInSpigot ?: e.packet.name) {
             // Prepare shoot
@@ -64,7 +64,7 @@ object ChargeListener {
     /**
      * 被攻击时打断蓄力
      */
-    @SubscribeEvent
+//    @SubscribeEvent
     private fun onDamaged(e: EntityDamageEvent) {
         val player = e.entity as? Player ?: return
         val info = ChargeHandler[player] ?: return

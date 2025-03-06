@@ -168,7 +168,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
                 val rarity = item.fixedEnchants.minBy { it.key.rarity.weight }.key.rarity
                 if (rarity.isCustomModelBookEnabled) {
                     setCustomModelData(rarity.customModelBook)
-                    this["custom_book", PersistentDataType.BOOLEAN] = true // 记录这物品被打上了自定义模型
+                    this["custom_book", PersistentDataType.STRING] = "true" // 记录这物品被打上了自定义模型
                 }
             }
             this["lore_index", PersistentDataType.INTEGER_ARRAY] = intArrayOf(firstIndex, lastIndex)
@@ -195,7 +195,8 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             if (item.isEnchantedBook) Aiyatsbus.api().getMinecraftAPI().removeBookEnchantsHidden(this)
 
             // 清理掉打上的自定义模型
-            val custom = this["custom_book", PersistentDataType.BOOLEAN] == true
+            // TODO: 不清楚会不会有清理掉物品原模型数据的 Bug, 后期需要再看看这一块的逻辑
+            val custom = this["custom_book", PersistentDataType.STRING] == "true"
             if (custom) setCustomModelData(null)
 
             // 创造模式的额外处理，需要重新给物品附魔
