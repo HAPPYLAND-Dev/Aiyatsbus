@@ -64,7 +64,6 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
         }
     }
 
-    private val gsonComponentSerializer = GsonComponentSerializer.gson()
     private val NBT_CODEC: Codec<Any, String, IOException, IOException> = PaperAdventure::class.java.getProperty("NBT_CODEC", isStatic = true)!!
 
     override fun getRepairCost(item: ItemStack): Int {
@@ -115,7 +114,7 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
         }
     }
 
-    override fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player): Any {
+    override fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player) {
 
         if (MinecraftVersion.versionId >= 12005) {
             return NMS12005.instance.adaptMerchantRecipe(merchantRecipeList, player)
@@ -129,38 +128,22 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
 
         if (MinecraftVersion.isUniversal) {
             val previous = merchantRecipeList as NMSMerchantRecipeList
-            val adapt = NMSMerchantRecipeList()
             for (i in 0 until previous.size) {
-                val recipe = previous[i]!!
-                adapt += NMSMerchantRecipe(
-                    adapt(recipe.baseCostA, player) as NMSItemStack,
-                    adapt(recipe.costB, player) as NMSItemStack,
-                    adapt(recipe.result, player) as NMSItemStack,
-                    recipe.uses,
-                    recipe.maxUses,
-                    recipe.xp,
-                    recipe.priceMultiplier,
-                    recipe.demand
-                )
+                with(previous[i]!!) {
+                    setProperty("baseCostA", adapt(baseCostA, player) as NMSItemStack)
+                    setProperty("costB", adapt(costB, player) as NMSItemStack)
+                    setProperty("result", adapt(result, player) as NMSItemStack)
+                }
             }
-            return adapt
         } else {
             val previous = merchantRecipeList as NMS16MerchantRecipeList
-            val adapt = NMS16MerchantRecipeList()
             for (i in 0 until previous.size) {
-                val recipe = previous[i]!!
-                adapt += NMS16MerchantRecipe(
-                    adapt(recipe.buyingItem1, player) as NMS16ItemStack,
-                    adapt(recipe.buyingItem2, player) as NMS16ItemStack,
-                    adapt(recipe.sellingItem, player) as NMS16ItemStack,
-                    recipe.uses,
-                    recipe.maxUses,
-                    recipe.xp,
-                    recipe.priceMultiplier,
-                    recipe.demand
-                )
+                with (previous[i]!!) {
+                    setProperty("buyingItem1", adapt(buyingItem1, player) as NMS16ItemStack)
+                    setProperty("buyingItem2", adapt(buyingItem2, player) as NMS16ItemStack)
+                    setProperty("sellingItem", adapt(sellingItem, player) as NMS16ItemStack)
+                }
             }
-            return adapt
         }
     }
 

@@ -40,6 +40,7 @@ import org.bukkit.craftbukkit.v1_21_R3.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
 import taboolib.common.platform.PlatformFactory
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.module.chat.component
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.function.BiFunction
@@ -173,7 +174,7 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         )
 //        return enchantment.build(MinecraftKey.withDefaultNamespace(enchant.id))
         return NMSEnchantment(
-            Aiyatsbus.api().getMinecraftAPI().componentFromJson(enchant.basicData.name) as IChatBaseComponent,
+            Aiyatsbus.api().getMinecraftAPI().componentFromJson(enchant.basicData.name.component().buildToRaw { colored() }) as IChatBaseComponent,
             enchantment.getProperty<NMSEnchantmentC>("definition")!!,
             enchantment.getProperty<HolderSet<NMSEnchantment>>("exclusiveSet")!!,
             enchantment.getProperty<DataComponentMap.a>("effectMapBuilder")!!.build()

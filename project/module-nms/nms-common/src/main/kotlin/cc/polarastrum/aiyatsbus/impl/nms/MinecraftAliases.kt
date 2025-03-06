@@ -26,8 +26,6 @@ package cc.polarastrum.aiyatsbus.impl.nms
 // 1.16
 typealias NMS16ItemStack = net.minecraft.server.v1_16_R3.ItemStack
 
-typealias NMS16MerchantRecipe = net.minecraft.server.v1_16_R3.MerchantRecipe
-
 typealias NMS16MerchantRecipeList = net.minecraft.server.v1_16_R3.MerchantRecipeList
 
 typealias NMS16NBTTagCompound = net.minecraft.server.v1_16_R3.NBTTagCompound
@@ -51,13 +49,9 @@ typealias CraftChatMessage16 = org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMes
 // Universal
 typealias NMSItemStack = net.minecraft.world.item.ItemStack
 
-typealias NMSMerchantRecipe = net.minecraft.world.item.trading.MerchantRecipe
-
 typealias NMSMerchantRecipeList = net.minecraft.world.item.trading.MerchantRecipeList
 
 typealias NMSNBTTagCompound = net.minecraft.nbt.NBTTagCompound
-
-typealias NMSIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent
 
 typealias NMSBlockPosition = net.minecraft.core.BlockPosition
 
@@ -68,5 +62,3 @@ typealias CraftPlayer20 = org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
 typealias CraftLivingEntity20 = org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity
 
 typealias CraftItemStack20 = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack
-
-typealias CraftChatMessage20 = org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage
