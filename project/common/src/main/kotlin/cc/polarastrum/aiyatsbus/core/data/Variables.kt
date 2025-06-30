@@ -71,19 +71,38 @@ class Variables(
     root: ConfigurationSection?
 ) {
 
-    /** 存储变量的类型映射，用于判断变量类型 */
+    /**
+     * 存储变量的类型映射，用于判断变量类型。
+     * 键为变量名，值为变量类型。
+     */
     private val variables: MutableMap<String, VariableType> = HashMap()
 
-    /** 与等级有关的变量，Pair 里的 String 是单位，Map 里的 Int 是等级，String 是公式 */
+    /**
+     * 等级相关变量映射。
+     * 键为变量名，值为 Pair(单位, 等级-公式映射)。
+     * 例如：{"damage" to ("点" to mapOf(1 to "level*2+1"))}
+     */
     val leveled: MutableMap<String, Pair1<String, Map<Int, String>>> = HashMap()
 
-    /** 与物品强相关的数据，变量名对初始值 */
+    /**
+     * 物品相关变量映射。
+     * 键为变量名，值为 Pair(存储键, 初始值)。
+     * 存储键可为 PDC 字段或以 (NBT) 开头的 NBT 路径。
+     */
     val modifiable: MutableMap<String, Pair1<String, String>> = HashMap()
 
-    /** 常量，相当于附魔配置，变量名对值 */
+    /**
+     * 常量变量映射。
+     * 键为变量名，值为常量内容。
+     */
     val ordinary: MutableMap<String, Any?> = HashMap()
 
-    /** 开发者添加的变量，变量名对函数，函数传入一个等级取得参数值 */
+    /**
+     * 自定义变量映射。
+     * 键为变量名，值为函数，函数参数为等级，返回变量值。
+     * 
+     * 避免操作本 map，使用 addCustom 和 removeCustom 方法。
+     */
     val custom: MutableMap<String, IntFunction<Any?>> = HashMap()
 
     init {
@@ -115,15 +134,43 @@ class Variables(
     }
 
     /**
-     * 计算与等级有关的变量并返回结果
+     * 注册自定义变量。
+     * 必须通过本方法添加自定义变量，避免直接操作 custom map。
      *
-     * 根据当前等级选择最接近的配置，计算变量值。
-     * 支持嵌套变量解析和单位显示。
+     * @param variable 变量名
+     * @param func 计算函数，参数为等级，返回变量值
+     */
+    fun addCustom(variable: String, func: IntFunction<Any?>) {
+        variables += variable to VariableType.CUSTOM
+        custom += variable to func
+    }
+
+    /**
+     * 移除自定义变量。
+     * 必须通过本方法移除自定义变量，避免直接操作 custom map。
+     *
+     * @param variable 变量名
+     * @return 是否成功移除
+     */
+    fun removeCustom(variable: String): Boolean {
+        return if (variables[variable] == VariableType.CUSTOM) {
+            variables.remove(variable)
+            custom.remove(variable)
+            true
+        } else {
+            false
+        }
+    }
+
+    /**
+     * 计算等级相关变量。
+     *
+     * 根据当前等级选择最接近的配置，支持嵌套变量解析和单位显示。
      *
      * @param variable 变量名
      * @param level 当前等级
      * @param withUnit 是否包含单位
-     * @return 计算结果
+     * @return 计算结果，类型为 Int 或 Double 或带单位的字符串
      */
     fun leveled(variable: String, level: Int, withUnit: Boolean): Any {
         val v = leveled[variable]!! // 获取变量
@@ -142,14 +189,14 @@ class Variables(
     }
 
     /**
-     * 计算物品变量并返回结果
+     * 获取物品相关变量的值。
      *
-     * 默认是从物品的 PDC 中获取，如果变量名开头为 (NBT) 则会自动去掉该开头并从物品 NBT 中寻找该变量。
-     * 如果物品为空或变量不存在，则返回默认值。
+     * 优先从物品的 PDC 获取，若变量名以 (NBT) 开头则从 NBT 获取。
+     * 若物品为空或变量不存在，返回默认值。
      *
      * @param variable 变量名
      * @param item 物品堆
-     * @return 变量值，如果物品为空则返回 "?"
+     * @return 变量值，若物品为空返回 "?"
      */
     fun modifiable(variable: String, item: ItemStack?): Any {
         if (item == null) return "?"
@@ -162,10 +209,9 @@ class Variables(
     }
 
     /**
-     * 修改物品变量，可以使用 NBT
+     * 修改物品相关变量。
      *
-     * 根据变量配置决定使用 PDC 还是 NBT 存储。
-     * 支持字符串类型的变量修改。
+     * 根据变量配置决定使用 PDC 还是 NBT 存储，支持字符串类型变量修改。
      *
      * @param item 要修改的物品
      * @param variable 变量名
@@ -187,7 +233,7 @@ class Variables(
     }
 
     /**
-     * 计算常量并返回结果
+     * 获取常量变量的值。
      *
      * 直接返回配置中定义的常量值。
      *
@@ -197,26 +243,24 @@ class Variables(
     fun ordinary(variable: String): Any? = ordinary[variable]
 
     /**
-     * 计算自定义变量并返回结果
+     * 计算自定义变量。
      *
-     * 调用开发者注册的自定义函数计算变量值。
-     * 函数接收等级参数并返回计算结果。
+     * 调用开发者注册的自定义函数，参数为等级。
      *
      * @param variable 变量名
      * @param level 当前等级
-     * @return 计算结果，如果变量不存在则返回 null
+     * @return 计算结果，若变量不存在返回 null
      */
     fun custom(variable: String, level: Int): Any? = custom[variable]?.apply(level)
 
     /**
-     * 计算变量并得到值
+     * 通用变量计算接口。
      *
      * 根据变量类型自动选择相应的计算方法。
-     * 提供统一的变量访问接口。
      *
      * @param variable 变量名
-     * @param level 计算与等级有关的变量需要的等级
-     * @param item 计算与物品强相关的变量时需要的物品堆
+     * @param level 等级（用于等级相关、自定义变量）
+     * @param item 物品（用于物品相关变量）
      * @param withUnit 是否带单位
      * @return 计算结果
      */
@@ -230,10 +274,9 @@ class Variables(
     }
 
     /**
-     * 自动计算所有的变量，并将所有结果放入 Map
+     * 批量计算所有变量。
      *
-     * 批量计算所有变量，返回变量名到计算结果的映射。
-     * 适用于需要一次性获取所有变量值的场景。
+     * 计算所有已注册变量，返回变量名到计算结果的映射。
      *
      * @param level 等级
      * @param item 物品

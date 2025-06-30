@@ -36,7 +36,7 @@ object ActionVault {
 
     // TODO: 空指针检查
 
-    @KetherParser(["money"], shared = true, namespace = "aiyatsbus")
+    @KetherParser(["a-money", "money"], shared = true, namespace = "aiyatsbus")
     fun moneyParser() = combinationParser {
         it.group(any()).apply(it) { player -> now { getBalance(player(player) ?: return@now 0.0) } }
     }
