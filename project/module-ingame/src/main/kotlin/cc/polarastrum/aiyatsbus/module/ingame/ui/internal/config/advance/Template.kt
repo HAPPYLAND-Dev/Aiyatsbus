@@ -24,7 +24,6 @@
 package cc.polarastrum.aiyatsbus.module.ingame.ui.internal.config.advance
 
 import com.google.common.collect.HashMultimap
-import cc.polarastrum.aiyatsbus.core.util.SimpleRegistry
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.function.asMap
@@ -32,6 +31,7 @@ import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.function.oneOf
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.MenuItem
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.config.MenuConfiguration
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.config.MenuSection
+import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.registry.SimpleRegistry
 import taboolib.library.configuration.ConfigurationSection
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")

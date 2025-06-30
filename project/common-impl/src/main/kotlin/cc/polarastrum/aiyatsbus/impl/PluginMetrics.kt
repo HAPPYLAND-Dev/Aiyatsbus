@@ -13,8 +13,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-package cc.polarastrum.aiyatsbus.impl
+ */package cc.polarastrum.aiyatsbus.impl
 
 import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import taboolib.common.LifeCycle
@@ -26,7 +25,7 @@ import taboolib.module.metrics.charts.SingleLineChart
 
 /**
  * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.impl.PluginMetrics
+ * com.mcstarrysky.aiyatsbus.impl.cc.polarastrum.aiyatsbus.impl.PluginMetrics
  *
  * @author mical
  * @since 2024/3/19 23:20
@@ -43,14 +42,6 @@ object PluginMetrics {
         // enchantments
         metrics.addCustomChart(SingleLineChart("enchantments") {
             Aiyatsbus.api().getEnchantmentManager().getEnchants().size
-        })
-
-        // kether_triggers
-        metrics.addCustomChart(SingleLineChart("kether_triggers") {
-            Aiyatsbus.api().getEnchantmentManager().getEnchants().values
-                .filter { it.trigger != null }
-                .flatMap { it.trigger!!.listeners.values + it.trigger!!.tickers.values }
-                .size
         })
     }
 }

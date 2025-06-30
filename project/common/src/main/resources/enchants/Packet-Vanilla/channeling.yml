@@ -6,10 +6,10 @@
 basic:
   id: channeling
   name: "引雷"
-  max_level: 1
+  max-level: 1
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 普通
 targets:

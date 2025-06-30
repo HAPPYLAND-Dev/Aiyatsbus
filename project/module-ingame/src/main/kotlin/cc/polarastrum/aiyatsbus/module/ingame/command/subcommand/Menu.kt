@@ -17,10 +17,7 @@
 package cc.polarastrum.aiyatsbus.module.ingame.command.subcommand
 
 import cc.polarastrum.aiyatsbus.core.sendLang
-import cc.polarastrum.aiyatsbus.module.ingame.ui.AnvilUI
-import cc.polarastrum.aiyatsbus.module.ingame.ui.EnchantSearchUI
-import cc.polarastrum.aiyatsbus.module.ingame.ui.ItemCheckUI
-import cc.polarastrum.aiyatsbus.module.ingame.ui.MainMenuUI
+import cc.polarastrum.aiyatsbus.module.ingame.ui.*
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -58,8 +55,9 @@ private fun handleMenu(sender: CommandSender, menu: String = "main", who: String
             "anvil" -> AnvilUI.open(receiver)
             "search" -> EnchantSearchUI.open(receiver)
             "check" -> ItemCheckUI.open(receiver, mode = ItemCheckUI.CheckMode.FIND)
+            "favorites" -> FavoritesUI.open(receiver)
         }
     } ?: sender.sendLang("command-subCommands-menu-fail")
 }
 
-val menus = listOf("main", "anvil", "search", "check")
+val menus = listOf("main", "anvil", "search", "check", "favorites")

@@ -22,14 +22,20 @@ import org.bukkit.event.Event
 import org.bukkit.inventory.ItemStack
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.data.trigger.event.EventResolver
+ * 事件解析器类
  *
+ * 定义事件数据的解析逻辑，包含实体解析、事件解析和物品解析功能。
+ * 用于从 Bukkit 事件中提取相关的实体、事件和物品信息。
+ *
+ * @param T 事件类型
  * @author mical
  * @since 2024/7/18 00:58
  */
 data class EventResolver<in T : Event>(
+    /** 实体解析器，从事件中提取生物实体信息 */
     val entityResolver: Function2To2<T, String?, LivingEntity?, Boolean>,
+    /** 事件解析器，处理事件本身的逻辑 */
     val eventResolver: Function1<T> = Function1 { _ -> },
-    val itemResolver: Function3To2<T, String?, LivingEntity, ItemStack?, Boolean> = Function3To2 { _, _, _ -> null to false }
+    /** 物品解析器，从事件中提取物品信息 */
+    val itemResolver: Function3To2<T, String?, LivingEntity, ItemStack?, Boolean> = Function3To2 { _, _, _ -> null to1 false }
 )

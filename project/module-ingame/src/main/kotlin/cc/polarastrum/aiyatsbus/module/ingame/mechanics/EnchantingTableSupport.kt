@@ -33,9 +33,12 @@ import org.bukkit.event.enchantment.EnchantItemEvent
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
+import taboolib.common.LifeCycle
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.console
 import taboolib.common.platform.function.info
+import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.common.platform.function.submit
 import taboolib.common.util.randomDouble
 import taboolib.common5.RandomList
@@ -119,6 +122,14 @@ object EnchantingTableSupport {
 
     @ConfigNode("max_level_limit")
     var maxLevelLimit = -1
+
+    init {
+        registerLifeCycleTask(LifeCycle.ENABLE) {
+            conf.onReload {
+                console().sendLang("configuration-reload", conf.file!!.name, 0)
+            }
+        }
+    }
 
     @SubscribeEvent(priority = EventPriority.MONITOR)
     fun e(e: PacketSendEvent) {

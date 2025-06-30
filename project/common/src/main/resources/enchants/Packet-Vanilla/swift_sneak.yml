@@ -6,14 +6,14 @@
 basic:
   id: swift_sneak
   name: "迅捷潜行"
-  max_level: 3
+  max-level: 3
 
 alternative:
-  is_vanilla: true
-  is_cursed: false
-  is_treasure: true
-  is_tradeable: false
-  is_discoverable: false
+  is-vanilla: true
+  is-cursed: false
+  is-treasure: true
+  is-tradeable: false
+  is-discoverable: false
 
 rarity: 珍奇
 targets:

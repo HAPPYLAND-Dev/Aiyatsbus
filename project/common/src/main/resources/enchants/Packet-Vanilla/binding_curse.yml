@@ -6,13 +6,13 @@
 basic:
   id: binding_curse
   name: "绑定诅咒"
-  max_level: 1
+  max-level: 1
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
   grindstoneable: false
-  is_cursed: true
-  is_treasure: true
+  is-cursed: true
+  is-treasure: true
 
 rarity: 诅咒
 targets:

@@ -20,8 +20,10 @@ import org.bukkit.NamespacedKey
 import java.io.File
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.AiyatsbusEnchantmentManager
+ * Aiyatsbus 附魔管理器接口
+ *
+ * 提供附魔的注册、加载、查询和管理功能。
+ * 定义了附魔系统的核心管理操作，包括附魔的增删改查等。
  *
  * @author mical
  * @since 2024/2/17 16:16
@@ -29,47 +31,68 @@ import java.io.File
 interface AiyatsbusEnchantmentManager {
 
     /**
-     * 获取附魔
+     * 根据命名空间键获取附魔
+     *
+     * @param key 附魔的命名空间键
+     * @return 对应的附魔实例，如果不存在则返回 null
      */
     fun getEnchant(key: NamespacedKey): AiyatsbusEnchantment?
 
     /**
-     * 获取附魔
+     * 根据命名空间键的字符串形式获取附魔
+     *
+     * @param key 附魔的字符串键
+     * @return 对应的附魔实例，如果不存在则返回 null
      */
     fun getEnchant(key: String): AiyatsbusEnchantment?
 
     /**
      * 根据名称获取附魔
+     *
+     * @param name 附魔的名称
+     * @return 对应的附魔实例，如果不存在则返回 null
      */
     fun getByName(name: String): AiyatsbusEnchantment?
 
     /**
      * 获取全部附魔
+     *
+     * @return 所有已注册附魔的映射表，键为命名空间键，值为附魔实例
      */
     fun getEnchants(): Map<NamespacedKey, AiyatsbusEnchantment>
 
     /**
      * 注册附魔
+     *
+     * @param enchantment 要注册的附魔实例
      */
     fun register(enchantment: AiyatsbusEnchantmentBase)
 
     /**
      * 取消注册附魔
+     *
+     * @param enchantment 要取消注册的附魔实例
      */
     fun unregister(enchantment: AiyatsbusEnchantment)
 
     /**
      * 加载附魔
+     *
+     * 从配置文件中加载所有附魔数据
      */
     fun loadEnchantments()
 
     /**
      * 从文件中加载附魔
+     *
+     * @param file 包含附魔配置的文件
      */
     fun loadFromFile(file: File)
 
     /**
      * 删除附魔
+     *
+     * 清空所有已注册的附魔数据
      */
     fun clearEnchantments()
 }

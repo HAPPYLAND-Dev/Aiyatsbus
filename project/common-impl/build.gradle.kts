@@ -1,4 +1,5 @@
 dependencies {
+    // 引入 API
     compileOnly(project(":project:common"))
     // 旧版本自定义附魔注册器
     compileOnly(project(":project:module-registration:registration-legacy"))

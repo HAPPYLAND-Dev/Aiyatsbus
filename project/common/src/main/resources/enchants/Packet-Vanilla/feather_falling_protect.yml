@@ -6,10 +6,10 @@
 basic:
   id: feather_falling
   name: "摔落保护"
-  max_level: 4
+  max-level: 4
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 # 1.19.2 及以前, 该附魔名为摔落保护
 # 1.19.3 及以后, 该附魔名为摔落缓冲

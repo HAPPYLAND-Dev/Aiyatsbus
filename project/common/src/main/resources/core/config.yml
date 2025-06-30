@@ -24,28 +24,11 @@ Settings:
     - nerous
     - nos
     - nereusopus
-  # 自动检测非法附魔
-  anti-illegal-item:
-    enable: false
-    # 检测间隔 (tick)
-    interval: 60
-    check-list:
-      - MAX_CAPABILITY
-      - CONFLICT_GROUP
-      - CONFLICT_ENCHANT
   # 是否开启 ItemsAdder 支持
   support-items-adder: true
   # 是否开启脚本预热, 会在附魔加载/重载时编译一次脚本
   # 可以略微提升一点点第一次触发附魔的速度
   enable-kether-preheat: true
-  # 是否开启性能检测小工具
-  # 该工具能够简单的监测附魔触发器运行耗时等信息
-  # 若此项关闭, 则下面的 show-performance-details 不可用
-  enable-performance-tool: false
-  # 是否显示性能监控的详情信息, 若开启则显示每个附魔处理所用时间
-  # 在附魔很多的情况下, 开启这个会导致刷屏, 且有可能无法显示完整
-  # 所以这个选项仅适合于在测试服自定义附魔时用于查看附魔性能使用
-  show-performance-details: false
   # 对于附魔的挖掘放置攻击生物等操作, OP 是否无视领地等保护
   anti-grief-ignore-op: true
   # 若没有特殊设置, 将冷却消息显示在动作栏而不是聊天框

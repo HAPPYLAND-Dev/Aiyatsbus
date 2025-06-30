@@ -71,18 +71,12 @@ object AiyatsbusCommand {
     @CommandBody(permission = "aiyatsbus.command.reload")
     val reload = reloadSubCommand
 
-    @CommandBody(permission = "aiyatsbus.command.report")
-    val report = reportSubCommand
-
-    @CommandBody(permission = "aiyatsbus.command.script")
-    val script = CommandScript
-
     @Awake(LifeCycle.INIT)
     fun init() {
         registerLifeCycleTask(LifeCycle.ACTIVE, 999) {
             // 生成 TabList
             enchantNamesAndIds.clear()
-            enchantNamesAndIds.addAll(Aiyatsbus.api().getEnchantmentManager().getEnchants().values.map { listOf(it.basicData.id, it.basicData.name) }.flatten())
+            enchantNamesAndIds.addAll(Aiyatsbus.api().getEnchantmentManager().getEnchants().values.map { listOf(it.basicData.id, it.basicData.originName) }.flatten())
         }
     }
 }
@@ -113,7 +107,6 @@ private fun commandAliases() {
             register(AiyatsbusCommand.mode, this)
             register(AiyatsbusCommand.random, this)
             register(AiyatsbusCommand.reload, this)
-            register(AiyatsbusCommand.report, this)
         }
     }
 }

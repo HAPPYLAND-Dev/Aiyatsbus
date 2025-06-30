@@ -6,11 +6,11 @@
 basic:
   id: frost_walker
   name: "冰霜行者"
-  max_level: 2
+  max-level: 2
 
 alternative:
-  is_vanilla: true
-  is_treasure: true
+  is-vanilla: true
+  is-treasure: true
 
 rarity: 珍奇
 targets:

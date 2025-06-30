@@ -24,9 +24,7 @@ import org.bukkit.craftbukkit.v1_20_R4.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import taboolib.library.reflex.Reflex.Companion.setProperty
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -68,19 +66,6 @@ class NMS12005Impl : NMS12005() {
 
     override fun hurtAndBreak(nmsItem: Any, amount: Int, entity: LivingEntity) {
         return (nmsItem as NMSItemStack).hurtAndBreak(amount, (entity as CraftLivingEntity).handle, null)
-    }
-
-    override fun hideBookEnchants(item: ItemMeta) {
-        item.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS)
-        // Spigot: ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-    }
-
-    override fun isBookEnchantsHidden(item: ItemMeta): Boolean {
-        return item.hasItemFlag(ItemFlag.HIDE_STORED_ENCHANTS)
-    }
-
-    override fun removeBookEnchantsHidden(item: ItemMeta) {
-        item.removeItemFlags(ItemFlag.HIDE_STORED_ENCHANTS)
     }
 }
 

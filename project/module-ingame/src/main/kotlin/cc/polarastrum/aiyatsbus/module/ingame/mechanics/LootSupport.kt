@@ -53,6 +53,9 @@ object LootSupport {
     @ConfigNode("enable")
     var enable = true
 
+    @ConfigNode("fish_enable")
+    var fishEnable = true
+
     /**
      * 开启悬停显示, 必出悬停原版附魔
      * 关闭时则关闭悬停显示, 一切附魔按权重随机
@@ -96,7 +99,7 @@ object LootSupport {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerFish(event: PlayerFishEvent) {
-        if (!enable) return
+        if (!fishEnable) return
         if (event.state != PlayerFishEvent.State.CAUGHT_FISH || event.caught !is Item) return
         val item = event.caught as Item
         if (item.itemStack.fixedEnchants.isNotEmpty()) {

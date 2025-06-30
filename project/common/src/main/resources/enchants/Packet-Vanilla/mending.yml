@@ -6,11 +6,11 @@
 basic:
   id: mending
   name: "经验修补"
-  max_level: 1
+  max-level: 1
 
 alternative:
-  is_vanilla: true
-  is_treasure: true
+  is-vanilla: true
+  is-treasure: true
 
 rarity: 传奇
 targets:

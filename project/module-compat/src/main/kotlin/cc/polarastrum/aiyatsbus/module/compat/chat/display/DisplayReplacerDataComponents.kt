@@ -16,17 +16,17 @@
  */
 package cc.polarastrum.aiyatsbus.module.compat.chat.display
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isValidJson
 import cc.polarastrum.aiyatsbus.module.compat.chat.DisplayReplacer
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.entity.Player
-import taboolib.module.nms.*
+import taboolib.module.nms.NMSItemTag
 
 /**
  * Aiyatsbus

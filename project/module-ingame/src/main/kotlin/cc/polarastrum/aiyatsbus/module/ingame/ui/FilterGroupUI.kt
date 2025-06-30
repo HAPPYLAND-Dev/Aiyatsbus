@@ -19,8 +19,8 @@ package cc.polarastrum.aiyatsbus.module.ingame.ui
 import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.FilterStatement
 import cc.polarastrum.aiyatsbus.core.FilterType
-import cc.polarastrum.aiyatsbus.core.aiyatsbusGroups
 import cc.polarastrum.aiyatsbus.core.data.registry.Group
+import cc.polarastrum.aiyatsbus.core.sendLang
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.MenuComponent
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.config.MenuConfiguration
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.feature.util.MenuFunctionBuilder
@@ -40,7 +40,9 @@ import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.UIType
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.record
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.function.console
 import kotlin.collections.set
+import kotlin.system.measureTimeMillis
 
 @MenuComponent("FilterGroup")
 object FilterGroupUI {
@@ -49,15 +51,15 @@ object FilterGroupUI {
     private lateinit var source: Configuration
     private lateinit var config: MenuConfiguration
 
-    fun reload() {
-        source.reload()
+    fun initialize() {
         config = MenuConfiguration(source)
     }
 
     @Awake(LifeCycle.ENABLE)
     fun init() {
         source.onReload {
-            config = MenuConfiguration(source)
+            measureTimeMillis { config = MenuConfiguration(source) }
+                .let { console().sendLang("configuration-reload", source.file!!.name, it) }
         }
     }
 
@@ -69,7 +71,7 @@ object FilterGroupUI {
             rows(shape.rows)
             val slots = shape["FilterGroup:filter"].toList()
             slots(slots)
-            elements { aiyatsbusGroups.values.toList() }
+            elements { Group.values.toList() }
 
             load(shape, templates, player, "FilterGroup:filter", "Previous", "Next")
             pages(shape, templates)

@@ -23,23 +23,29 @@ import cc.polarastrum.aiyatsbus.core.aiyatsbusEt
 import taboolib.common5.clong
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.data.PlayerData
+ * Aiyatsbus 玩家数据类
+ *
+ * 存储和管理玩家的附魔相关数据，包括菜单模式、收藏夹、过滤器和冷却时间。
+ * 支持数据的序列化和反序列化，用于持久化存储。
  *
  * @author mical
  * @since 2024/2/18 12:59
  */
 data class PlayerData(private val serializedData: String?) {
+    /** 菜单模式 */
     var menuMode: MenuMode = MenuMode.NORMAL
+    /** 收藏的附魔列表 */
     var favorites: MutableList<String> = mutableListOf()
+    /** 过滤器设置 */
     var filters: Map<FilterType, MutableMap<String, FilterStatement>> =
         FilterType.values().associateWith { mutableMapOf() }
+    /** 冷却时间映射 */
     var cooldown: MutableMap<String, Long> = mutableMapOf()
 
     init {
         serializedData?.let {
-            serializedData.split("||")
-                .map { pair -> pair.split("==")[0] to pair.split("==")[1] }
+            serializedData.split("||") // 通过 || 分割数据
+                .map { pair -> pair.split("==")[0] to pair.split("==")[1] } // 等号拼接键和值
                 .forEach { (key, value) ->
                     when (key) {
                         "menu_mode" -> menuMode = MenuMode.valueOf(value)
@@ -47,6 +53,7 @@ data class PlayerData(private val serializedData: String?) {
 
                         "filters" -> {
                             var tot = 0
+                            // $ 分割 FilterType
                             value.split("$").forEach { content ->
                                 filters[AiyatsbusEnchantmentFilter.filterTypes[tot++]]!!.putAll(content.split(";")
                                     .filter { filter -> filter.isNotBlank() }
@@ -70,6 +77,11 @@ data class PlayerData(private val serializedData: String?) {
         }
     }
 
+    /**
+     * 序列化玩家数据
+     *
+     * @return 序列化后的字符串
+     */
     fun serialize() = "menu_mode==$menuMode||" +
             "favorites==${favorites.joinToString(";")}||" +
             "filters==${
@@ -80,7 +92,12 @@ data class PlayerData(private val serializedData: String?) {
             "cooldown==${cooldown.map { (id, stamp) -> "$id=$stamp" }.joinToString(";")}"
 }
 
+/**
+ * 菜单模式枚举
+ */
 enum class MenuMode {
+    /** 普通模式 */
     NORMAL,
+    /** 作弊模式 */
     CHEAT
 }

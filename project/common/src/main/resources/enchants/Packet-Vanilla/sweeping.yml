@@ -6,10 +6,10 @@
 basic:
   id: sweeping
   name: "横扫之刃"
-  max_level: 3
+  max-level: 3
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 # 1.21 以前, 该附魔 ID 为 sweeping
 # 1.21 及以后, 该附魔 ID 为 sweeping_edge

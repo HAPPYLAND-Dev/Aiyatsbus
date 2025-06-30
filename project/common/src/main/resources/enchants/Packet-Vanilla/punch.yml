@@ -6,10 +6,10 @@
 basic:
   id: punch
   name: "冲击"
-  max_level: 2
+  max-level: 2
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 珍奇
 targets:

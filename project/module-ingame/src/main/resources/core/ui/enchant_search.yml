@@ -19,7 +19,7 @@ template:
   'L':
     material: BOOK
     name: "&f所有检索出的附魔"
-    
+
   'F':
     material: BLACK_STAINED_GLASS_PANE
     name: "&7"

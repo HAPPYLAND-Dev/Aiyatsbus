@@ -17,7 +17,6 @@
 package cc.polarastrum.aiyatsbus.module.language
 
 import cc.polarastrum.aiyatsbus.core.AiyatsbusLanguage
-import cc.polarastrum.aiyatsbus.core.asLangOrNull
 import org.bukkit.command.CommandSender
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -29,8 +28,10 @@ import taboolib.platform.util.asLangTextOrNull
 import taboolib.platform.util.sendLang
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.module.language.DefaultAiyatsbusLanguage
+ * 默认 Aiyatsbus 语言系统实现
+ * 
+ * 基于 TabooLib 的语言系统，提供多语言支持和文本管理功能。
+ * 支持前缀、参数替换、复合文本等高级功能。
  *
  * @author mical
  * @since 2024/4/2 20:20
@@ -53,8 +54,16 @@ class DefaultAiyatsbusLanguage : AiyatsbusLanguage {
         return sender.asLangTextList(key, *args, sender.asLangTextOrNull("prefix") to "prefix")
     }
 
+    /**
+     * 语言系统初始化伴生对象
+     */
     companion object {
 
+        /**
+         * 初始化语言系统
+         * 
+         * 在系统常量阶段注册语言服务，配置语言文件路径和功能
+         */
         @Awake(LifeCycle.CONST)
         fun init() {
             // 注册服务
@@ -65,7 +74,7 @@ class DefaultAiyatsbusLanguage : AiyatsbusLanguage {
             Language.releasePath = "plugins/{0}/core/lang/{1}"
             // 启用行内复合文本支持
             Language.enableSimpleComponent = true
-            // 启用文件监听(注: 于 2024/11/20 起，不再默认启用)
+            // 启用文件监听（注：TabooLib 于 2024/11/20 起，不再默认启用）
             Language.enableFileWatcher = true
         }
     }

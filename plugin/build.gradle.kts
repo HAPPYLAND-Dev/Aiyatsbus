@@ -5,9 +5,9 @@ taboolib {
         name(rootProject.name)
         contributors {
             name("Mical")
+            name("xiaozhangup")
             name("坏黑")
             name("白熊")
-            name("xiaozhangup")
         }
 
         dependencies {
@@ -22,7 +22,7 @@ taboolib {
 
         desc("Aiyatsbus is a powerful enchantment framework for Paper servers.")
         load("STARTUP")
-        bukkitApi("1.16")
+        bukkitApi("1.17")
     }
 
     relocate("ink.ptms.um", "cc.polarastrum.aiyatsbus.module.compat.library.um")

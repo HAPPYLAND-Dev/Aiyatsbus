@@ -23,9 +23,9 @@
  */
 package cc.polarastrum.aiyatsbus.module.ingame.ui.internal.config.advance
 
-import cc.polarastrum.aiyatsbus.core.util.SimpleRegistry
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.MenuItem
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.config.MenuConfiguration
+import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.registry.SimpleRegistry
 import java.util.stream.Collectors
 import kotlin.math.ceil
 

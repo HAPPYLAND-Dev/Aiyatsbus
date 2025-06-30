@@ -27,59 +27,87 @@ import taboolib.module.configuration.util.asMap
 import taboolib.module.nms.getItemTag
 import taboolib.module.nms.setItemTag
 import taboolib.platform.util.modifyMeta
+import java.util.function.IntFunction
 
 /**
- * 附魔的变量显示与替换
+ * 附魔变量类型枚举
  *
- * leveled - 与等级有关的变量, 例如等级越高触发概率越大, 公式需要带入等级计算, 可嵌套其他变量但严禁互相嵌套(否则可能会导致灾难性的后果)
- * modifiable - 与物品强相关的数据, 需要写在物品的 PDC 里, 武器击杀次数累积多少触发什么东西
- * ordinary - 常量, 你也可以理解为配置项, 不提供任何计算
+ * 定义了四种不同类型的变量：
+ * - leveled：与等级有关的变量，例如等级越高触发概率越大，公式需要带入等级计算，可嵌套其他变量但严禁互相嵌套
+ * - modifiable：与物品强相关的数据，需要写在物品的 PDC 里，如武器击杀次数累积多少触发什么东西
+ * - ordinary：常量，也可以理解为配置项，不提供任何计算
+ * - custom：开发者自定义的变量，通过函数计算得出结果
  *
  * @author mical
  * @since 2024/2/17 22:29
  */
 enum class VariableType {
-    LEVELED, MODIFIABLE, ORDINARY
+    /** 与等级有关的变量 */
+    LEVELED,
+
+    /** 与物品强相关的数据 */
+    MODIFIABLE,
+
+    /** 常量配置项 */
+    ORDINARY,
+
+    /** 开发者添加的变量 */
+    CUSTOM
 }
 
+/**
+ * 附魔变量管理类
+ *
+ * 负责管理附魔系统中的各种变量，包括变量的解析、计算和存储。
+ * 支持四种类型的变量：等级相关变量、物品相关变量、常量变量和自定义变量。
+ * 提供变量计算、修改和批量处理功能。
+ *
+ * @param root 配置根节点，包含所有变量的配置信息
+ *
+ * @author mical
+ * @since 2024/2/17 22:29
+ */
 class Variables(
     root: ConfigurationSection?
 ) {
 
-    /** 存储变量的类型, 要根据这个判断变量类型 */
+    /** 存储变量的类型映射，用于判断变量类型 */
     private val variables: MutableMap<String, VariableType> = HashMap()
 
-    /** 与等级有关的变量, Pair 里的 String 是单位, Map 里的 Int 是等级, String 是公式 */
-    val leveled: MutableMap<String, Pair<String, Map<Int, String>>> = HashMap()
+    /** 与等级有关的变量，Pair 里的 String 是单位，Map 里的 Int 是等级，String 是公式 */
+    val leveled: MutableMap<String, Pair1<String, Map<Int, String>>> = HashMap()
 
-    /** 与物品强相关的数据, 变量名对初始值 */
-    private val modifiable: MutableMap<String, Pair<String, String>> = HashMap()
+    /** 与物品强相关的数据，变量名对初始值 */
+    val modifiable: MutableMap<String, Pair1<String, String>> = HashMap()
 
-    /** 常量, 相当于附魔配置, 变量名对值 */
-    private val ordinary: MutableMap<String, Any?> = HashMap()
+    /** 常量，相当于附魔配置，变量名对值 */
+    val ordinary: MutableMap<String, Any?> = HashMap()
+
+    /** 开发者添加的变量，变量名对函数，函数传入一个等级取得参数值 */
+    val custom: MutableMap<String, IntFunction<Any?>> = HashMap()
 
     init {
-        // leveled
+        // 解析等级相关变量
         root?.getConfigurationSection("leveled").asMap().forEach { (variable, section) ->
             // 如果分级配置了不同的值
             if (section is ConfigurationSection) {
-                leveled[variable] = (section["unit"]?.toString().orEmpty()) to section.asMap()
+                leveled[variable] = (section["unit"]?.toString().orEmpty()) to1 section.asMap()
                     .map { it.key.cint to it.value.toString() }.toMap()
             } else {
                 val (unit, formula) = section.toString().split(":", limit = 2)
-                // 只存 1 级, 任何等级都能获取到
-                leveled[variable] = unit to mapOf(1 to formula)
+                // 只存 1 级，任何等级都能获取到
+                leveled[variable] = unit to1 mapOf(1 to formula)
             }
             // 存储该变量的类型
             variables[variable] = VariableType.LEVELED
         }
-        // modifiable
+        // 解析物品相关变量
         root?.getConfigurationSection("modifiable").asMap().forEach { (variable, expression) ->
             val parts = expression.toString().split('=')
-            modifiable[variable] = parts[0] to parts[1]
+            modifiable[variable] = parts[0] to1 parts[1]
             variables[variable] = VariableType.MODIFIABLE
         }
-        // ordinary
+        // 解析常量变量
         root?.getConfigurationSection("ordinary").asMap().forEach { (variable, value) ->
             ordinary[variable] = value
             variables[variable] = VariableType.ORDINARY
@@ -88,25 +116,40 @@ class Variables(
 
     /**
      * 计算与等级有关的变量并返回结果
+     *
+     * 根据当前等级选择最接近的配置，计算变量值。
+     * 支持嵌套变量解析和单位显示。
+     *
+     * @param variable 变量名
+     * @param level 当前等级
+     * @param withUnit 是否包含单位
+     * @return 计算结果
      */
     fun leveled(variable: String, level: Int, withUnit: Boolean): Any {
         val v = leveled[variable]!! // 获取变量
         return v.second
             .filter { it.key <= level } // 过滤掉等级高于当前等级的参数
-            .minBy { level - it.key }.value // 取当前变量与该变量的差的最小值的变量, 当然也就是最高的那个等级配置
-            .singletons(VariableReaders.DOUBLE_BRACES) { leveled(it, level, false).toString() } // 尝试解析其中的嵌套变量(双括号)
+            .minBy { level - it.key }.value // 取当前变量与该变量的差的最小值的变量，当然也就是最高的那个等级配置
+            .singletons(VariableReaders.DOUBLE_BRACES) { leveled(it, level, false).toString() } // 尝试解析其中的嵌套变量（双括号）
             .calcToDouble("level" to level)
             .let {
                 // 如果是小数形式的整数则只保留整数位
                 if (it.isInteger()) it.toInt() else it.toBigDecimal()
-                    .setScale(AiyatsbusSettings.variableRoundingScale, AiyatsbusSettings.variableRoundingMode).toDouble()
+                    .setScale(AiyatsbusSettings.variableRoundingScale, AiyatsbusSettings.variableRoundingMode)
+                    .toDouble()
             }
             .let { if (withUnit) it.toString() + v.first else it }
     }
 
     /**
      * 计算物品变量并返回结果
-     * 默认是从物品的 PDC 中获取, 如果变量名开头为 (NBT) 则会自动去掉该开头并从物品 NBT 中寻找该变量
+     *
+     * 默认是从物品的 PDC 中获取，如果变量名开头为 (NBT) 则会自动去掉该开头并从物品 NBT 中寻找该变量。
+     * 如果物品为空或变量不存在，则返回默认值。
+     *
+     * @param variable 变量名
+     * @param item 物品堆
+     * @return 变量值，如果物品为空则返回 "?"
      */
     fun modifiable(variable: String, item: ItemStack?): Any {
         if (item == null) return "?"
@@ -119,7 +162,15 @@ class Variables(
     }
 
     /**
-     * 修改物品变量, 可以使用 NBT
+     * 修改物品变量，可以使用 NBT
+     *
+     * 根据变量配置决定使用 PDC 还是 NBT 存储。
+     * 支持字符串类型的变量修改。
+     *
+     * @param item 要修改的物品
+     * @param variable 变量名
+     * @param value 新值
+     * @return 修改后的物品
      */
     fun modifyVariable(item: ItemStack, variable: String, value: String): ItemStack {
         val v = modifiable[variable]!!
@@ -137,28 +188,59 @@ class Variables(
 
     /**
      * 计算常量并返回结果
+     *
+     * 直接返回配置中定义的常量值。
+     *
+     * @param variable 变量名
+     * @return 常量值
      */
     fun ordinary(variable: String): Any? = ordinary[variable]
 
     /**
+     * 计算自定义变量并返回结果
+     *
+     * 调用开发者注册的自定义函数计算变量值。
+     * 函数接收等级参数并返回计算结果。
+     *
+     * @param variable 变量名
+     * @param level 当前等级
+     * @return 计算结果，如果变量不存在则返回 null
+     */
+    fun custom(variable: String, level: Int): Any? = custom[variable]?.apply(level)
+
+    /**
      * 计算变量并得到值
      *
+     * 根据变量类型自动选择相应的计算方法。
+     * 提供统一的变量访问接口。
+     *
+     * @param variable 变量名
      * @param level 计算与等级有关的变量需要的等级
      * @param item 计算与物品强相关的变量时需要的物品堆
-     * @param withUnit 带不带单位, 不写单位这题扣一分
+     * @param withUnit 是否带单位
+     * @return 计算结果
      */
     fun variable(variable: String, level: Int, item: ItemStack? = null, withUnit: Boolean = false): Any? {
         return when (variables[variable]!!) {
             VariableType.LEVELED -> leveled(variable, level, withUnit)
             VariableType.MODIFIABLE -> modifiable(variable, item)
             VariableType.ORDINARY -> ordinary(variable)
+            VariableType.CUSTOM -> custom(variable, level)
         }
     }
 
     /**
-     * 自动计算所有的变量, 并将所有结果放入 Map
+     * 自动计算所有的变量，并将所有结果放入 Map
+     *
+     * 批量计算所有变量，返回变量名到计算结果的映射。
+     * 适用于需要一次性获取所有变量值的场景。
+     *
+     * @param level 等级
+     * @param item 物品
+     * @param withUnit 是否带单位
+     * @return 变量名到计算结果的映射
      */
     fun variables(level: Int, item: ItemStack? = null, withUnit: Boolean = false): Map<String, Any?> {
-        return variables.mapValues { variable(it.key, level, item, withUnit) }
+        return variables.keys.associateWith { variable(it, level, item, withUnit) }
     }
 }

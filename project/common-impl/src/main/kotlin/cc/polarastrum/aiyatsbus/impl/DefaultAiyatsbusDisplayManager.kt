@@ -19,6 +19,7 @@
 package cc.polarastrum.aiyatsbus.impl
 
 import cc.polarastrum.aiyatsbus.core.*
+import cc.polarastrum.aiyatsbus.core.data.registry.Rarity
 import cc.polarastrum.aiyatsbus.core.util.*
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -30,14 +31,17 @@ import org.bukkit.persistence.PersistentDataType
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.console
 import taboolib.module.chat.Source
 import taboolib.module.chat.component
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigNode
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.conversion
+import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.modifyMeta
 import taboolib.platform.util.onlinePlayers
+import kotlin.system.measureTimeMillis
 
 /**
  * Aiyatsbus
@@ -126,8 +130,8 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             }
             // 注意, 附魔书对应的隐藏附魔 flag 是 HIDE POTION EFFECTS 而不是 HIDE ENCHANTS (1.18- 是这样, 1.19+ 未知)
             if (item.isEnchantedBook)
-                if (Aiyatsbus.api().getMinecraftAPI().isBookEnchantsHidden(this)) return@modifyMeta
-                else Aiyatsbus.api().getMinecraftAPI().hideBookEnchants(this)
+                if (isBookEnchantsHidden(this)) return@modifyMeta
+                else hideBookEnchants(this)
             else
                 if (hasItemFlag(ItemFlag.HIDE_ENCHANTS)) return@modifyMeta
                 else addItemFlags(ItemFlag.HIDE_ENCHANTS)
@@ -192,7 +196,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
                 return@modifyMeta
             }
             removeItemFlags(ItemFlag.HIDE_ENCHANTS)
-            if (item.isEnchantedBook) Aiyatsbus.api().getMinecraftAPI().removeBookEnchantsHidden(this)
+            if (item.isEnchantedBook) removeBookEnchantsHidden(this)
 
             // 清理掉打上的自定义模型
             // TODO: 不清楚会不会有清理掉物品原模型数据的 Bug, 后期需要再看看这一块的逻辑
@@ -217,6 +221,30 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             remove("lore_index")
             remove("custom_book")
         }
+    }
+
+    /**
+     * Spigot: ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+     */
+    private fun hideBookEnchants(item: ItemMeta) {
+        item.addItemFlags(
+            if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
+            else ItemFlag.HIDE_POTION_EFFECTS
+        )
+    }
+
+    private fun isBookEnchantsHidden(item: ItemMeta): Boolean {
+        return item.hasItemFlag(
+            if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
+            else ItemFlag.HIDE_POTION_EFFECTS
+        )
+    }
+
+    private fun removeBookEnchantsHidden(item: ItemMeta) {
+        item.removeItemFlags(
+            if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
+            else ItemFlag.HIDE_POTION_EFFECTS
+        )
     }
 
     companion object {
@@ -250,7 +278,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
 
         @delegate:ConfigNode("sort.rarity.order")
         override val rarityOrder by conversion<List<String>, List<String>> {
-            toMutableList().also { it += aiyatsbusRarities.keys.filterNot(this::contains) }
+            toMutableList().also { it += Rarity.keys.filterNot(this::contains) }
         }
 
         @ConfigNode("combine.enable")
@@ -277,7 +305,8 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
         @Awake(LifeCycle.ENABLE)
         fun init() {
             conf.onReload {
-                onlinePlayers.forEach(Player::updateInventory)
+                measureTimeMillis { onlinePlayers.forEach(Player::updateInventory) }
+                    .let { console().sendLang("configuration-reload", conf.file!!.name, it) }
             }
         }
     }

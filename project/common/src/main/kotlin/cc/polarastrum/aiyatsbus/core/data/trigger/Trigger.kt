@@ -24,29 +24,39 @@ import taboolib.library.configuration.ConfigurationSection
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.trigger.Trigger
+ * 触发器类
+ *
+ * 管理附魔的事件监听器和定时器，负责注册和注销各种触发器。
+ * 支持事件监听器和定时器两种触发方式。
  *
  * @author mical
  * @since 2024/3/9 18:36
  */
 data class Trigger(
+    /** 配置节点 */
     private val section: ConfigurationSection?,
+    /** 所属附魔 */
     private val enchant: AiyatsbusEnchantment,
+    /** 定时器优先级，默认为 0 */
     val tickerPriority: Int = (section?.getString("tickerPriority")
         ?: section?.getString("ticker-priority")).coerceInt(0),
+    /** 监听器优先级，默认为 0 */
     val listenerPriority: Int = (section?.getString("listenerPriority")
         ?: section?.getString("listener-priority")).coerceInt(0),
 ) {
 
+    /** 事件监听器映射表 */
     val listeners: ConcurrentHashMap<String, EventExecutor> = ConcurrentHashMap()
+    /** 定时器映射表 */
     val tickers: ConcurrentHashMap<String, Ticker> = ConcurrentHashMap()
 
     init {
+        // 初始化事件监听器
         section?.getConfigurationSection("listeners")?.let { listenersSection ->
             listeners += listenersSection.getKeys(false)
                 .associateWith { EventExecutor(listenersSection.getConfigurationSection(it)!!, enchant) }
         }
+        // 初始化定时器
         section?.getConfigurationSection("tickers")?.let { tickersSection ->
             tickers += tickersSection.getKeys(false)
                 .associateWith { Ticker(tickersSection.getConfigurationSection(it)!!, enchant) }
@@ -58,6 +68,16 @@ data class Trigger(
         }
     }
 
+    /**
+     * 禁用触发器
+     *
+     * 清理所有监听器和定时器，释放相关资源。
+     * 
+     * @example
+     * ```kotlin
+     * trigger.onDisable()
+     * ```
+     */
     fun onDisable() {
         listeners.clear()
         tickers.keys.forEach { Aiyatsbus.api().getTickHandler().getRoutine().remove(enchant, it) }

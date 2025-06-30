@@ -16,12 +16,11 @@
  */
 package cc.polarastrum.aiyatsbus.module.ingame.mechanics.display
 
-import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.NMSItemTag
 import taboolib.module.nms.PacketSendEvent
 
 /**
@@ -33,27 +32,24 @@ import taboolib.module.nms.PacketSendEvent
  */
 object PacketWindowItems {
 
-    @SubscribeEvent(priority = EventPriority.MONITOR)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketSendEvent) {
         if (e.packet.name == "PacketPlayOutWindowItems" || e.packet.name == "ClientboundContainerSetContentPacket") {
             try {
-                val field = if (MinecraftVersion.isUniversal) "items" else "b"
-                val slots = e.packet.read<List<Any>>(field)!!.toMutableList()
+                val slots = e.packet.read<List<Any>>("items")!!.toMutableList()
                 for (i in slots.indices) {
-                    val bkItem = Aiyatsbus.api().getMinecraftAPI().asBukkitCopy(slots[i])
+                    val bkItem = NMSItemTag.asBukkitCopy(slots[i])
                     if (bkItem.isNull) continue
-                    val nmsItem = Aiyatsbus.api().getMinecraftAPI().asNMSCopy(bkItem.toDisplayMode(e.player))
+                    val nmsItem = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
                     slots[i] = nmsItem
                 }
-                e.packet.write(field, slots)
+                e.packet.write("items", slots)
 
-                if (MinecraftVersion.major >= 9) {
-                    val cursor = e.packet.read<Any>("carriedItem")!! // carriedItem
-                    val bkItem = Aiyatsbus.api().getMinecraftAPI().asBukkitCopy(cursor)
-                    if (bkItem.isNull) return
-                    val nmsItem = Aiyatsbus.api().getMinecraftAPI().asNMSCopy(bkItem.toDisplayMode(e.player))
-                    e.packet.write("carriedItem", nmsItem)
-                }
+                val cursor = e.packet.read<Any>("carriedItem")!! // carriedItem
+                val bkItem = NMSItemTag.asBukkitCopy(cursor)
+                if (bkItem.isNull) return
+                val nmsItem = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
+                e.packet.write("carriedItem", nmsItem)
             } catch (e: Throwable) {
                 e.printStackTrace()
             }

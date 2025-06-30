@@ -6,10 +6,10 @@
 basic:
   id: piercing
   name: "穿透"
-  max_level: 4
+  max-level: 4
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 稀有
 targets:

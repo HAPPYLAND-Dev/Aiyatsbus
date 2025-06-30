@@ -6,10 +6,10 @@
 basic:
   id: bane_of_arthropods
   name: "节肢杀手"
-  max_level: 5
+  max-level: 5
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 普通
 targets:

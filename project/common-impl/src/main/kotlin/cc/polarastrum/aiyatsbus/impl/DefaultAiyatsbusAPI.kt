@@ -18,15 +18,10 @@ package cc.polarastrum.aiyatsbus.impl
 
 import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.registration.AiyatsbusEnchantmentRegisterer
-import cc.polarastrum.aiyatsbus.core.registration.modern.ModernEnchantmentRegisterer
-import cc.polarastrum.aiyatsbus.impl.registration.legacy.DefaultLegacyEnchantmentRegisterer
-import taboolib.common.UnsupportedVersionException
+import cc.polarastrum.aiyatsbus.core.script.AiyatsbusScriptHandler
 import taboolib.common.platform.PlatformFactory
-import taboolib.common.platform.function.info
 import taboolib.common.util.t
-import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsProxy
-import java.util.concurrent.CompletableFuture
 
 /**
  * Aiyatsbus
@@ -41,30 +36,17 @@ class DefaultAiyatsbusAPI : AiyatsbusAPI {
 
     private val enchantmentManager = PlatformFactory.getAPI<AiyatsbusEnchantmentManager>()
 
+    private val eventExecutor = PlatformFactory.getAPI<AiyatsbusEventExecutor>()
+
     private val displayManager = PlatformFactory.getAPI<AiyatsbusDisplayManager>()
 
     private val language = PlatformFactory.getAPI<AiyatsbusLanguage>()
 
     private val playerDataHandler = PlatformFactory.getAPI<AiyatsbusPlayerDataHandler>()
 
-    private val enchantmentRegisterer0: AiyatsbusEnchantmentRegisterer by lazy {
-        when {
-            MinecraftVersion.versionId >= 12104 ->
-                proxy<ModernEnchantmentRegisterer>("cc.polarastrum.aiyatsbus.impl.registration.v12104_nms.DefaultModernEnchantmentRegisterer")
-            MinecraftVersion.versionId >= 12102 ->
-                proxy<ModernEnchantmentRegisterer>("cc.polarastrum.aiyatsbus.impl.registration.v12103_nms.DefaultModernEnchantmentRegisterer")
-            MinecraftVersion.versionId >= 12100 ->
-                proxy<ModernEnchantmentRegisterer>("cc.polarastrum.aiyatsbus.impl.registration.v12100_nms.DefaultModernEnchantmentRegisterer")
-            MinecraftVersion.versionId >= 12005 -> throw UnsupportedVersionException()
-            MinecraftVersion.versionId >= 12003 ->
-                proxy<ModernEnchantmentRegisterer>("cc.polarastrum.aiyatsbus.impl.registration.v12004_nms.DefaultModernEnchantmentRegisterer")
-            else -> DefaultLegacyEnchantmentRegisterer
-        }
-    }
+    private val scriptHandler = PlatformFactory.getAPI<AiyatsbusScriptHandler>()
 
-    private val eventExecutor = PlatformFactory.getAPI<AiyatsbusEventExecutor>()
-
-    private val ketherHandler = PlatformFactory.getAPI<AiyatsbusKetherHandler>()
+    private lateinit var enchantmentRegisterer: AiyatsbusEnchantmentRegisterer
 
     private val minecraftAPI0 by lazy {
         proxy<AiyatsbusMinecraftAPI>("cc.polarastrum.aiyatsbus.impl.nms.DefaultAiyatsbusMinecraftAPI")
@@ -81,52 +63,53 @@ class DefaultAiyatsbusAPI : AiyatsbusAPI {
     }
 
     override fun getEnchantmentRegisterer(): AiyatsbusEnchantmentRegisterer {
-        return enchantmentRegisterer0
-    }
-
-    override fun getEventExecutor(): AiyatsbusEventExecutor {
-        return eventExecutor
-    }
-
-    override fun getKetherHandler(): AiyatsbusKetherHandler {
-        return ketherHandler
-    }
-
-    override fun getDisplayManager(): AiyatsbusDisplayManager {
-        return displayManager
-    }
-
-    override fun getLanguage(): AiyatsbusLanguage {
-        return language
+        if (::enchantmentRegisterer.isInitialized) {
+            enchantmentRegisterer = registerer
+        }
+        return registerer
     }
 
     override fun getMinecraftAPI(): AiyatsbusMinecraftAPI {
         return minecraftAPI0
     }
 
+    override fun getDisplayManager(): AiyatsbusDisplayManager {
+        return displayManager
+    }
+
+    override fun getEventExecutor(): AiyatsbusEventExecutor {
+        return eventExecutor
+    }
+
+    override fun getLanguage(): AiyatsbusLanguage {
+        return language
+    }
+
     override fun getPlayerDataHandler(): AiyatsbusPlayerDataHandler {
         return playerDataHandler
+    }
+
+    override fun getScriptHandler(): AiyatsbusScriptHandler {
+        return scriptHandler
     }
 
     override fun getTickHandler(): AiyatsbusTickHandler {
         return tickHandler
     }
 
-    private inline fun <reified T> proxy(bind: String, vararg parameter: Any): T {
-        val time = System.currentTimeMillis()
-        val proxy = nmsProxy(T::class.java, bind, *parameter)
-        val cost = System.currentTimeMillis() - time
-        info("""
-            代理类 ${T::class.java.simpleName} 已生成，用时 $cost 毫秒。
-            Generated ${T::class.java.simpleName} in ${System.currentTimeMillis() - time}ms
-        """.t())
-        return proxy
-    }
+    companion object {
 
-    init {
-        CompletableFuture.runAsync {
-            enchantmentRegisterer0
-            minecraftAPI0
+        lateinit var registerer: AiyatsbusEnchantmentRegisterer
+
+        inline fun <reified T> proxy(bind: String, vararg parameter: Any): T {
+            val time = System.currentTimeMillis()
+            val proxy = nmsProxy(T::class.java, bind, *parameter)
+            val cost = System.currentTimeMillis() - time
+            println("""
+            [Aiyatsbus] 代理类 ${T::class.java.simpleName} 已生成，用时 $cost 毫秒。
+            [Aiyatsbus] Generated ${T::class.java.simpleName} in ${System.currentTimeMillis() - time}ms
+        """.t())
+            return proxy
         }
     }
 }

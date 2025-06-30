@@ -22,8 +22,10 @@ import org.bukkit.entity.Player
 import taboolib.platform.util.bukkitPlugin
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.compat.AntiGrief
+ * 反破坏插件兼容接口
+ *
+ * 定义与反破坏插件的兼容接口，提供方块放置、破坏、交互等权限检查功能。
+ * 支持多种反破坏插件的统一接入。
  *
  * @author mical
  * @since 2024/4/4 12:53
@@ -32,38 +34,70 @@ interface AntiGrief {
 
     /**
      * 检查玩家是否可以放置方块
+     *
+     * @param player 玩家
+     * @param location 放置位置
+     * @return 如果可以放置则返回 true
      */
     fun canPlace(player: Player, location: Location): Boolean
 
     /**
      * 检查玩家是否可以破坏方块
+     *
+     * @param player 玩家
+     * @param location 破坏位置
+     * @return 如果可以破坏则返回 true
      */
     fun canBreak(player: Player, location: Location): Boolean
 
     /**
      * 检查玩家是否可以与方块交互
+     *
+     * @param player 玩家
+     * @param location 交互位置
+     * @return 如果可以交互则返回 true
      */
     fun canInteract(player: Player, location: Location): Boolean
 
     /**
      * 检查玩家是否可以与实体交互
+     *
+     * @param player 玩家
+     * @param entity 目标实体
+     * @return 如果可以交互则返回 true
      */
     fun canInteractEntity(player: Player, entity: Entity): Boolean
 
     /**
      * 检查玩家是否可以伤害实体
+     *
+     * @param player 玩家
+     * @param entity 目标实体
+     * @return 如果可以伤害则返回 true
      */
     fun canDamage(player: Player, entity: Entity): Boolean
 
     /**
      * 获取插件名称
+     *
+     * @return 反破坏插件的名称
      */
     fun getAntiGriefPluginName(): String
 
     /**
      * 检查插件是否存在
+     *
+     * @return 如果插件存在则返回 true
      */
     fun checkRunning(): Boolean {
+        if (getAntiGriefPluginName().contains('.')) {
+            return try {
+                Class.forName(getAntiGriefPluginName())
+                true
+            } catch (_: ClassNotFoundException) {
+                false
+            }
+        }
         return bukkitPlugin.server.pluginManager.getPlugin(getAntiGriefPluginName()) != null
     }
 }

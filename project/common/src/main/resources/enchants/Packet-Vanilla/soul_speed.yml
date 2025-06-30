@@ -6,13 +6,13 @@
 basic:
   id: soul_speed
   name: "灵魂疾行"
-  max_level: 3
+  max-level: 3
 
 alternative:
-  is_vanilla: true
-  is_treasure: true
-  is_tradeable: false
-  is_discoverable: false
+  is-vanilla: true
+  is-treasure: true
+  is-tradeable: false
+  is-discoverable: false
 
 rarity: 稀有
 targets:

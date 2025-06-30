@@ -16,95 +16,86 @@
  */
 package cc.polarastrum.aiyatsbus.core.data.registry
 
-import cc.polarastrum.aiyatsbus.core.StandardPriorities
 import cc.polarastrum.aiyatsbus.core.data.Dependencies
-import cc.polarastrum.aiyatsbus.core.sendLang
-import cc.polarastrum.aiyatsbus.core.util.inject.Reloadable
-import cc.polarastrum.aiyatsbus.core.util.inject.AwakePriority
+import cc.polarastrum.aiyatsbus.core.data.Dependency
+import cc.polarastrum.aiyatsbus.core.data.Registry
+import cc.polarastrum.aiyatsbus.core.data.RegistryItem
 import cc.polarastrum.aiyatsbus.core.util.replace
-import org.bukkit.entity.Player
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
-import taboolib.common.platform.function.console
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.chat.component
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
-import taboolib.platform.util.onlinePlayers
-import java.util.concurrent.ConcurrentHashMap
 
 /**
- * 附魔品质
+ * 稀有度类
+ *
+ * 用于定义附魔的稀有度等级，包含稀有度的各种属性和配置信息。
+ * 稀有度决定了附魔的获取难度、显示效果等。
  *
  * @author mical
- * @since 2024/2/17 14:19
+ * @since 2025/6/20 19:59
  */
 data class Rarity @JvmOverloads constructor(
+    /** 配置根节点 */
     private val root: ConfigurationSection,
-    val id: String = root.name,
+    /** 依赖项配置，定义该稀有度的前置条件 */
+    override val dependencies: Dependencies = Dependencies(root.getConfigurationSection("dependencies")),
+    /** 稀有度名称 */
     val name: String = root.getString("name")!!,
+    /** 稀有度颜色代码，用于显示 */
     val color: String = root.getString("color")!!,
+    /** 稀有度权重，影响获取概率，默认为 100 */
     val weight: Int = root.getInt("weight", 100),
+    /** 头颅材质值，用于自定义头颅显示 */
     val skull: String = root.getString("skull", "")!!,
+    /** 是否不可访问，为 true 时玩家无法获得该稀有度的附魔 */
     val inaccessible: Boolean = root.getBoolean("inaccessible", false),
-    val dependencies: Dependencies = Dependencies(root.getConfigurationSection("dependencies")),
-    val customModelUI: Int = root.getInt("custom_model_ui"), // 菜单中的自定义模型
-    val customModelBook: Int = root.getInt("custom_model_book") // 玩家附魔书的自定义模型
-) {
+    /** 菜单中的自定义模型 ID，-1 表示使用默认模型 */
+    val customModelUI: Int = root.getInt("custom_model_ui"),
+    /** 玩家附魔书中的自定义模型 ID，-1 表示使用默认模型 */
+    val customModelBook: Int = root.getInt("custom_model_book")
+) : RegistryItem(root), Dependency {
 
+    /**
+     * 是否启用了菜单自定义模型
+     *
+     * @return true 表示启用了自定义模型，false 表示使用默认模型
+     */
     val isCustomModelUIEnabled: Boolean
         get() = customModelUI != -1
 
+    /**
+     * 是否启用了附魔书自定义模型
+     *
+     * @return true 表示启用了自定义模型，false 表示使用默认模型
+     */
     val isCustomModelBookEnabled: Boolean
         get() = customModelBook != -1
 
     /**
-     * 显示名称
+     * 生成带颜色的显示名称
+     *
+     * @param text 要显示的文本，默认为稀有度名称
+     * @return 带有颜色格式的显示文本
+     *
+     * @example
+     * ```kotlin
+     * rarity.displayName("史诗") // 返回带颜色的 "史诗" 文本
+     * ```
      */
     fun displayName(text: String = name): String {
         return color.replace("text" to text).component().buildColored().toLegacyText()
     }
-}
 
-object RarityLoader {
+    /**
+     * 稀有度注册器伴生对象
+     * 负责从配置文件中加载和管理稀有度数据
+     */
+    companion object : Registry<Rarity>("rarity", { section -> Rarity(section) }) {
 
-    @Config("enchants/rarity.yml", autoReload = true)
-    lateinit var config: Configuration
-        private set
-
-    val registered: ConcurrentHashMap<String, Rarity> = ConcurrentHashMap()
-
-    private var isLoaded = false
-
-    @Reloadable
-    @AwakePriority(LifeCycle.ENABLE, StandardPriorities.RARITY)
-    fun init() {
-        if (isLoaded) {
-            config.reload()
-            return
-        }
-        load()
-        isLoaded = true
-    }
-
-    @Awake(LifeCycle.ENABLE)
-    fun reload() {
-        config.onReload {
-            load()
-            onlinePlayers.forEach(Player::updateInventory) // 要刷新显示
-        }
-    }
-
-    private fun load() {
-        val time = System.currentTimeMillis()
-        registered.clear()
-        config.getKeys(false).map { config.getConfigurationSection(it)!! }.forEach {
-            val rarity = Rarity(it)
-            if (!rarity.dependencies.checkAvailable()) {
-                return@forEach
-            }
-            registered += rarity.id to rarity
-        }
-        console().sendLang("loading-rarities", registered.size, System.currentTimeMillis() - time)
+        /** 稀有度配置文件，自动重载配置变更 */
+        @Config("enchants/rarity.yml", autoReload = true)
+        override lateinit var config: Configuration
+            private set
     }
 }

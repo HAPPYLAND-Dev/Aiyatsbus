@@ -1,4 +1,5 @@
 dependencies {
+    // 引入 API
     compileOnly(project(":project:common"))
     compileOnly(project(":project:common-impl"))
 }

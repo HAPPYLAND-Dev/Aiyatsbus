@@ -6,10 +6,10 @@
 basic:
   id: looting
   name: "抢夺"
-  max_level: 3
+  max-level: 3
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 史诗
 targets:

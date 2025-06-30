@@ -6,10 +6,10 @@
 basic:
   id: density
   name: "致密"
-  max_level: 5
+  max-level: 5
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 dependencies:
   supports: 12100

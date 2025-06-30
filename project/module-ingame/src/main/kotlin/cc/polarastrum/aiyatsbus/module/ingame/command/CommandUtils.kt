@@ -28,6 +28,7 @@ import taboolib.common.platform.command.component.CommandComponentLiteral
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.pluginVersion
 import taboolib.common.util.Strings
+import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.chat.component
 import taboolib.module.nms.MinecraftVersion
 
@@ -66,12 +67,12 @@ fun CommandComponent.createTabooLegacyHelper(commandType: String = "main", main:
     if (this is CommandBase) {
         incorrectCommand { s, ctx, _, state ->
             val sender = s.cast<CommandSender>()
-            val input = ctx.args().first()
+            val input = ctx.getProperty<Array<String>>("rawArgs")!!.first()
             val name = children.filterIsInstance<CommandComponentLiteral>()
                 .firstOrNull { it.aliases.contains(input) }?.aliases?.get(0) ?: input
             var usage = sender.asLangOrNull("$prefix-subCommands-$name-usage") ?: ""
             if (usage.isNotEmpty()) usage += " "
-            val description = sender.asLangOrNull("$prefix-subCommands-$name-description") ?: sender.asLang("$prefix-no-desc")
+            var description = sender.asLangOrNull("$prefix-subCommands-$name-description") ?: sender.asLang("$prefix-no-desc")
 
             when (state) {
                 // 缺参数
@@ -87,9 +88,14 @@ fun CommandComponent.createTabooLegacyHelper(commandType: String = "main", main:
                         val similar = children.filterIsInstance<CommandComponentLiteral>()
                             .filterNot { it.hidden }
                             .filter { sender.hasPermission(it.permission) }
-                            .maxByOrNull { Strings.similarDegree(name, it.aliases[0]) }!!
-                            .aliases[0]
-                        sender.sendLang("$prefix-argument-unknown", name to "name", similar to "similar")
+                            .maxByOrNull { Strings.similarDegree(name, it.aliases[0]) }
+                            ?.aliases?.get(0)
+                            ?: ""
+                        if (similar.isEmpty()) return@incorrectCommand
+                        usage = sender.asLangOrNull("$prefix-subCommands-$similar-usage") ?: ""
+                        if (usage.isNotEmpty()) usage += " "
+                        description = sender.asLangOrNull("$prefix-subCommands-$similar-description") ?: sender.asLang("$prefix-no-desc")
+                        sender.sendLang("$prefix-argument-unknown", name to "name", similar to "similar", usage to "usage", description to "description")
                     }
                 }
             }

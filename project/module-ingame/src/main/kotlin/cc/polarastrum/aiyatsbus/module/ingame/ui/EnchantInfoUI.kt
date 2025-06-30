@@ -22,6 +22,7 @@ import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.CheckType
 import cc.polarastrum.aiyatsbus.core.data.LimitType
 import cc.polarastrum.aiyatsbus.core.data.MenuMode
+import cc.polarastrum.aiyatsbus.core.data.registry.Group
 import cc.polarastrum.aiyatsbus.core.util.*
 import cc.polarastrum.aiyatsbus.module.ingame.mechanics.VillagerSupport
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.*
@@ -45,8 +46,10 @@ import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.UIType
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.record
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.function.console
 import taboolib.module.chat.Source
 import kotlin.collections.set
+import kotlin.system.measureTimeMillis
 
 @MenuComponent("EnchantInfo")
 object EnchantInfoUI {
@@ -55,15 +58,15 @@ object EnchantInfoUI {
     private lateinit var source: Configuration
     private lateinit var config: MenuConfiguration
 
-    fun reload() {
-        source.reload()
+    fun initialize() {
         config = MenuConfiguration(source)
     }
 
     @Awake(LifeCycle.ENABLE)
     fun init() {
         source.onReload {
-            config = MenuConfiguration(source)
+            measureTimeMillis { config = MenuConfiguration(source) }
+                .let { console().sendLang("configuration-reload", source.file!!.name, it) }
         }
     }
 
@@ -118,7 +121,7 @@ object EnchantInfoUI {
                         }
                     }
 
-                    "related" -> aiyatsbusGroups.values.filter { enchant.enchantment.isInGroup(it) }.map { "group:${it.name}" }
+                    "related" -> Group.values.filter { enchant.enchantment.isInGroup(it) }.map { "group:${it.name}" }
                     else -> listOf()
                 }
             }

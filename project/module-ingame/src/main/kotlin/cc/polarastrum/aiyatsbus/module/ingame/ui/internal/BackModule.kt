@@ -107,7 +107,7 @@ fun Player.back() {
         UIType.FILTER_TARGET -> FilterTargetUI.open(this)
         UIType.ITEM_CHECK -> ItemCheckUI.open(this, params["item"] as? ItemStack, params["mode"] as ItemCheckUI.CheckMode)
         UIType.MAIN_MENU -> MainMenuUI.open(this)
-        UIType.FAVORITE -> {} // TODO
+        UIType.FAVORITE -> FavoritesUI.open(this)
         UIType.UNKNOWN -> {
         }
     }

@@ -23,7 +23,6 @@
  */
 package cc.polarastrum.aiyatsbus.module.ingame.ui.internal.registry
 
-import cc.polarastrum.aiyatsbus.core.util.SimpleRegistry
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.feature.util.MenuFunction
 import java.util.*
 

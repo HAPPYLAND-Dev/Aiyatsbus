@@ -19,18 +19,18 @@
 package cc.polarastrum.aiyatsbus.core
 
 import cc.polarastrum.aiyatsbus.core.data.*
-import cc.polarastrum.aiyatsbus.core.data.registry.Target
 import cc.polarastrum.aiyatsbus.core.data.registry.Rarity
-import cc.polarastrum.aiyatsbus.core.data.trigger.Trigger
+import cc.polarastrum.aiyatsbus.core.data.registry.Target
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
-import taboolib.common.util.unsafeLazy
 import taboolib.module.configuration.Configuration
 import java.io.File
 
 /**
- * 2024/8/21 此类变为抽象类, 使第三方通过代码自定义附魔更容易
- * 需要实现这个类, 此类不再提供自带的触发器, 方便其他插件如果有需要调用自己提供的触发器
+ * Aiyatsbus 附魔基础抽象类
+ *
+ * 2024/8/21 此类变为抽象类，使第三方通过代码自定义附魔更容易。
+ * 需要实现这个类，此类不再提供自带的触发器，方便其他插件如果有需要调用自己提供的触发器。
  *
  * @author mical
  * @since 2024/2/17 14:39
@@ -52,8 +52,8 @@ abstract class AiyatsbusEnchantmentBase(
     override lateinit var enchantment: Enchantment
 
     override val rarity: Rarity
-        get() = cc.polarastrum.aiyatsbus.core.aiyatsbusRarity(config["rarity"].toString())
-            ?: cc.polarastrum.aiyatsbus.core.aiyatsbusRarity(AiyatsbusSettings.defaultRarity) ?: error("Enchantment $id has an unknown rarity")
+        get() = aiyatsbusRarity(config["rarity"].toString())
+            ?: aiyatsbusRarity(AiyatsbusSettings.defaultRarity) ?: error("Enchantment $id has an unknown rarity")
 
     override val variables: Variables = Variables(config.getConfigurationSection("variables"))
 

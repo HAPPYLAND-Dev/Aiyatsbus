@@ -22,11 +22,8 @@ import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.CheckType
 import cc.polarastrum.aiyatsbus.core.data.trigger.event.EventMapping
 import cc.polarastrum.aiyatsbus.core.data.trigger.event.EventResolver
-import cc.polarastrum.aiyatsbus.core.event.AiyatsbusBowChargeEvent
 import cc.polarastrum.aiyatsbus.core.event.AiyatsbusPrepareAnvilEvent
 import cc.polarastrum.aiyatsbus.core.util.*
-import cc.polarastrum.aiyatsbus.core.util.inject.Reloadable
-import cc.polarastrum.aiyatsbus.core.util.inject.AwakePriority
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
@@ -50,7 +47,9 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.ProxyListener
+import taboolib.common.platform.function.console
 import taboolib.common.platform.function.registerBukkitListener
+import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.common.platform.function.unregisterListener
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Config
@@ -60,6 +59,7 @@ import taboolib.module.configuration.conversion
 import taboolib.platform.util.isAir
 import taboolib.platform.util.killer
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.system.measureTimeMillis
 
 /**
  * Aiyatsbus
@@ -78,18 +78,18 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
 
     private val cachedClasses = ConcurrentHashMap<String, Class<*>>()
 
-    private fun LivingEntity?.checkedIfIsNPC(): Pair<LivingEntity?, Boolean> {
-        if (checkIfIsNPC()) return this to false // 如果是 NPC 则不再进行处理事件
-        return this to true
+    private fun LivingEntity?.checkedIfIsNPC(): Pair1<LivingEntity?, Boolean> {
+        if (checkIfIsNPC()) return this to1 false // 如果是 NPC 则不再进行处理事件
+        return this to1 true
     }
 
     init {
         resolvers += Event::class.java to EventResolver<Event>(
             // 最后面返回 true 是因为这是最后一步直接解析, 如果这都解析不到那就没必要再重复一次解析了
             entityResolver = { event, playerReference ->
-                event.invokeMethodDeep<LivingEntity?>(playerReference ?: return@EventResolver null to true).checkedIfIsNPC()
+                event.invokeMethodDeep<LivingEntity?>(playerReference ?: return@EventResolver null to1 true).checkedIfIsNPC()
             },
-            itemResolver = { event, itemReference, _ -> event.invokeMethodDeep<ItemStack?>(itemReference ?: return@EventResolver null to true) to true }
+            itemResolver = { event, itemReference, _ -> event.invokeMethodDeep<ItemStack?>(itemReference ?: return@EventResolver null to1 true) to1 true }
         )
         resolvers += PlayerEvent::class.java to EventResolver<PlayerEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += PlayerMoveEvent::class.java to EventResolver<PlayerMoveEvent>(
@@ -116,7 +116,7 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
                     else -> null
                 }.checkedIfIsNPC()
                 "entity" -> (event.entity as? LivingEntity).checkedIfIsNPC()
-                else -> null to false
+                else -> null to1 false
             }
         })
         resolvers += EntityDeathEvent::class.java to EventResolver<EntityDeathEvent>({ event, _ -> event.killer.checkedIfIsNPC() })
@@ -127,15 +127,15 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
             entityResolver = { event, _ -> event.player.checkedIfIsNPC() },
             itemResolver = { event, itemReference, _ ->
                 when (itemReference) {
-                    "left" -> event.left to true
-                    "right" -> event.right to true
-                    "result" -> event.result to true
-                    else -> null to false
+                    "left" -> event.left to1 true
+                    "right" -> event.right to1 true
+                    "result" -> event.result to1 true
+                    else -> null to1 false
                 }
             }
         )
-        resolvers += AiyatsbusBowChargeEvent.Prepare::class.java to EventResolver<AiyatsbusBowChargeEvent.Prepare>({ event, _ -> (event.player).checkedIfIsNPC() })
-        resolvers += AiyatsbusBowChargeEvent.Released::class.java to EventResolver<AiyatsbusBowChargeEvent.Released>({ event, _ -> (event.player).checkedIfIsNPC() })
+//        resolvers += AiyatsbusBowChargeEvent.Prepare::class.java to EventResolver<AiyatsbusBowChargeEvent.Prepare>({ event, _ -> (event.player).checkedIfIsNPC() })
+//        resolvers += AiyatsbusBowChargeEvent.Released::class.java to EventResolver<AiyatsbusBowChargeEvent.Released>({ event, _ -> (event.player).checkedIfIsNPC() })
     }
 
     override fun registerListener(listen: String, eventMapping: EventMapping) {
@@ -266,19 +266,11 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
                         "item" to this,
                         "enchant" to enchant,
                         "level" to enchantPair.value,
-                        "mirror" to Mirror.MirrorStatus()
                     )
 
                     vars += enchant.variables.variables(enchantPair.value, this, false)
 
-                    if (AiyatsbusSettings.enablePerformanceTool) {
-                        mirrorNow("Enchantment:Listener:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${enchant.basicData.id}" else "") {
-                            vars += "mirror" to it
-                            Aiyatsbus.api().getKetherHandler().invoke(executor.handle, entity, variables = vars)
-                        }
-                    } else {
-                        Aiyatsbus.api().getKetherHandler().invoke(executor.handle, entity, variables = vars)
-                    }
+                    executor.execute(entity, vars)
                 }
         }
     }
@@ -296,20 +288,21 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AiyatsbusEventExecutor>(DefaultAiyatsbusEventExecutor())
-        }
-
-        @Reloadable
-        @AwakePriority(LifeCycle.ENABLE, StandardPriorities.EVENT_EXECUTORS)
-        fun onEnable() {
-            Aiyatsbus.api().getEventExecutor().destroyListeners()
-            Aiyatsbus.api().getEventExecutor().registerListeners()
+            reloadable {
+                registerLifeCycleTask(LifeCycle.ENABLE, StandardPriorities.EVENT_EXECUTORS) {
+                    Aiyatsbus.api().getEventExecutor().destroyListeners()
+                    Aiyatsbus.api().getEventExecutor().registerListeners()
+                }
+            }
         }
 
         @Awake(LifeCycle.ENABLE)
         fun onReload() {
             conf.onReload {
-                Aiyatsbus.api().getEventExecutor().destroyListeners()
-                Aiyatsbus.api().getEventExecutor().registerListeners()
+                measureTimeMillis {
+                    Aiyatsbus.api().getEventExecutor().destroyListeners()
+                    Aiyatsbus.api().getEventExecutor().registerListeners()
+                }.let { console().sendLang("configuration-reload", conf.file!!.name, it) }
             }
         }
 

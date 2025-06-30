@@ -16,12 +16,11 @@
  */
 package cc.polarastrum.aiyatsbus.module.ingame.mechanics.display
 
-import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.toRevertMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.NMSItemTag
 import taboolib.module.nms.PacketReceiveEvent
 
 /**
@@ -37,12 +36,11 @@ object PacketSetCreativeSlot {
     fun e(e: PacketReceiveEvent) {
         if (e.packet.name == "PacketPlayInSetCreativeSlot" || e.packet.name == "ServerboundSetCreativeModeSlotPacket") {
             try {
-                val field = if (MinecraftVersion.isUniversal) "itemStack" else "b"
-                val origin = e.packet.read<Any>(field)!!
-                val bkItem = Aiyatsbus.api().getMinecraftAPI().asBukkitCopy(origin)
+                val origin = e.packet.read<Any>("itemStack")!!
+                val bkItem = NMSItemTag.asBukkitCopy(origin)
                 if (bkItem.isNull) return
-                val adapted = Aiyatsbus.api().getMinecraftAPI().asNMSCopy(bkItem.toRevertMode(e.player))
-                e.packet.write(field, adapted)
+                val adapted = NMSItemTag.asNMSCopy(bkItem.toRevertMode(e.player))
+                e.packet.write("itemStack", adapted)
             } catch (e: Throwable) {
                 e.printStackTrace()
             }

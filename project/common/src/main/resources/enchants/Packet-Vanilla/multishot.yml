@@ -6,10 +6,10 @@
 basic:
   id: multishot
   name: "多重射击"
-  max_level: 1
+  max-level: 1
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 稀有
 targets:

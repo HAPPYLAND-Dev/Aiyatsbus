@@ -20,15 +20,13 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.CheckType
-import cc.polarastrum.aiyatsbus.core.util.Mirror
-import cc.polarastrum.aiyatsbus.core.util.inject.Reloadable
-import cc.polarastrum.aiyatsbus.core.util.inject.AwakePriority
 import cc.polarastrum.aiyatsbus.core.util.isNull
-import cc.polarastrum.aiyatsbus.core.util.mirrorNow
+import cc.polarastrum.aiyatsbus.core.util.reloadable
 import org.bukkit.inventory.ItemStack
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.service.PlatformExecutor
 import taboolib.platform.util.onlinePlayers
@@ -89,7 +87,6 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
                     val variables = mutableMapOf(
                         "player" to player,
                         "enchant" to ench,
-                        "mirror" to Mirror.MirrorStatus()
                     )
 
                     slots.forEach slot@{ slot ->
@@ -127,36 +124,15 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
 
                             if (!record.contains(id)) {
                                 record += id
-                                if (AiyatsbusSettings.enablePerformanceTool) {
-                                    mirrorNow("Enchantment:Tick:PreHandle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
-                                        vars += "mirror" to it
-                                        Aiyatsbus.api().getKetherHandler().invoke(ticker.preHandle, player, vars)
-                                    }
-                                } else {
-                                    Aiyatsbus.api().getKetherHandler().invoke(ticker.preHandle, player, vars)
-                                }
+                                ticker.execute(ticker.preHandle, player, vars)
                             }
 
-                            if (AiyatsbusSettings.enablePerformanceTool) {
-                                mirrorNow("Enchantment:Tick:Handle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
-                                    vars += "mirror" to it
-                                    Aiyatsbus.api().getKetherHandler().invoke(ticker.handle, player, vars)
-                                }
-                            } else {
-                                Aiyatsbus.api().getKetherHandler().invoke(ticker.handle, player, vars)
-                            }
+                            ticker.execute(ticker.handle, player, vars)
                         }
                     }
                     if (!flag && record.contains(id)) {
                         record -= id
-                        if (AiyatsbusSettings.enablePerformanceTool) {
-                            mirrorNow("Enchantment:Tick:PostHandle:Kether" + if (AiyatsbusSettings.showPerformanceDetails) ":${ench.basicData.id}" else "") {
-                                variables += "mirror" to it
-                                Aiyatsbus.api().getKetherHandler().invoke(ticker.postHandle, player, variables)
-                            }
-                        } else {
-                            Aiyatsbus.api().getKetherHandler().invoke(ticker.postHandle, player, variables)
-                        }
+                        ticker.execute(ticker.postHandle, player, variables)
                     }
                 }
             }
@@ -168,13 +144,12 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
         @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AiyatsbusTickHandler>(DefaultAiyatsbusTickHandler())
-        }
-
-        @Reloadable
-        @AwakePriority(LifeCycle.ENABLE, StandardPriorities.TICKERS)
-        fun onEnable() {
-            Aiyatsbus.api().getTickHandler().reset()
-            Aiyatsbus.api().getTickHandler().start()
+            reloadable {
+                registerLifeCycleTask(LifeCycle.ENABLE, StandardPriorities.TICKERS) {
+                    Aiyatsbus.api().getTickHandler().reset()
+                    Aiyatsbus.api().getTickHandler().start()
+                }
+            }
         }
 
         @Awake(LifeCycle.DISABLE)

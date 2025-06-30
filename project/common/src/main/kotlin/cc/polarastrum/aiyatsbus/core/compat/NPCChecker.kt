@@ -20,25 +20,46 @@ import org.bukkit.entity.Entity
 import java.util.LinkedList
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.compat.NPCChecker
+ * NPC 检查器接口
+ *
+ * 用于检查实体是否为 NPC（非玩家角色）。
+ * 支持多种 NPC 插件的兼容性检查，如 Citizens、MyPet 等。
+ * 通过注册多个检查器实现，可以同时支持多种 NPC 插件。
  *
  * @author mical
- * @date 2024/9/4 20:47
+ * @since 2024/9/4 20:47
  */
 interface NPCChecker {
 
     /**
-     * 检查是否为 NPC
+     * 检查实体是否为 NPC
+     *
+     * 根据具体的 NPC 插件实现，检查指定的实体是否为 NPC。
+     * 不同的 NPC 插件可能有不同的检查方式。
+     *
+     * @param entity 要检查的实体
+     * @return 如果实体是 NPC 则返回 true，否则返回 false
      */
     fun checkIfIsNPC(entity: Entity): Boolean
 
+    /**
+     * NPC 检查器伴生对象
+     *
+     * 提供全局的 NPC 检查功能，管理所有已注册的检查器。
+     */
     companion object {
 
+        /** 已注册的 NPC 检查器列表 */
         val registeredIntegrations = LinkedList<NPCChecker>()
 
         /**
-         * 检查是否为 NPC
+         * 检查实体是否为 NPC
+         *
+         * 使用所有已注册的检查器检查实体。
+         * 只要有一个检查器认为该实体是 NPC，就返回 true。
+         *
+         * @param entity 要检查的实体
+         * @return 如果实体是 NPC 则返回 true，否则返回 false
          */
         fun checkIfIsNPC(entity: Entity): Boolean {
             return registeredIntegrations.isNotEmpty() &&

@@ -6,10 +6,10 @@
 basic:
   id: projectile_protection
   name: "弹射物保护"
-  max_level: 4
+  max-level: 4
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 普通
 targets:

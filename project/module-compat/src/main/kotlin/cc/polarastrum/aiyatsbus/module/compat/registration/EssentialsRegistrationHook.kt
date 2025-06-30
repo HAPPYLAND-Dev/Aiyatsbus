@@ -43,7 +43,7 @@ class EssentialsRegistrationHook : EnchantRegistrationHook {
             for (field in fields) {
                 Enchantments::class.java.getProperty<MutableMap<String, Enchantment>>(field)?.let {
                     it[enchantment.basicData.id] = enchantment.enchantment
-                    it[enchantment.basicData.name] = enchantment.enchantment
+                    it[enchantment.basicData.originName] = enchantment.enchantment
                 }
             }
         }
@@ -54,7 +54,7 @@ class EssentialsRegistrationHook : EnchantRegistrationHook {
             for (field in fields) {
                 Enchantments::class.java.getProperty<MutableMap<String, Enchantment>>(field)?.let {
                     it -= enchantment.basicData.id
-                    it -= enchantment.basicData.name
+                    it -= enchantment.basicData.originName
                 }
             }
         }

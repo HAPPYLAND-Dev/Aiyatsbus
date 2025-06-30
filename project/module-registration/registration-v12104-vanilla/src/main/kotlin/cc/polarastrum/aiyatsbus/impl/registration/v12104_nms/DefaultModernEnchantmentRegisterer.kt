@@ -18,10 +18,10 @@
  */
 package cc.polarastrum.aiyatsbus.impl.registration.v12104_nms
 
-import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantment
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentBase
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentManager
+import cc.polarastrum.aiyatsbus.core.StandardPriorities
 import cc.polarastrum.aiyatsbus.core.registration.modern.ModernEnchantmentRegisterer
 import cc.polarastrum.aiyatsbus.impl.registration.v12104_paper.EnchantmentHelper
 import io.papermc.paper.registry.entry.RegistryTypeMapper
@@ -31,20 +31,28 @@ import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.resources.MinecraftKey
+import net.minecraft.tags.TagKey
+import net.minecraft.world.item.Item
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.craftbukkit.v1_21_R3.CraftRegistry
 import org.bukkit.craftbukkit.v1_21_R3.CraftServer
 import org.bukkit.craftbukkit.v1_21_R3.enchantments.CraftEnchantment
+import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
+import taboolib.common.LifeCycle
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.setProperty
 import taboolib.module.chat.component
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.function.BiFunction
 import javax.annotation.Nullable
+import kotlin.collections.HashMap
 
 /**
  * NOTICE 不再支持 spigot
@@ -58,6 +66,10 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         .registryAccess()
         .lookupOrThrow(Registries.ENCHANTMENT)
 
+    private val itemRegistry = (Bukkit.getServer() as CraftServer).server
+        .registryAccess()
+        .lookupOrThrow(Registries.ITEM) as RegistryMaterials<Item>
+
     private val bukkitRegistry = (org.bukkit.Registry.ENCHANTMENT as DelayedRegistry<Enchantment, *>).delegate()
 
     private val frozenField = RegistryMaterials::class.java
@@ -68,6 +80,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
     private val allTags = RegistryMaterials::class.java
         .declaredFields
         .filter { it.type.name.contains("TagSet") }[0]
+        .apply { isAccessible = true }
+
+    private val frozenTags = RegistryMaterials::class.java
+        .declaredFields
+        .filter { it.type == Map::class.java }[4]
         .apply { isAccessible = true }
 
     private val unregisteredIntrusiveHoldersField = RegistryMaterials::class.java
@@ -85,8 +102,24 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         .getDeclaredField("cache")
         .apply { isAccessible = true }
 
+    override fun unfreezeRegistry() {
+        // Unfreeze NMS Item registry
+        frozenField.set(itemRegistry, false)
+        unregisteredIntrusiveHoldersField.set(itemRegistry, IdentityHashMap<Item, Holder.c<Item>>())
+
+        // Unfreeze NMS Enchantment registry
+        frozenField.set(enchantmentRegistry, false)
+        unregisteredIntrusiveHoldersField.set(
+            enchantmentRegistry,
+            IdentityHashMap<NMSEnchantment, Holder.c<NMSEnchantment>>()
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
     override fun replaceRegistry() {
         val api = PlatformFactory.getAPI<AiyatsbusEnchantmentManager>()
+
+        unfreezeRegistry()
 
         val newRegistryMTB =
             BiFunction<NamespacedKey, NMSEnchantment, Enchantment?> { key, registry ->
@@ -94,14 +127,15 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
                 val aiyatsbus = api.getEnchant(key)
 
                 if (isVanilla) {
-                    EnchantmentHelper.createCraftEnchantment(enchantmentRegistry.get(CraftNamespacedKey.toMinecraft(key)).get())
+                    EnchantmentHelper.createCraftEnchantment(
+                        enchantmentRegistry.get(CraftNamespacedKey.toMinecraft(key)).get()
+                    )
                 } else if (aiyatsbus != null) {
                     aiyatsbus as Enchantment
                 } else null
             }
 
         // Update bukkit registry
-        @Suppress("UNCHECKED_CAST")
         minecraftToBukkit.set(
             bukkitRegistry,
             RegistryTypeMapper(newRegistryMTB as BiFunction<NamespacedKey, NMSEnchantment, Enchantment>)
@@ -110,24 +144,42 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         // Clear the enchantment cache
         cache.set(bukkitRegistry, mutableMapOf<NamespacedKey, Enchantment>())
 
-        // Unfreeze NMS registry
-        frozenField.set(enchantmentRegistry, false)
-        unregisteredIntrusiveHoldersField.set(enchantmentRegistry, IdentityHashMap<NMSEnchantment, Holder.c<NMSEnchantment>>())
+        // Freeze registries when all enchantments were loaded
+        freezeRegistry()
+    }
 
-        /*
-        Creating an unbound tag set requires using reflection because the inner class is
-        package-private, so we just find the method manually.
-         */
+    override fun freezeRegistry() {
+        registerLifeCycleTask(LifeCycle.ENABLE, StandardPriorities.FREEZE_REGISTRY) {
+            /*
+            Creating an unbound tag set requires using reflection because the inner class is
+            package-private, so we just find the method manually.
+            */
+            val unboundTagSet = RegistryMaterials::class.java
+                .declaredClasses[0]
+                .declaredMethods
+                .filter { Modifier.isStatic(it.modifiers) }
+                .filter { it.parameterCount == 0 }[0]
+                .apply { isAccessible = true }
+                .invoke(null)
 
-        val unboundTagSet = RegistryMaterials::class.java
-            .declaredClasses[0]
-            .declaredMethods
-            .filter { Modifier.isStatic(it.modifiers) }
-            .filter { it.parameterCount == 0 }[0]
-            .apply { isAccessible = true }
-            .invoke(null)
+            // Freeze NMS Enchantment Registry
+            allTags.set(enchantmentRegistry, unboundTagSet)
 
-        allTags.set(enchantmentRegistry, unboundTagSet)
+            // Freeze NMS Item Registry
+            val itemTagSet = allTags.get(itemRegistry)
+            val itemTagsMap = HashMap<TagKey<Item>, HolderSet.Named<Item>>(
+                itemTagSet.getProperty<Any>("val\$map")!! as Map<TagKey<Item>, HolderSet.Named<Item>>
+            )
+            val itemFrozenTags = frozenTags.get(itemRegistry) as MutableMap<TagKey<Item>, HolderSet.Named<Item>>
+            itemTagsMap.forEach(itemFrozenTags::putIfAbsent)
+
+            allTags.set(itemRegistry, unboundTagSet)
+            itemRegistry.freeze()
+            itemFrozenTags.forEach(itemTagsMap::putIfAbsent)
+
+            itemTagSet.setProperty("val\$map", itemTagsMap)
+            allTags.set(itemRegistry, itemTagSet)
+        }
     }
 
     override fun register(enchant: AiyatsbusEnchantmentBase): Enchantment {
@@ -162,9 +214,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
     }
 
     private fun vanillaEnchantment(enchant: AiyatsbusEnchantment): NMSEnchantment {
+        val supportedItems = createItemsSet("enchant_supported", enchant.id, enchant.targets.flatMap { it.types })
+
         val enchantment = NMSEnchantment.enchantment(
             NMSEnchantment.definition(
-                HolderSet.empty(),
+                supportedItems,
                 1,
                 enchant.basicData.maxLevel,
                 NMSEnchantment.constantCost(1),
@@ -174,11 +228,32 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         )
 //        return enchantment.build(MinecraftKey.withDefaultNamespace(enchant.id))
         return NMSEnchantment(
-            Aiyatsbus.api().getMinecraftAPI().componentFromJson(enchant.basicData.name.component().buildToRaw { colored() }) as IChatBaseComponent,
+            CraftChatMessage.fromJSON(
+                enchant.basicData.name.component().buildToRaw { colored() }) as IChatBaseComponent,
             enchantment.getProperty<NMSEnchantmentC>("definition")!!,
             enchantment.getProperty<HolderSet<NMSEnchantment>>("exclusiveSet")!!,
             enchantment.getProperty<DataComponentMap.a>("effectMapBuilder")!!.build()
         )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun createItemsSet(
+        prefix: String,
+        enchantId: String,
+        materials: Collection<Material>
+    ): HolderSet.Named<Item> {
+        val customKey = TagKey.create(itemRegistry.key(), MinecraftKey.withDefaultNamespace("$prefix/$enchantId"))
+        val holders = arrayListOf<Holder<Item>>()
+
+        materials.forEach { material ->
+            val location = CraftNamespacedKey.toMinecraft(material.key)
+            val holder = itemRegistry.get(location).orElse(null) ?: return@forEach
+            holders.add(holder)
+        }
+
+        itemRegistry.bindTag(customKey, holders)
+
+        return (frozenTags.get(itemRegistry) as Map<*, *>)[customKey] as HolderSet.Named<Item>
     }
 }
 

@@ -77,6 +77,15 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         .map { CraftNamespacedKey.fromMinecraft(it) }
         .toSet()
 
+    override fun unfreezeRegistry() {
+        frozenField.set(BuiltInRegistries.ENCHANTMENT, false)
+        unregisteredIntrusiveHoldersField.set(
+            BuiltInRegistries.ENCHANTMENT,
+            IdentityHashMap<net.minecraft.world.item.enchantment.Enchantment,
+                    Holder.c<net.minecraft.world.item.enchantment.Enchantment>>()
+        )
+    }
+
     override fun replaceRegistry() {
         val server = Bukkit.getServer() as CraftServer
         val api = PlatformFactory.getAPI<AiyatsbusEnchantmentManager>()
@@ -106,12 +115,10 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
             .setStaticFinal(registry)
 
         // Unfreeze NMS registry
-        frozenField.set(BuiltInRegistries.ENCHANTMENT, false)
-        unregisteredIntrusiveHoldersField.set(
-            BuiltInRegistries.ENCHANTMENT,
-            IdentityHashMap<net.minecraft.world.item.enchantment.Enchantment,
-                    Holder.c<net.minecraft.world.item.enchantment.Enchantment>>()
-        )
+        unfreezeRegistry()
+    }
+
+    override fun freezeRegistry() {
     }
 
     override fun register(enchant: AiyatsbusEnchantmentBase): Enchantment {

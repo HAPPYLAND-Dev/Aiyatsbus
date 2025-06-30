@@ -6,10 +6,10 @@
 basic:
   id: smite
   name: "亡灵杀手"
-  max_level: 5
+  max-level: 5
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 普通
 targets:

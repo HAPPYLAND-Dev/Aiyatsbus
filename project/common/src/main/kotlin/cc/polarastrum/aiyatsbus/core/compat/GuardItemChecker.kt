@@ -28,23 +28,44 @@ import java.util.*
 import kotlin.math.max
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.compat.QuickShopGuardChecker
+ * 物品保护检查器接口
+ *
+ * 定义物品保护检查接口，用于检查物品是否受保护，防止玩家拾取受保护的物品。
+ * 原本为 QuickShop 的两个分支而设计，现在任何插件都可以来做适配。
  *
  * @author mical
  * @since 2024/8/19 09:41
  */
 interface GuardItemChecker {
 
+    /**
+     * 检查是否为受保护的物品
+     *
+     * @param item 要检查的物品实体
+     * @return 如果是受保护的物品则返回 true
+     */
     fun checkIsGuardItem(item: Item): Boolean
 
     companion object {
 
+        /** 已注册的集成检查器列表 */
         val registeredIntegrations = LinkedList<GuardItemChecker>()
 
         /**
          * 检查是否为受保护的物品
-         * 原本为 QuickShop 的两个分支而设计, 现在任何插件都可以来做适配
+         *
+         * 原本为 QuickShop 的两个分支而设计，现在任何插件都可以来做适配。
+         *
+         * @param item 要检查的物品实体
+         * @param player 玩家，如果为 null 则不检查玩家相关事件
+         * @return 如果是受保护的物品则返回 true
+         * 
+         * @example
+         * ```kotlin
+         * if (GuardItemChecker.checkIsGuardItem(item, player)) {
+         *     // 物品受保护，不允许拾取
+         * }
+         * ```
          */
         fun checkIsGuardItem(item: Item, player: Player?): Boolean {
             if (!item.canPlayerPickup()) return true
@@ -54,13 +75,16 @@ interface GuardItemChecker {
         }
 
         /**
-         * TODO: 以下工具类未来会挪位置
-         *
          * 计算玩家背包剩余容量
          *
          * @param player 玩家
          * @param item 物品
          * @return 剩余容量
+         * 
+         * @example
+         * ```kotlin
+         * val capacity = GuardItemChecker.calculateItemCapacity(player, itemStack)
+         * ```
          */
         fun calculateItemCapacity(player: Player, item: ItemStack): Int {
             val inventory = player.inventory
@@ -88,6 +112,10 @@ interface GuardItemChecker {
 
         /**
          * 依照服务的内顺序依次检测事件判断有无插件阻止
+         *
+         * @param item 物品实体
+         * @param player 玩家
+         * @return 如果有插件阻止拾取则返回 true
          */
         private fun eventCanceled(item: Item, player: Player): Boolean {
             val remaining = max(0, item.itemStack.amount - calculateItemCapacity(player, item.itemStack))

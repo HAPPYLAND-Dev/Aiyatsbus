@@ -20,12 +20,13 @@ import org.bukkit.block.Block
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import kotlin.jvm.Throws
 
 /**
- * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.core.AiyatsbusMinecraftAPI
+ * Aiyatsbus Minecraft API 接口
+ *
+ * 提供与 Minecraft 内部系统的交互接口。
+ * 包含物品操作、方块破坏、组件转换等底层功能。
  *
  * @author mical
  * @since 2024/2/18 00:14
@@ -34,54 +35,78 @@ interface AiyatsbusMinecraftAPI {
 
     /**
      * 获取物品在铁砧上的操作数
+     *
+     * @param item 物品
+     * @return 操作数
      */
     fun getRepairCost(item: ItemStack): Int
 
     /**
      * 设置物品在铁砧上的操作数
+     *
+     * @param item 物品
+     * @param cost 操作数
      */
     fun setRepairCost(item: ItemStack, cost: Int)
 
     /**
-     * 1.18.2 以下版本 (不包含 1.18.2) 中 ItemFactory#createItemStack 不存在
-     * 此函数用以替代
+     * 创建物品堆栈
+     *
+     * 1.18.2 以下版本（不包含 1.18.2）中 ItemFactory#createItemStack 不存在，
+     * 此函数用以替代。
+     *
+     * @param material 材料名称
+     * @param tag 标签
+     * @return 物品堆栈
+     * @throws IllegalStateException 如果创建失败
      */
     @Throws(IllegalStateException::class)
     fun createItemStack(material: String, tag: String?): ItemStack
 
-    /** 为原版的 MerchantRecipeList 的物品显示更多附魔 */
+    /**
+     * 为原版的 MerchantRecipeList 的物品显示更多附魔
+     *
+     * @param merchantRecipeList 商人配方列表
+     * @param player 玩家
+     */
     fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player)
 
-    /** 将 Json 转成 IChatBaseComponent */
+    /**
+     * 将 Json 转成 IChatBaseComponent
+     *
+     * @param json JSON 字符串
+     * @return IChatBaseComponent 对象
+     */
     fun componentFromJson(json: String): Any
 
-    /** 将 IChatBaseComponent 转成 Json */
+    /**
+     * 将 IChatBaseComponent 转成 Json
+     *
+     * @param iChatBaseComponent IChatBaseComponent 对象
+     * @return JSON 字符串
+     */
     fun componentToJson(iChatBaseComponent: Any): String
 
-    /** 取代高版本 player.breakBlock 的函数, 会触发 BlockBreakEvent */
+    /**
+     * 破坏方块
+     *
+     * 取代高版本 player.breakBlock 的函数，会触发 BlockBreakEvent。
+     *
+     * @param player 玩家
+     * @param block 方块
+     * @return 是否成功破坏
+     */
     fun breakBlock(player: Player, block: Block): Boolean
 
-    /** 取代高版本 ItemStack#damage */
+    /**
+     * 损坏物品堆栈
+     *
+     * 取代高版本 ItemStack#damage。
+     *
+     * @param item 物品堆栈
+     * @param amount 损坏量
+     * @param entity 实体
+     * @return 损坏后的物品堆栈
+     */
     fun damageItemStack(item: ItemStack, amount: Int, entity: LivingEntity): ItemStack
-
-    /** 隐藏书本附魔 */
-    fun hideBookEnchants(item: ItemMeta)
-
-    /** 是否已经隐藏书本附魔 */
-    fun isBookEnchantsHidden(item: ItemMeta): Boolean
-
-    /** 显示书本附魔 */
-    fun removeBookEnchantsHidden(item: ItemMeta)
-
-    /** 发送手部活动数据 */
-    fun setHandActive(player: Player, isHandActive: Boolean)
-
-    /** 兼容 1.21 */
-    fun asNMSCopy(item: ItemStack): Any
-
-    /** 兼容 1.21 */
-    fun asBukkitCopy(item: Any): ItemStack
-
-    /** 兼容 1.21 */
-    fun sendRawActionBar(player: Player, action: String)
 }

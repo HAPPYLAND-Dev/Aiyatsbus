@@ -5,11 +5,11 @@
 
 prefix: '&8\[&{#D8D8FA}附魔&8\]'
 
-loading-rarities: '{prefix} &a良好 &8| &a{0} &3个附魔品质已加载 &8({1} ms)'
-loading-targets: '{prefix} &a良好 &8| &a{0} &3个附魔对象已加载 &8({1} ms)'
-loading-internal-triggers: '{prefix} &a良好 &8| &a{0} &3个内置触发器已加载 &8({1} ms)'
+loading-rarity: '{prefix} &a良好 &8| &a{0} &3个附魔品质已加载 &8({1} ms)'
+loading-target: '{prefix} &a良好 &8| &a{0} &3个附魔对象已加载 &8({1} ms)'
+loading-internal-trigger: '{prefix} &a良好 &8| &a{0} &3个内置触发器已加载 &8({1} ms)'
 loading-enchantments: '{prefix} &a良好 &8| &a{0} &3个附魔已加载 &8({1} ms)'
-loading-groups: '{prefix} &a良好 &8| &a{0} &3个附魔组已加载 &8({1} ms)'
+loading-group: '{prefix} &a良好 &8| &a{0} &3个附魔组已加载 &8({1} ms)'
 
 plugin-reload: '{prefix} &a良好 &8| &3已重新载入插件 &8({0} ms)'
 
@@ -60,7 +60,7 @@ ui-type-filter_group: '类型定位筛选器' # 筛选器的名称相较于 3.0 
 ui-type-filter_rarity: '品质筛选器'
 ui-type-filter_target: '物品类别筛选器'
 ui-type-item_check: '附魔查询'
-ui-type-main-menu: '附魔主菜单'
+ui-type-main_menu: '附魔主菜单'
 ui-type-favorite: '附魔收藏夹'
 
 ui-check-mode-find: '&7搜索可用附魔'
@@ -149,7 +149,7 @@ command-argument-wrong:
 command-argument-unknown:
   - '{prefix} &7指令 &f{name} &7不存在'
   - '{prefix} &7你可能想要:'
-  - '{prefix} &f{similar}'
+  - '{prefix} &f/aiyatsbus {similar} {usage}&8- &7{description}'
 command-incorrect-sender: '{prefix} &7指令 &f{name} &7只能由 &f玩家 &7执行'
 command-subCommands-book-description: '给玩家一本指定的附魔书'
 command-subCommands-book-usage: '&7\[&8附魔&7\] &7<&8等级&7> &7<&8玩家&7>'

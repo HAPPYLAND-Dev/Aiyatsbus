@@ -23,6 +23,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestPlayers
+import taboolib.common.util.random
 import taboolib.module.kether.isInt
 import taboolib.platform.util.giveItem
 
@@ -35,10 +36,10 @@ import taboolib.platform.util.giveItem
  */
 val randomSubCommand = subCommand {
     dynamic("rarity") {
-        suggestion<CommandSender> { _, _ -> aiyatsbusRarities.map { it.key } + aiyatsbusRarities.map { it.value.name } }
+        suggestion<CommandSender> { _, _ -> Rarity.map { it.key } + Rarity.map { it.value.name } }
         execute<CommandSender> { sender, args, _ -> handleRandom(sender, null, aiyatsbusRarity(args["rarity"])!!) }
         dynamic("level", true) {
-            suggestionUncheck<CommandSender> { _, _ -> listOf("等级", "level") }
+            suggestionUncheck<CommandSender> { _, _ -> listOf("等级", "level", "random", "随机") }
             execute<CommandSender> { sender, args, _ -> handleRandom(sender, null, aiyatsbusRarity(args["rarity"])!!, args["level"]) }
             dynamic("player", true) {
                 suggestPlayers()
@@ -53,11 +54,14 @@ private fun handleRandom(sender: CommandSender, who: String?, rarity: Rarity, le
         sender.sendLang("command-subCommands-random-rarity")
         return
     }
-    if (level?.isInt() != true) {
-        sender.sendLang("command-subCommands-random-number")
-        return
+    val lv = when {
+        level == "random" || level == "随机" -> random(1, enchant.basicData.maxLevel)
+        level?.isInt() == true -> level.toInt().coerceAtLeast(1).coerceAtMost(enchant.basicData.maxLevel)
+        else -> {
+            sender.sendLang("command-subCommands-random-number")
+            return
+        }
     }
-    val lv = level.toInt().coerceAtLeast(1).coerceAtMost(enchant.basicData.maxLevel)
     (who?.let { Bukkit.getPlayer(it) } ?: (sender as? Player))?.let { receiver ->
         receiver.giveItem(enchant.book(lv))
         sender.sendLang("command-subCommands-random-sender", receiver.name to "name", enchant.displayName(lv) to "enchantment")

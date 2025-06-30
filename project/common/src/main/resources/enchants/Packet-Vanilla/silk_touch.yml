@@ -6,10 +6,10 @@
 basic:
   id: silk_touch
   name: "精准采集"
-  max_level: 1
+  max-level: 1
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 珍奇
 targets:

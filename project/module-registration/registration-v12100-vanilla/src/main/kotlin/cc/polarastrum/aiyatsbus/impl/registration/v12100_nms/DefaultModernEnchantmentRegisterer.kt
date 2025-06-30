@@ -18,7 +18,6 @@
  */
 package cc.polarastrum.aiyatsbus.impl.registration.v12100_nms
 
-import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantment
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentBase
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentManager
@@ -34,6 +33,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry
 import org.bukkit.craftbukkit.v1_21_R1.CraftServer
 import org.bukkit.craftbukkit.v1_21_R1.enchantments.CraftEnchantment
+import org.bukkit.craftbukkit.v1_21_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_21_R1.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
 import taboolib.common.platform.PlatformFactory
@@ -78,6 +78,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         .getDeclaredField("cache")
         .apply { isAccessible = true }
 
+    override fun unfreezeRegistry() {
+        frozenField.set(enchantmentRegistry, false)
+        unregisteredIntrusiveHoldersField.set(enchantmentRegistry, IdentityHashMap<NMSEnchantment, Holder.c<NMSEnchantment>>())
+    }
+
     override fun replaceRegistry() {
         val api = PlatformFactory.getAPI<AiyatsbusEnchantmentManager>()
 
@@ -101,8 +106,10 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         cache.set(bukkitRegistry, mutableMapOf<NamespacedKey, Enchantment>())
 
         // Unfreeze NMS registry
-        frozenField.set(enchantmentRegistry, false)
-        unregisteredIntrusiveHoldersField.set(enchantmentRegistry, IdentityHashMap<NMSEnchantment, Holder.c<NMSEnchantment>>())
+        unfreezeRegistry()
+    }
+
+    override fun freezeRegistry() {
     }
 
     override fun register(enchant: AiyatsbusEnchantmentBase): Enchantment {
@@ -150,7 +157,7 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         )
 //        return enchantment.build(MinecraftKey.withDefaultNamespace(enchant.id))
         return NMSEnchantment(
-            Aiyatsbus.api().getMinecraftAPI().componentFromJson(enchant.basicData.name) as IChatBaseComponent,
+            CraftChatMessage.fromJSON(enchant.basicData.name) as IChatBaseComponent,
             enchantment.getProperty<NMSEnchantmentC>("definition")!!,
             enchantment.getProperty<HolderSet<NMSEnchantment>>("exclusiveSet")!!,
             enchantment.getProperty<DataComponentMap.a>("effectMapBuilder")!!.build()

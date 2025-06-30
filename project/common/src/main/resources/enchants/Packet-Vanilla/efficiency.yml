@@ -6,10 +6,10 @@
 basic:
   id: efficiency
   name: "效率"
-  max_level: 5
+  max-level: 5
 
 alternative:
-  is_vanilla: true
+  is-vanilla: true
 
 rarity: 稀有
 targets:
