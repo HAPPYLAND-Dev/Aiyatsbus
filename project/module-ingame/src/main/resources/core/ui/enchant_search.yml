@@ -104,7 +104,7 @@ template:
       - ==: Functional
         keyword: EnchantSearch:filter_string
   'E':
-    material: PLAYER_HEAD
+    material: ENCHANTED_BOOK
     name: "{enchant_display_lore}"
     lore:
       - "&7附魔: {enchant_display}"
