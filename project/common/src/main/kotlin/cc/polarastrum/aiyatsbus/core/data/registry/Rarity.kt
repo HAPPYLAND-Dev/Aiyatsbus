@@ -51,9 +51,9 @@ data class Rarity @JvmOverloads constructor(
     /** 是否不可访问，为 true 时玩家无法获得该稀有度的附魔 */
     val inaccessible: Boolean = root.getBoolean("inaccessible", false),
     /** 菜单中的自定义模型 ID，-1 表示使用默认模型 */
-    val customModelUI: Int = root.getInt("custom_model_ui"),
+    val customModelUI: Int = root.getInt("custom-model-ui"),
     /** 玩家附魔书中的自定义模型 ID，-1 表示使用默认模型 */
-    val customModelBook: Int = root.getInt("custom_model_book")
+    val customModelBook: Int = root.getInt("custom-model-book")
 ) : RegistryItem(root), Dependency {
 
     /**
