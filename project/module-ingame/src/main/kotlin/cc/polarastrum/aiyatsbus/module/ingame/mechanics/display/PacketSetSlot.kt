@@ -34,7 +34,8 @@ object PacketSetSlot {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketSendEvent) {
-        if (e.packet.name == "PacketPlayOutSetSlot" || e.packet.name == "ClientboundContainerSetSlotPacket") {
+        val name = e.packet.name
+        if (name == "PacketPlayOutSetSlot" || name == "ClientboundContainerSetSlotPacket") {
             try {
                 val origin = e.packet.read<Any>("itemStack")!!
                 val bkItem = NMSItemTag.asBukkitCopy(origin)

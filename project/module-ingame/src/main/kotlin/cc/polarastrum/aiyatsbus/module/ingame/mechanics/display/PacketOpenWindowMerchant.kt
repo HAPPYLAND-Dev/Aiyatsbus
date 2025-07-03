@@ -32,7 +32,8 @@ object PacketOpenWindowMerchant {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketSendEvent) {
-        if (e.packet.name == "PacketPlayOutOpenWindowMerchant" || e.packet.name == "ClientboundMerchantOffersPacket") {
+        val name = e.packet.name
+        if (name == "PacketPlayOutOpenWindowMerchant" || name == "ClientboundMerchantOffersPacket") {
             try {
                 // 1.16 - 1.20.4 全部版本都可以直接读 b, 1.20.5 改成 c
                 Aiyatsbus.api().getMinecraftAPI()

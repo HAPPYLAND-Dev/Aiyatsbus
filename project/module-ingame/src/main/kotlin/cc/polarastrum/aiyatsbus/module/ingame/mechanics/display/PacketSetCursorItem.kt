@@ -16,32 +16,52 @@
  */
 package cc.polarastrum.aiyatsbus.module.ingame.mechanics.display
 
+import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.toRevertMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
 import taboolib.module.nms.NMSItemTag
 import taboolib.module.nms.PacketReceiveEvent
+import taboolib.module.nms.PacketSendEvent
 
 /**
  * Aiyatsbus
- * com.mcstarrysky.aiyatsbus.module.listener.packet.PacketSetCreativeSlot
+ * com.mcstarrysky.aiyatsbus.module.listener.packet.PacketSetCursorItem
  *
- * @author mical
- * @since 2024/2/18 00:35
+ * @author xiaozhangup
+ * @since 2025/7/2 23:47
  */
-object PacketSetCreativeSlot {
+object PacketSetCursorItem {
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    fun e(e: PacketSendEvent) {
+        val name = e.packet.name
+        if (name == "ClientboundSetCursorItemPacket") {
+            try {
+                val origin = e.packet.read<Any>("contents")!!
+                val bkItem = NMSItemTag.asBukkitCopy(origin)
+                if (bkItem.isNull) return
+                info("Cursor Item: ${bkItem.type}")
+                val adapted = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
+                e.packet.write("contents", adapted)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketReceiveEvent) {
         val name = e.packet.name
-        if (name == "PacketPlayInSetCreativeSlot" || name == "ServerboundSetCreativeModeSlotPacket") {
+        if (name == "PacketPlayInWindowClick" || name == "ServerboundContainerClickPacket") {
             try {
-                val origin = e.packet.read<Any>("itemStack")!!
+                val origin = e.packet.read<Any>("carriedItem")!!
                 val bkItem = NMSItemTag.asBukkitCopy(origin)
                 if (bkItem.isNull) return
                 val adapted = NMSItemTag.asNMSCopy(bkItem.toRevertMode(e.player))
-                e.packet.write("itemStack", adapted)
+                e.packet.write("carriedItem", adapted)
             } catch (e: Throwable) {
                 e.printStackTrace()
             }

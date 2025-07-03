@@ -34,7 +34,8 @@ object PacketWindowItems {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketSendEvent) {
-        if (e.packet.name == "PacketPlayOutWindowItems" || e.packet.name == "ClientboundContainerSetContentPacket") {
+        val name = e.packet.name
+        if (name == "PacketPlayOutWindowItems" || name == "ClientboundContainerSetContentPacket") {
             try {
                 val slots = e.packet.read<List<Any>>("items")!!.toMutableList()
                 for (i in slots.indices) {
