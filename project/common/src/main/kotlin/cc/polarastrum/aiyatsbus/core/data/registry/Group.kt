@@ -68,7 +68,7 @@ data class Group @JvmOverloads constructor(
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRiODlhZDA2ZDMxOGYwYWUxZWVhZjY2MGZlYTc4YzM0ZWI1NWQwNWYwMWUxY2Y5OTlmMzMxZmIzMmQzODk0MiJ9fX0="
     )!!,
     /** 最大共存数量，限制该组中附魔可以同时存在的最大数量，默认为 1 */
-    val maxCoexist: Int = root.getInt("max_coexist", 1),
+    val maxCoexist: Int = if (root.contains("max-coexist")) root.getInt("max-coexist", 1) else root.getInt("max_coexist", 1),
     /** 是否不可访问，为 true 时玩家无法获得该附魔组的附魔 */
     val inaccessible: Boolean = root.getBoolean("inaccessible", false),
 ) : RegistryItem(root), Dependency {
