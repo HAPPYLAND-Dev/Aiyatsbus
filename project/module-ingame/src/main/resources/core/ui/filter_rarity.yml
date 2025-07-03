@@ -48,7 +48,7 @@ template:
         keyword: FilterRarity:reset
 
   'T':
-    material: PLAYER_HEAD
+    material: ENCHANTED_BOOK
     name: "&f{rarity_display} &7(&a{amount}&7)"
     lore:
       - "&7左击 &a只看此品质的附魔"

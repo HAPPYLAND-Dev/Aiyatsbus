@@ -52,7 +52,7 @@ template:
         keyword: EnchantInfo:favorite
 
   'E':
-    material: PLAYER_HEAD
+    material: ENCHANTED_BOOK
     feature:
       - ==: Functional
         keyword: EnchantInfo:element
