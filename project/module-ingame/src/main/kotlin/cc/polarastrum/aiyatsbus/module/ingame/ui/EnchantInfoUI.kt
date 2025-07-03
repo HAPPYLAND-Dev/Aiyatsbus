@@ -232,6 +232,9 @@ object EnchantInfoUI {
             icon.variables { variable -> listOf(holders[variable] ?: "") }
                 .modifyMeta<ItemMeta> {
                     lore = lore.toBuiltComponent().map(Source::toLegacyText)
+                    if (enchant.rarity.isCustomModelUIEnabled && !hasCustomModelData()) {
+                        setCustomModelData(enchant.rarity.customModelUI)
+                    }
                 }
                 .skull(enchant.rarity.skull)
         }
@@ -379,6 +382,11 @@ object EnchantInfoUI {
                     "enchant" -> {
                         val enchant = aiyatsbusEt(parts[1])!!
                         val holders = enchant.displayer.holders(enchant.basicData.maxLevel, player, enchant.book())
+                        item.editMeta {
+                            if (enchant.rarity.isCustomModelUIEnabled && !it.hasCustomModelData()) {
+                                it.setCustomModelData(enchant.rarity.customModelUI)
+                            }
+                        }
                         item.skull(enchant.rarity.skull).variables { variable -> listOf(holders[variable] ?: "") }
                     }
                     else -> item

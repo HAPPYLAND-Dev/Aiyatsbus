@@ -120,7 +120,12 @@ object ItemCheckUI {
             val level = enchantPair.second
             val holders = enchant.displayer.holders(level, args["player"] as Player, args["item"] as ItemStack)
             icon.variables { variable -> listOf(holders[variable] ?: "") }
-                .modifyMeta<ItemMeta> { lore = lore.toBuiltComponent().map(Source::toLegacyText) }
+                .modifyMeta<ItemMeta> {
+                    lore = lore.toBuiltComponent().map(Source::toLegacyText)
+                    if (enchant.rarity.isCustomModelUIEnabled && !hasCustomModelData()) {
+                        setCustomModelData(enchant.rarity.customModelUI)
+                    }
+                }
                 .skull(enchant.rarity.skull)
         }
         onClick { (_, _, _, event, args) ->

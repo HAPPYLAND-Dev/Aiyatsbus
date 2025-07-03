@@ -102,6 +102,11 @@ object FilterRarityUI {
                 else -> {}
             }
 
+            icon.editMeta {
+                if (rarity.isCustomModelUIEnabled && !it.hasCustomModelData()) {
+                    it.setCustomModelData(rarity.customModelUI)
+                }
+            }
             icon.variables {
                 when (it) {
                     "name", "rarity_display" -> listOf(rarity.displayName())
