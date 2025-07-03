@@ -120,13 +120,10 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         unfreezeRegistry()
 
         val newRegistryMTB =
-            BiFunction<NamespacedKey, NMSEnchantment, Enchantment> { key, registry ->
-                val isVanilla = enchantmentRegistry.containsKey(CraftNamespacedKey.toMinecraft(key))
+            BiFunction<NamespacedKey, NMSEnchantment, Enchantment?> { key, registry ->
                 val aiyatsbus = api.getEnchant(key)
 
-                if (isVanilla) {
-                    CraftEnchantment(key, registry)
-                } else if (aiyatsbus != null) {
+                if (aiyatsbus != null) {
                     aiyatsbus as Enchantment
                 } else null
             }
@@ -188,7 +185,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
             val nms = enchantmentRegistry[CraftNamespacedKey.toMinecraft(enchant.enchantmentKey)]
 
             if (nms.isPresent) {
-                 return EnchantmentHelper.createCraftEnchantment(enchant, nms.get().value()) as CraftEnchantment
+                return (if (enchant.alternativeData.isVanilla) {
+                    EnchantmentHelper.createVanillaCraftEnchantment(enchant, nms.get().value())
+                } else {
+                    EnchantmentHelper.createAiyatsbusCraftEnchantment(enchant, nms.get().value())
+                }) as CraftEnchantment
             } else {
                 throw IllegalStateException("Enchantment ${enchant.id} wasn't registered")
             }

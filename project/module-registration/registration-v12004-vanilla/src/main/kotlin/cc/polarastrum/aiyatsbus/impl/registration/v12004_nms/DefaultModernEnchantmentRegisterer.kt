@@ -25,6 +25,7 @@ import cc.polarastrum.aiyatsbus.core.registration.modern.ModernEnchantmentRegist
 import cc.polarastrum.aiyatsbus.core.util.setStaticFinal
 import cc.polarastrum.aiyatsbus.impl.registration.v12004_paper.AiyatsbusCraftEnchantment
 import cc.polarastrum.aiyatsbus.impl.registration.v12004_paper.VanillaAiyatsbusEnchantment
+import cc.polarastrum.aiyatsbus.impl.registration.v12004_paper.VanillaCraftEnchantment
 import net.minecraft.core.Holder
 import net.minecraft.core.IRegistry
 import net.minecraft.core.IRegistryCustom
@@ -36,7 +37,6 @@ import net.minecraft.world.item.enchantment.Enchantments
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer
-import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
 import taboolib.common.platform.PlatformFactory
@@ -96,12 +96,9 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
             // TabooLib NMSProxy 已知问题: 调用对象中「仅在父类」声明的方法或字段无法被 TabooLib NMSProxy 重定向
             ((server.handle.server as MinecraftServer).registryAccess() as IRegistryCustom).registryOrThrow(Registries.ENCHANTMENT)
         ) { key, registry ->
-            val isVanilla = vanillaEnchantments.contains(key)
             val aiyatsbus = api.getEnchant(key)
 
-            if (isVanilla) {
-                CraftEnchantment(key, registry)
-            } else if (aiyatsbus != null) {
+            if (aiyatsbus != null) {
                 aiyatsbus as Enchantment
             } else null
         }
@@ -125,7 +122,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         if (BuiltInRegistries.ENCHANTMENT.containsKey(CraftNamespacedKey.toMinecraft(enchant.enchantmentKey))) {
             val nms = BuiltInRegistries.ENCHANTMENT[CraftNamespacedKey.toMinecraft(enchant.enchantmentKey)]
             if (nms != null) {
-                 return AiyatsbusCraftEnchantment(enchant, nms)
+                 return if (enchant.alternativeData.isVanilla) {
+                     VanillaCraftEnchantment(enchant, nms)
+                 } else {
+                     AiyatsbusCraftEnchantment(enchant, nms)
+                 }
             } else {
                 throw IllegalStateException("Enchantment ${enchant.id} wasn't registered")
             }

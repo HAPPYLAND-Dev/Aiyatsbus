@@ -16,26 +16,39 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package cc.polarastrum.aiyatsbus.impl.registration.v12104_paper
+package cc.polarastrum.aiyatsbus.impl.registration.v12100_paper
 
+import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantment
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentBase
-import net.minecraft.core.Holder
 import net.minecraft.world.item.enchantment.Enchantment
+import org.bukkit.craftbukkit.enchantments.CraftEnchantment
+import org.bukkit.inventory.ItemStack
 
 /**
  * Aiyatsbus
- * cc.polarastrum.aiyatsbus.impl.registration.v12104_paper.EnchantmentHelper
+ * cc.polarastrum.aiyatsbus.impl.registration.v12104_paper.VanillaCraftEnchantment
  *
- * @author mical
- * @since 2025/2/14 16:31
+ * @author lynn
+ * @since 2025/7/3
  */
-object EnchantmentHelper {
+class VanillaCraftEnchantment(
+    private val enchant: AiyatsbusEnchantmentBase,
+    holder: Enchantment
+) : CraftEnchantment(enchant.enchantmentKey, holder), AiyatsbusEnchantment by enchant {
 
-    fun createVanillaCraftEnchantment(enchant: AiyatsbusEnchantmentBase, nms: Holder<Enchantment>): Any {
-        return VanillaCraftEnchantment(enchant, nms)
+    init {
+        enchant.enchantment = this
     }
 
-    fun createAiyatsbusCraftEnchantment(enchant: AiyatsbusEnchantmentBase, nms: Holder<Enchantment>): Any {
-        return AiyatsbusCraftEnchantment(enchant, nms)
+    override fun getMaxLevel(): Int {
+        return enchant.basicData.maxLevel
+    }
+
+    override fun conflictsWith(other: org.bukkit.enchantments.Enchantment): Boolean {
+        return enchant.conflictsWith(other)
+    }
+
+    override fun canEnchantItem(item: ItemStack): Boolean {
+        return enchant.canEnchantItem(item)
     }
 }

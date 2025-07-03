@@ -87,13 +87,10 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         val api = PlatformFactory.getAPI<AiyatsbusEnchantmentManager>()
 
         val newRegistryMTB =
-            BiFunction<NamespacedKey, NMSEnchantment, Enchantment> { key, registry ->
-                val isVanilla = enchantmentRegistry.containsKey(CraftNamespacedKey.toMinecraft(key))
+            BiFunction<NamespacedKey, NMSEnchantment, Enchantment?> { key, registry ->
                 val aiyatsbus = api.getEnchant(key)
 
-                if (isVanilla) {
-                    CraftEnchantment(key, registry)
-                } else if (aiyatsbus != null) {
+                if (aiyatsbus != null) {
                     aiyatsbus as Enchantment
                 } else null
             }
@@ -120,7 +117,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
             val nms = enchantmentRegistry[CraftNamespacedKey.toMinecraft(enchant.enchantmentKey)]
 
             if (nms != null) {
-                 return EnchantmentHelper.createCraftEnchantment(enchant, nms) as CraftEnchantment
+                return (if (enchant.alternativeData.isVanilla) {
+                    EnchantmentHelper.createVanillaCraftEnchantment(enchant, nms)
+                } else {
+                    EnchantmentHelper.createAiyatsbusCraftEnchantment(enchant, nms)
+                }) as CraftEnchantment
             } else {
                 throw IllegalStateException("Enchantment ${enchant.id} wasn't registered")
             }
