@@ -22,6 +22,7 @@ import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.registry.Rarity
 import cc.polarastrum.aiyatsbus.core.util.*
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -34,7 +35,6 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.console
-import taboolib.module.chat.Source
 import taboolib.module.chat.component
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigNode
@@ -253,7 +253,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
     }
 
     private fun componentFromRaw(raw: String) : Component {
-        return GsonComponentSerializer.gson().deserialize(raw)
+        return GsonComponentSerializer.gson().deserialize(raw).decoration(TextDecoration.ITALIC, false)
     }
 
     companion object {
