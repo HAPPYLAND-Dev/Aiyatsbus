@@ -109,4 +109,6 @@ interface AiyatsbusMinecraftAPI {
      * @return 损坏后的物品堆栈
      */
     fun damageItemStack(item: ItemStack, amount: Int, entity: LivingEntity): ItemStack
+
+    fun getCursorItem(player: Player): Any?
 }

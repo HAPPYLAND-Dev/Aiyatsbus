@@ -191,6 +191,10 @@ class DefaultAiyatsbusMinecraftAPI : AiyatsbusMinecraftAPI {
             }
         }
     }
+
+    override fun getCursorItem(player: Player): Any? {
+        return (player as CraftPlayer).handle.containerMenu.carried
+    }
 }
 
 typealias NMSItemStack = net.minecraft.world.item.ItemStack

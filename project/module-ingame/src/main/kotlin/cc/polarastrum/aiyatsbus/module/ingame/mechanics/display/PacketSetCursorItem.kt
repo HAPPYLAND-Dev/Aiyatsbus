@@ -16,11 +16,13 @@
  */
 package cc.polarastrum.aiyatsbus.module.ingame.mechanics.display
 
+import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.toRevertMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.module.nms.MinecraftVersion.versionId
 import taboolib.module.nms.NMSItemTag
 import taboolib.module.nms.PacketReceiveEvent
 import taboolib.module.nms.PacketSendEvent
@@ -36,14 +38,26 @@ object PacketSetCursorItem {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketSendEvent) {
-        val name = e.packet.name
-        if (name == "ClientboundSetCursorItemPacket") {
+        // Spigot 与 Paper 同名
+        if (e.packet.name == "ClientboundSetCursorItemPacket") {
             try {
                 val origin = e.packet.read<Any>("contents")!!
                 val bkItem = NMSItemTag.asBukkitCopy(origin)
-                if (bkItem.isNull) return
-                val adapted = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
-                e.packet.write("contents", adapted)
+                if (versionId >= 12105) {
+                    var nmsCursorItem: Any? = Aiyatsbus.api().getMinecraftAPI().getCursorItem(e.player)
+                    if (nmsCursorItem == null) {
+                        e.packet.write("contents", nmsCursorItem)
+                        return
+                    }
+                    nmsCursorItem = NMSItemTag.asBukkitCopy(nmsCursorItem)
+                    nmsCursorItem = nmsCursorItem.toDisplayMode(e.player)
+                    nmsCursorItem = NMSItemTag.asNMSCopy(nmsCursorItem)
+                    e.packet.write("contents", nmsCursorItem)
+                } else {
+                    if (bkItem.isNull) return
+                    val adapted = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
+                    e.packet.write("contents", adapted)
+                }
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
@@ -52,6 +66,7 @@ object PacketSetCursorItem {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PacketReceiveEvent) {
+        if (versionId >= 12105) return
         val name = e.packet.name
         if (name == "PacketPlayInWindowClick" || name == "ServerboundContainerClickPacket") {
             try {
@@ -64,5 +79,37 @@ object PacketSetCursorItem {
                 e.printStackTrace()
             }
         }
+
+//        if (versionId >= 12005) {
+//            val rawSlot = e.packet.read<Short>("slotNum")!!.toInt()
+//            val serverPlayer = e.player.invokeMethod<Any>("getHandle")!!
+//            val containerMenu = serverPlayer.getProperty<Any>("containerMenu")!!
+//            val bukkitView = containerMenu.invokeMethod<Any>("getBukkitView") as InventoryView
+//            val cursorItem = bukkitView.getItem(rawSlot)
+//
+//            val registryAccess = (Bukkit.getWorlds().first() as CraftWorld).handle.registryAccess()
+//            val registryOps: RegistryOps<HashCode> =
+//                registryAccess.createSerializationContext(HashOps.CRC32C_INSTANCE)
+//
+//            val hashOpsGenerator: HashedPatchMap.HashGenerator = object : HashedPatchMap.HashGenerator {
+//
+//                override fun apply(t: TypedDataComponent<*>): Int {
+//                    return t.encodeValue(registryOps).getOrThrow { string ->
+//                        IllegalArgumentException("")
+//                    }.asInt()
+//                }
+//            }
+//
+//            // 拿起物品
+//            if (cursorItem.isNull || cursorItem.fixedEnchants.isEmpty()) {
+//                return
+//            }
+//
+//            // 获取到的物品即为原始物品, 意味着不需要再进行 toRevertMode
+//            val hashedStack =
+//                HashedStack.create(NMSItemTag.asNMSCopy(cursorItem!!) as ItemStack, hashOpsGenerator)
+//            e.packet.write("carriedItem", hashedStack)
+//            return
+//        }
     }
 }
