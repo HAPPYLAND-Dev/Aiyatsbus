@@ -21,6 +21,8 @@ package cc.polarastrum.aiyatsbus.impl
 import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.registry.Rarity
 import cc.polarastrum.aiyatsbus.core.util.*
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -141,20 +143,23 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             // 生成附魔展示 Lore
             val generatedLore = generateLore(item, player)
             // 物品的原始 Lore
-            val originLore = lore ?: emptyList()
+            val originLore = lore() ?: emptyList()
             // 获取附魔显示格式
             val loreFormation =
                 if (originLore.isNotEmpty()) settings.hasLoreFormation else settings.withoutLoreFormation
             // 处理最终 Lore
-            val result = buildList<String> {
+            val result = buildList<Component> {
                 loreFormation.forEach { line ->
                     when (line) {
-                        "{enchant_lore}" -> addAll(generatedLore.toBuiltComponent().map(Source::toLegacyText))
+                        "{enchant_lore}" -> addAll(
+                            generatedLore.toBuiltComponent().map { componentFromRaw(it.toRawMessage()) })
                         "{capability_line}" ->
                             add(
-                                settings.capabilityLine
-                                    .replace("capability" to item.type.capability - item.fixedEnchants.size)
-                                    .component().buildColored().toLegacyText()
+                                componentFromRaw(
+                                    settings.capabilityLine
+                                        .replace("capability" to item.type.capability - item.fixedEnchants.size)
+                                        .component().buildColored().toRawMessage()
+                                )
                             )
                         "{item_lore}" -> {
                             // 如果是插入物品原 Lore 就在插入前后记录索引
@@ -162,12 +167,12 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
                             addAll(originLore)
                             lastIndex = size
                         }
-                        else -> add(line.component().buildColored().toLegacyText())
+                        else -> add(componentFromRaw(line.component().buildColored().toRawMessage()))
                     }
                 }
             }
             // 设置显示 Lore
-            lore = result
+            lore(result)
             if (item.type == Material.ENCHANTED_BOOK && !hasCustomModelData()) {
                 val rarity = item.fixedEnchants.minBy { it.key.rarity.weight }.key.rarity
                 if (rarity.isCustomModelBookEnabled) {
@@ -216,7 +221,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             }
             // 除去 enchant lore
             val (first, last) = loreIndex
-            lore = lore!!.subList(first, last)
+            lore(lore()!!.subList(first, last))
             remove("enchants_serialized")
             remove("lore_index")
             remove("custom_book")
@@ -245,6 +250,10 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
             else ItemFlag.HIDE_POTION_EFFECTS
         )
+    }
+
+    private fun componentFromRaw(raw: String) : Component {
+        return GsonComponentSerializer.gson().deserialize(raw)
     }
 
     companion object {
