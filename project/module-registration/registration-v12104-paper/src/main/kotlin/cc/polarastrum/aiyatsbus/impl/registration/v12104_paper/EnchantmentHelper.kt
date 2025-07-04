@@ -21,6 +21,7 @@ package cc.polarastrum.aiyatsbus.impl.registration.v12104_paper
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentBase
 import net.minecraft.core.Holder
 import net.minecraft.world.item.enchantment.Enchantment
+import org.bukkit.craftbukkit.enchantments.CraftEnchantment
 
 /**
  * Aiyatsbus
@@ -30,6 +31,10 @@ import net.minecraft.world.item.enchantment.Enchantment
  * @since 2025/2/14 16:31
  */
 object EnchantmentHelper {
+
+    fun createCraftEnchantment(nms: Holder<Enchantment>): Any {
+        return CraftEnchantment(nms)
+    }
 
     fun createVanillaCraftEnchantment(enchant: AiyatsbusEnchantmentBase, nms: Holder<Enchantment>): Any {
         return VanillaCraftEnchantment(enchant, nms)

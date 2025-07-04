@@ -21,7 +21,6 @@ import cc.polarastrum.aiyatsbus.core.toRevertMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.info
 import taboolib.module.nms.NMSItemTag
 import taboolib.module.nms.PacketReceiveEvent
 import taboolib.module.nms.PacketSendEvent
@@ -43,7 +42,6 @@ object PacketSetCursorItem {
                 val origin = e.packet.read<Any>("contents")!!
                 val bkItem = NMSItemTag.asBukkitCopy(origin)
                 if (bkItem.isNull) return
-                info("Cursor Item: ${bkItem.type}")
                 val adapted = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
                 e.packet.write("contents", adapted)
             } catch (e: Throwable) {

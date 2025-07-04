@@ -92,7 +92,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
 
                 if (aiyatsbus != null) {
                     aiyatsbus as Enchantment
-                } else null
+                } else {
+                    // 此时若获取不到则一定是获取原版附魔
+                    // 此时获取更多附魔返回值应当为 null
+                    EnchantmentHelper.createCraftEnchantment(key, enchantmentRegistry.get(CraftNamespacedKey.toMinecraft(key))) as CraftEnchantment
+                }
             }
 
         // Update bukkit registry

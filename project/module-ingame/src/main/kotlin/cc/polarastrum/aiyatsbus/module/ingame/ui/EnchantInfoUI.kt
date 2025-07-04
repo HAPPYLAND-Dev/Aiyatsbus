@@ -191,7 +191,8 @@ object EnchantInfoUI {
             icon.variables {
                 when (it) {
                     "params" -> enchant.variables.leveled.map { (variable) ->
-                        player.asLang("ui-enchant-info-variables", variable to "variable", enchant.variables.leveled(variable, level, false) to "value")
+                        val varName = player.asLangOrNull("variable-$variable") ?: variable
+                        player.asLang("ui-enchant-info-variables", varName to "variable", enchant.variables.leveled(variable, level, true) to "value")
                     }
 
                     "roman" -> listOf(level.roman())

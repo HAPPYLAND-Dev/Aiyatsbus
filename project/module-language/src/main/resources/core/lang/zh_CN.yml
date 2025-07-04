@@ -68,7 +68,6 @@ ui-check-mode-find-current: '&a搜索可用附魔'
 ui-check-mode-load: '&7读取物品附魔'
 ui-check-mode-load-current: '&a读取物品附魔'
 
-ui-enchant-info-variables: '&b{variable} &7> {value}'
 ui-enchant-info-limitations-permission-true: '&a✔'
 ui-enchant-info-limitations-permission-false: '&c✘'
 ui-enchant-info-other-attain-ways-inaccessible: '&c无法通过正常渠道获取'
@@ -111,6 +110,71 @@ limitations-feet: '足'
 limitations-legs: '腿'
 limitations-chest: '胸'
 limitations-head: '头'
+
+ui-enchant-info-variables: '&b{variable} &7> {value}'
+
+# 适配 NereusOpus 变量
+variable-amount: "数量/规模"
+variable-chance: "触发几率"
+variable-repeat-ticks: "生效周期"
+variable-durability-decrease: "耐久降低"
+variable-durability-increase: "耐久升高"
+variable-durability-decrease-extra: "额外磨损"
+variable-require-full-charge: "是否跟随攻击冷却"
+variable-velocity: "加速度"
+variable-velocity-y: "垂直加速"
+variable-velocity-xz: "水平加速"
+variable-damage-multiplier: "伤害倍率"
+variable-damage-splash-multiplier: "溅射伤害"
+variable-damage-splash: "溅射伤害"
+variable-duration: "持续时间"
+variable-amplifier: "效果等级"
+variable-disable-on-players: "是否不对玩家生效"
+variable-damage: "真实伤害"
+variable-power: "规模/力度"
+variable-cause-fire: "是否引发火焰"
+variable-break-blocks: "是否破坏方块"
+variable-angle: "偏移角度"
+variable-decrease-if-cooldown: "是否存在冷却减幅"
+variable-speed: "速度加成"
+variable-range: "范围"
+variable-range_x: "x轴范围"
+variable-range_y: "y轴范围"
+variable-range_z: "z轴范围"
+variable-judge-range: "判定范围"
+variable-percent: "比例"
+variable-cooldown-decreased: "攻击冷却减幅"
+variable-min-health: "最低血量"
+variable-min-health-percent: "最低血量"
+variable-avaliable-on-players: "是否对玩家生效"
+variable-drop-xp: "是否掉落经验"
+variable-oxygen: "氧气值"
+variable-min-distance: "最长生效距离"
+variable-max-health-increase: "最大血量增加"
+variable-drops: "掉落物"
+variable-targets: "作用对象"
+variable-exp-multiplier: "经验倍率"
+variable-heal: "回复血量"
+variable-heal-multiplier: "回复倍率"
+variable-max-distance: "最大距离"
+variable-health-judging-line: "判定血量"
+variable-high-damage-multiplier: "高于判定线"
+variable-low-damage-multiplier: "低于判定线"
+variable-absorption-multiplier: "伤害吸收倍率"
+variable-spread: "偏散程度"
+variable-custom: "持续显示"
+variable-food: "饱食度"
+variable-colored: "是否附带发光颜色"
+variable-sound: "释放音效"
+variable-cooldown: "冷却时间"
+variable-permission-check: "是否检查方块权限"
+variable-hardness-check: "是否检查方块硬度"
+variable-disable-on-sneak: "是否在蹲下时禁用"
+variable-enable-sound: "是否开启声音"
+
+# 变量值
+value-true: "&a✔"
+value-false: "&c✘"
 
 messages-menu-search-input: '{prefix} &7请在聊天栏中输入字段...'
 messages-menu-search-input_finish: '{prefix} &a输入完成'

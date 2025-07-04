@@ -37,6 +37,7 @@ import net.minecraft.world.item.enchantment.Enchantments
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer
+import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
 import taboolib.common.platform.PlatformFactory
@@ -96,10 +97,13 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
             // TabooLib NMSProxy 已知问题: 调用对象中「仅在父类」声明的方法或字段无法被 TabooLib NMSProxy 重定向
             ((server.handle.server as MinecraftServer).registryAccess() as IRegistryCustom).registryOrThrow(Registries.ENCHANTMENT)
         ) { key, registry ->
+            val isVanilla = vanillaEnchantments.contains(key)
             val aiyatsbus = api.getEnchant(key)
 
             if (aiyatsbus != null) {
                 aiyatsbus as Enchantment
+            } else if (isVanilla) {
+                CraftEnchantment(key, registry)
             } else null
         }
 
