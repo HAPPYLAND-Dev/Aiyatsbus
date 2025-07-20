@@ -40,26 +40,22 @@ object PacketSetCursorItem {
     fun e(e: PacketSendEvent) {
         // Spigot 与 Paper 同名
         if (e.packet.name == "ClientboundSetCursorItemPacket") {
-            try {
-                val origin = e.packet.read<Any>("contents")!!
-                val bkItem = NMSItemTag.asBukkitCopy(origin)
-                if (versionId >= 12105) {
-                    var nmsCursorItem: Any? = Aiyatsbus.api().getMinecraftAPI().getCursorItem(e.player)
-                    if (nmsCursorItem == null) {
-                        e.packet.write("contents", nmsCursorItem)
-                        return
-                    }
-                    nmsCursorItem = NMSItemTag.asBukkitCopy(nmsCursorItem)
-                    nmsCursorItem = nmsCursorItem.toDisplayMode(e.player)
-                    nmsCursorItem = NMSItemTag.asNMSCopy(nmsCursorItem)
+            val origin = e.packet.read<Any>("contents")!!
+            val bkItem = NMSItemTag.asBukkitCopy(origin)
+            if (versionId >= 12105) {
+                var nmsCursorItem: Any? = Aiyatsbus.api().getMinecraftAPI().getCursorItem(e.player)
+                if (nmsCursorItem == null) {
                     e.packet.write("contents", nmsCursorItem)
-                } else {
-                    if (bkItem.isNull) return
-                    val adapted = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
-                    e.packet.write("contents", adapted)
+                    return
                 }
-            } catch (e: Throwable) {
-                e.printStackTrace()
+                nmsCursorItem = NMSItemTag.asBukkitCopy(nmsCursorItem)
+                nmsCursorItem = nmsCursorItem.toDisplayMode(e.player)
+                nmsCursorItem = NMSItemTag.asNMSCopy(nmsCursorItem)
+                e.packet.write("contents", nmsCursorItem)
+            } else {
+                if (bkItem.isNull) return
+                val adapted = NMSItemTag.asNMSCopy(bkItem.toDisplayMode(e.player))
+                e.packet.write("contents", adapted)
             }
         }
     }
@@ -69,15 +65,11 @@ object PacketSetCursorItem {
         if (versionId >= 12105) return
         val name = e.packet.name
         if (name == "PacketPlayInWindowClick" || name == "ServerboundContainerClickPacket") {
-            try {
-                val origin = e.packet.read<Any>("carriedItem")!!
-                val bkItem = NMSItemTag.asBukkitCopy(origin)
-                if (bkItem.isNull) return
-                val adapted = NMSItemTag.asNMSCopy(bkItem.toRevertMode(e.player))
-                e.packet.write("carriedItem", adapted)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            val origin = e.packet.read<Any>("carriedItem")!!
+            val bkItem = NMSItemTag.asBukkitCopy(origin)
+            if (bkItem.isNull) return
+            val adapted = NMSItemTag.asNMSCopy(bkItem.toRevertMode(e.player))
+            e.packet.write("carriedItem", adapted)
         }
 
 //        if (versionId >= 12005) {

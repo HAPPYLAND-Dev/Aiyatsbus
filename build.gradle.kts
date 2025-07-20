@@ -26,6 +26,8 @@ subprojects {
                 Bukkit,
                 BukkitHook,
                 BukkitNMSItemTag,
+                "bukkit-nms-tag-12105",
+                "bukkit-nms-tag-12106",
                 BukkitUI,
                 BukkitUtil,
                 I18n,
@@ -37,7 +39,7 @@ subprojects {
             )
         }
         version {
-            taboolib = "6.2.3-12d4045"
+            taboolib = "6.2.3-5297ae6"
         }
     }
 

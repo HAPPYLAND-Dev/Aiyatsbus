@@ -89,6 +89,8 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
                         "enchant" to ench,
                     )
 
+                    variables += ench.variables.ordinary
+
                     slots.forEach slot@{ slot ->
                         val item: ItemStack
                         try {

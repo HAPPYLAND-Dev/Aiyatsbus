@@ -150,7 +150,7 @@ fun ProxyCommandSender.asLangList(node: String, vararg args: Any): List<String> 
  * @throws IllegalStateException 如果附魔未找到（可能是原版附魔，请确保所有原版附魔文件完整）
  */
 val Enchantment.aiyatsbusEt: AiyatsbusEnchantment
-    get() = Aiyatsbus.api().getEnchantmentManager().getEnchant(key) ?: error("Enchantment ${key.key} not found. (Maybe it's a vanilla enchantment. Please ensure all of the vanilla enchantment's files are complete.)")
+    get() = Aiyatsbus.api().getEnchantmentManager().getEnchant(key) ?: throw IllegalStateException("Enchantment ${key.key} not found. (Maybe it's a vanilla enchantment. Please ensure all of the vanilla enchantment's files are complete.)")
 
 /**
  * 根据名称或 Key 获取 AiyatsbusEnchantment 附魔对象
