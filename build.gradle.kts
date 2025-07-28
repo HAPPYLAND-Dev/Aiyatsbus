@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     id("io.izzel.taboolib") version "2.0.23" apply false
-    id("org.jetbrains.kotlin.jvm") version "1.9.25" apply false
+    id("org.jetbrains.kotlin.jvm") version "2.1.21" apply false
 }
 
 subprojects {
@@ -40,6 +40,9 @@ subprojects {
         }
         version {
             taboolib = "6.2.3-a372a91"
+            coroutines = "1.10.2"
+            skipKotlin = true
+            skipKotlinRelocate = true
         }
     }
 

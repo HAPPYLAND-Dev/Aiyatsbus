@@ -10,7 +10,6 @@ basic:
 
 alternative:
   is-vanilla: true
-  is-treasure: true
   is-tradeable: false
   is-cursed: false
   is-discoverable: false
@@ -18,7 +17,7 @@ alternative:
 dependencies:
   supports: 12100
 
-rarity: 普通
+rarity: 史诗
 targets:
   - 重锤
 

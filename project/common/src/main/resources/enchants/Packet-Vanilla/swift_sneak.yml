@@ -11,11 +11,10 @@ basic:
 alternative:
   is-vanilla: true
   is-cursed: false
-  is-treasure: true
   is-tradeable: false
   is-discoverable: false
 
-rarity: 珍奇
+rarity: 史诗
 targets:
   - 护腿
 

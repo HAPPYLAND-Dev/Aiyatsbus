@@ -10,7 +10,6 @@ basic:
 
 alternative:
   is-vanilla: true
-  is-treasure: true
   is-tradeable: false
   is-discoverable: false
 
