@@ -82,7 +82,7 @@ class FactionsUUIDComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(FactionsUUIDComp())
+            AntiGriefChecker.registerNewCompatibility("FactionsUUID") { FactionsUUIDComp() }
         }
     }
 } 

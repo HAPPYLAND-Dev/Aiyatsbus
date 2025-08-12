@@ -75,7 +75,7 @@ class HuskClaimsComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(HuskClaimsComp())
+            AntiGriefChecker.registerNewCompatibility("HuskClaims") { HuskClaimsComp() }
         }
     }
 } 

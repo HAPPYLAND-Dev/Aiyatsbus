@@ -20,9 +20,8 @@ import cc.polarastrum.aiyatsbus.core.AiyatsbusSettings
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.event.server.PluginDisableEvent
-import org.bukkit.event.server.PluginEnableEvent
-import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
+import taboolib.platform.util.bukkitPlugin
 
 /**
  * 反破坏检查器
@@ -35,9 +34,6 @@ import taboolib.common.platform.event.SubscribeEvent
  * @since 2024/3/21 21:56
  */
 object AntiGriefChecker {
-
-    /** 已注册的检查器集合 */
-    private val registeredChecker = hashSetOf<AntiGrief>()
 
     /** 缓存可用的检查器集合 */
     private val checkers = hashSetOf<AntiGrief>()
@@ -100,40 +96,11 @@ object AntiGriefChecker {
      *
      * @param comp 要注册的兼容性检查器
      */
-    fun registerNewCompatibility(comp: AntiGrief) {
-        registeredChecker += comp
-
-        if (comp.checkRunning()) {
-            checkers += comp
+    fun registerNewCompatibility(name: String, comp: () -> AntiGrief) {
+        if (checkRunning(name)) {
+            info("已注册适用于 $name 的兼容性检查器")
+            checkers += comp.invoke()
         } // 这时候肯定可以读到了，先处理一次
-    }
-
-    /**
-     * 插件启用事件监听器
-     *
-     * 当反破坏插件启用时，将对应的检查器添加到可用列表中。
-     *
-     * @param e 插件启用事件
-     */
-    @SubscribeEvent
-    fun e(e: PluginEnableEvent) {
-        val checker = registeredChecker
-            .find { it.getAntiGriefPluginName() == e.plugin.name } ?: return
-        checkers += checker
-    }
-
-    /**
-     * 插件禁用事件监听器
-     *
-     * 当反破坏插件禁用时，从可用检查器列表中移除对应的检查器。
-     *
-     * @param e 插件禁用事件
-     */
-    @SubscribeEvent
-    fun e(e: PluginDisableEvent) {
-        checkers.removeAll {
-            it.getAntiGriefPluginName() == e.plugin.name
-        }
     }
 
     /**
@@ -149,5 +116,22 @@ object AntiGriefChecker {
     private inline fun checkPermission(player: Player, action: (AntiGrief) -> Boolean): Boolean {
         if (player.isOp && AiyatsbusSettings.antiGriefIgnoreOp) return true
         return checkers.all { action(it) }
+    }
+
+    /**
+     * 检查插件是否存在
+     *
+     * @return 如果插件存在则返回 true
+     */
+    private fun checkRunning(name: String): Boolean {
+        if (name.contains('.')) {
+            return try {
+                Class.forName(name)
+                true
+            } catch (_: ClassNotFoundException) {
+                false
+            }
+        }
+        return bukkitPlugin.server.pluginManager.getPlugin(name) != null
     }
 }

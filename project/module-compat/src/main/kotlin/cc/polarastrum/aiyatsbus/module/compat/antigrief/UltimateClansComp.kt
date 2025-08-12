@@ -91,7 +91,7 @@ class UltimateClansComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(UltimateClansComp())
+            AntiGriefChecker.registerNewCompatibility("UltimateClans") { UltimateClansComp() }
         }
     }
 } 

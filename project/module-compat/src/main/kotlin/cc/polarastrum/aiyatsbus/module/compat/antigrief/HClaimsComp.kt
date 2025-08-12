@@ -84,7 +84,7 @@ class HClaimsComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(HClaimsComp())
+            AntiGriefChecker.registerNewCompatibility("hClaims") { HClaimsComp() }
         }
     }
 } 

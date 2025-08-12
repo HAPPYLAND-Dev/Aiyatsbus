@@ -75,7 +75,7 @@ class TownyComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(TownyComp())
+            AntiGriefChecker.registerNewCompatibility("Towny") { TownyComp()}
         }
     }
 } 

@@ -105,7 +105,7 @@ class IridiumSkyblockComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(IridiumSkyblockComp())
+            AntiGriefChecker.registerNewCompatibility("IridiumSkyblock") { IridiumSkyblockComp() }
         }
     }
 } 

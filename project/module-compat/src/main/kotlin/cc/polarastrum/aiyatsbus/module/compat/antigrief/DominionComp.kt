@@ -89,7 +89,7 @@ class DominionComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(DominionComp())
+            AntiGriefChecker.registerNewCompatibility("Dominion") { DominionComp() }
         }
     }
 } 

@@ -74,7 +74,7 @@ class PreciousStonesComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(PreciousStonesComp())
+            AntiGriefChecker.registerNewCompatibility("PreciousStones") { PreciousStonesComp() }
         }
     }
 } 

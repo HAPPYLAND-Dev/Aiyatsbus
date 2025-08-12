@@ -110,7 +110,7 @@ class ResidenceComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(ResidenceComp())
+            AntiGriefChecker.registerNewCompatibility("Residence") { ResidenceComp() }
         }
     }
 }

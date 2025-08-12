@@ -87,7 +87,7 @@ class RedProtectComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(RedProtectComp())
+            AntiGriefChecker.registerNewCompatibility("RedProtect") { RedProtectComp() }
         }
     }
 } 

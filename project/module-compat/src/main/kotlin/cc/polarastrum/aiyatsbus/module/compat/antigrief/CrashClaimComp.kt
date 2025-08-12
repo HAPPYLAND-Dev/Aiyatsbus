@@ -77,7 +77,7 @@ class CrashClaimComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(CrashClaimComp())
+            AntiGriefChecker.registerNewCompatibility("CrashClaim") { CrashClaimComp() }
         }
     }
 } 

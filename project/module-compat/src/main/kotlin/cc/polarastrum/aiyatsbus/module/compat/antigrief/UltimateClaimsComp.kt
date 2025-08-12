@@ -81,7 +81,7 @@ class UltimateClaimsComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(UltimateClansComp())
+            AntiGriefChecker.registerNewCompatibility("UltimateClaims") { UltimateClansComp() }
         }
     }
 } 

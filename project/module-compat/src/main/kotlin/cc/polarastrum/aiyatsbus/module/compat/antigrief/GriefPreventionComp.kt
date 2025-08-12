@@ -80,7 +80,7 @@ class GriefPreventionComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(GriefPreventionComp())
+            AntiGriefChecker.registerNewCompatibility("GriefPrevention") { GriefPreventionComp() }
         }
     }
 } 

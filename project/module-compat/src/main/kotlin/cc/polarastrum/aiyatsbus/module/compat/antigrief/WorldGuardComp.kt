@@ -112,7 +112,7 @@ class WorldGuardComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(WorldGuardComp())
+            AntiGriefChecker.registerNewCompatibility("WorldGuard") { WorldGuardComp() }
         }
     }
 } 

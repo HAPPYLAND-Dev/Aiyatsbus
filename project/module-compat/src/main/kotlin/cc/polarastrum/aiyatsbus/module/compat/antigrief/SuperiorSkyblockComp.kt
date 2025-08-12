@@ -102,7 +102,7 @@ class SuperiorSkyblockComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(SuperiorSkyblockComp())
+            AntiGriefChecker.registerNewCompatibility("SuperiorSkyblock2") { SuperiorSkyblockComp() }
         }
     }
 } 

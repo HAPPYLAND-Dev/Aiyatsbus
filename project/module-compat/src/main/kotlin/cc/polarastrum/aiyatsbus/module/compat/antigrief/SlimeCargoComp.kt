@@ -66,7 +66,7 @@ class SlimeCargoComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(SlimeCargoComp())
+            AntiGriefChecker.registerNewCompatibility("SlimeCargoNext") { SlimeCargoComp() }
         }
     }
 }

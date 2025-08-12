@@ -102,7 +102,7 @@ class BentoBoxComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(BentoBoxComp())
+            AntiGriefChecker.registerNewCompatibility("BentoBox") { BentoBoxComp() }
         }
     }
 }

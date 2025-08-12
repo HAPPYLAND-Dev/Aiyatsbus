@@ -43,7 +43,7 @@ class OrangDomainComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(OrangDomainComp())
+            AntiGriefChecker.registerNewCompatibility("OrangDomain") { OrangDomainComp() }
         }
     }
 }

@@ -85,7 +85,7 @@ class FabledSkyBlockComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(FabledSkyBlockComp())
+            AntiGriefChecker.registerNewCompatibility("FabledSkyBlock") { FabledSkyBlockComp() }
         }
     }
 } 

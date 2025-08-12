@@ -87,7 +87,7 @@ class NoBuildPlusComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(NoBuildPlusComp())
+            AntiGriefChecker.registerNewCompatibility("NoBuildPlus") { NoBuildPlusComp() }
         }
     }
 } 

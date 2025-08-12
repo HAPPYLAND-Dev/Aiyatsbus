@@ -83,21 +83,4 @@ interface AntiGrief {
      * @return 反破坏插件的名称
      */
     fun getAntiGriefPluginName(): String
-
-    /**
-     * 检查插件是否存在
-     *
-     * @return 如果插件存在则返回 true
-     */
-    fun checkRunning(): Boolean {
-        if (getAntiGriefPluginName().contains('.')) {
-            return try {
-                Class.forName(getAntiGriefPluginName())
-                true
-            } catch (_: ClassNotFoundException) {
-                false
-            }
-        }
-        return bukkitPlugin.server.pluginManager.getPlugin(getAntiGriefPluginName()) != null
-    }
 }

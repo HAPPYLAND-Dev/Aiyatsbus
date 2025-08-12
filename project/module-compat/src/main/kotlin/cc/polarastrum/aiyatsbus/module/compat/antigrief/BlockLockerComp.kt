@@ -71,7 +71,7 @@ class BlockLockerComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(BlockLockerComp())
+            AntiGriefChecker.registerNewCompatibility("BlockLocker") { BlockLockerComp() }
         }
     }
 }

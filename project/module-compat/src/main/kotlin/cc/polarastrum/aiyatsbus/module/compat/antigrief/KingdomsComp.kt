@@ -82,7 +82,7 @@ class KingdomsComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(KingdomsComp())
+            AntiGriefChecker.registerNewCompatibility("Kingdoms") { KingdomsComp() }
         }
     }
 } 
