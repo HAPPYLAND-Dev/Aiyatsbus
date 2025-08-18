@@ -40,7 +40,7 @@ subprojects {
             disableWhenPrimitiveLoaderError = true
         }
         version {
-            taboolib = "6.2.3-a372a91"
+            taboolib = "6.2.3-test-15"
             coroutines = "1.10.2"
             skipKotlin = true
             skipKotlinRelocate = true
