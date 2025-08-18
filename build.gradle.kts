@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    id("io.izzel.taboolib") version "2.0.23" apply false
+    id("io.izzel.taboolib") version "2.0.27" apply false
     id("org.jetbrains.kotlin.jvm") version "2.1.21" apply false
 }
 
@@ -26,8 +26,6 @@ subprojects {
                 Bukkit,
                 BukkitHook,
                 BukkitNMSItemTag,
-                "bukkit-nms-tag-12105",
-                "bukkit-nms-tag-12106",
                 BukkitUI,
                 BukkitUtil,
                 I18n,
@@ -37,6 +35,9 @@ subprojects {
                 MinecraftEffect,
                 Metrics
             )
+            forceDownloadInDev = false
+            disableOnSkippedVersion = false
+            disableWhenPrimitiveLoaderError = true
         }
         version {
             taboolib = "6.2.3-a372a91"
