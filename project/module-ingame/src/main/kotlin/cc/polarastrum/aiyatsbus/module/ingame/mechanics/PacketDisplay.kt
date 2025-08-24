@@ -1,5 +1,6 @@
 package cc.polarastrum.aiyatsbus.module.ingame.mechanics
 
+import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.toRevertMode
 import com.github.retrooper.packetevents.PacketEvents
@@ -10,17 +11,16 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.event.PacketSendEvent
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
-import com.github.retrooper.packetevents.protocol.item.HashedStack
 import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCreativeInventoryAction
 import com.github.retrooper.packetevents.wrapper.play.server.*
 import io.github.retrooper.packetevents.util.SpigotConversionUtil
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.event.SubscribeEvent
 
 /**
  * Aiyatsbus
@@ -39,6 +39,13 @@ object PacketDisplay {
         packetEventManager.registerListener(PacketDisplayListener())
     }
 
+    @SubscribeEvent
+    fun e(e: taboolib.module.nms.PacketReceiveEvent) {
+        if (e.packet.name == "PacketPlayInWindowClick" || e.packet.name == "ServerboundContainerClickPacket") {
+            Aiyatsbus.api().getMinecraftAPI().getPacketHandler().handleContainerClick(e)
+        }
+    }
+
     class PacketDisplayListener : PacketListenerAbstract() {
         override fun onPacketReceive(e: PacketReceiveEvent) {
             val player = e.getPlayer<Player>()
@@ -48,12 +55,26 @@ object PacketDisplay {
                     packet.itemStack = recoverItem(packet.itemStack, player)
                 }
 
-                PacketType.Play.Client.CLICK_WINDOW -> {
-                    val packet = WrapperPlayClientClickWindow(e)
-                    packet.carriedHashedStack = HashedStack.fromItemStack(
-                        SpigotConversionUtil.fromBukkitItemStack(player.itemOnCursor.toRevertMode(player))
-                    )
-                }
+//                PacketType.Play.Client.CLICK_WINDOW -> {
+//                    val packet = WrapperPlayClientClickWindow(e)
+//                    if (packet.windowClickType != WrapperPlayClientClickWindow.WindowClickType.QUICK_CRAFT) return
+//
+//                    val cursor = player.openInventory.cursor
+//                    if (packet.carriedHashedStack.isPresent) {
+//                        val reverted = SpigotConversionUtil.fromBukkitItemStack(cursor.toRevertMode(player))
+//                        val hashed = HashedStack.fromItemStack(recoverItem(reverted, player))
+//                        packet.carriedHashedStack = hashed
+//                    }
+//
+//                    if (packet.hashedSlots.size == 1 && cursor.amount == 1) {
+//                        val itemsToRecover = mutableMapOf<Int, Optional<HashedStack>>()
+//                        val reverted = SpigotConversionUtil.fromBukkitItemStack(cursor.toRevertMode(player))
+//                        val hashed = HashedStack.fromItemStack(recoverItem(reverted, player)) // 操你妈, 半残实现害我差一天
+//                        packet.hashedSlots.keys.forEach { itemsToRecover[it] = hashed }
+//                        packet.hashedSlots = itemsToRecover
+//                        e.markForReEncode(true)
+//                    }
+//                }
             }
         }
 
