@@ -10,7 +10,9 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.event.PacketSendEvent
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
+import com.github.retrooper.packetevents.protocol.item.HashedStack
 import com.github.retrooper.packetevents.protocol.item.ItemStack
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCreativeInventoryAction
@@ -48,7 +50,9 @@ object PacketDisplay {
 
                 PacketType.Play.Client.CLICK_WINDOW -> {
                     val packet = WrapperPlayClientClickWindow(e)
-                    packet.carriedItemStack = recoverItem(packet.carriedItemStack, player)
+                    packet.carriedHashedStack = HashedStack.fromItemStack(
+                        SpigotConversionUtil.fromBukkitItemStack(player.itemOnCursor.toRevertMode(player))
+                    )
                 }
             }
         }
@@ -95,7 +99,9 @@ object PacketDisplay {
                         if (data.type == EntityDataTypes.ITEMSTACK) {
                             data as EntityData<ItemStack>
                             val item = data.value as ItemStack
-                            data.value = renderItem(item, player)
+                            if (item.type == ItemTypes.ENCHANTED_BOOK) {
+                                data.value = renderItem(item, player)
+                            }
                         }
                     }
                 }
