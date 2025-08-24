@@ -12,6 +12,7 @@ taboolib {
 
         dependencies {
             name("CarbKotlin")
+            name("packetevents")
             name("PlaceholderAPI").optional(true)
             name("ItemsAdder").optional(true)
             name("BentoBox").optional(true)
