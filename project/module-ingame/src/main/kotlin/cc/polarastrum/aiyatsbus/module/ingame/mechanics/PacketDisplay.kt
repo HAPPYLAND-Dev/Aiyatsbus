@@ -3,24 +3,11 @@ package cc.polarastrum.aiyatsbus.module.ingame.mechanics
 import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.toRevertMode
-import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.PacketEventsAPI
-import com.github.retrooper.packetevents.event.EventManager
-import com.github.retrooper.packetevents.event.PacketListenerAbstract
-import com.github.retrooper.packetevents.event.PacketReceiveEvent
-import com.github.retrooper.packetevents.event.PacketSendEvent
-import com.github.retrooper.packetevents.protocol.entity.data.EntityData
-import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
-import com.github.retrooper.packetevents.protocol.item.ItemStack
-import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
-import com.github.retrooper.packetevents.protocol.packettype.PacketType
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCreativeInventoryAction
-import com.github.retrooper.packetevents.wrapper.play.server.*
-import io.github.retrooper.packetevents.util.SpigotConversionUtil
+import cc.polarastrum.aiyatsbus.core.util.isNull
 import org.bukkit.entity.Player
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.module.nms.PacketReceiveEvent
+import taboolib.module.nms.PacketSendEvent
 
 /**
  * Aiyatsbus
@@ -31,116 +18,67 @@ import taboolib.common.platform.event.SubscribeEvent
  */
 object PacketDisplay {
 
-    val packetEvents: PacketEventsAPI<*> by lazy { PacketEvents.getAPI() }
-    val packetEventManager: EventManager by lazy { packetEvents.eventManager }
-
-    @Awake(LifeCycle.ACTIVE)
-    fun registerListener() {
-        packetEventManager.registerListener(PacketDisplayListener())
+    @SubscribeEvent
+    fun e(e: PacketSendEvent) {
+        when (e.packet.name) {
+            "PacketPlayOutOpenWindowMerchant", "ClientboundMerchantOffersPacket" -> handlePacketPlayOutOpenWindowMerchant(e)
+            "ClientboundSetPlayerInventoryPacket" -> handlePacketClientboundSetPlayerInventory(e)
+            "PacketPlayOutSetSlot", "ClientboundContainerSetSlotPacket" -> handlePacketPlayOutSetSlot(e)
+            "PacketPlayOutWindowItems", "ClientboundContainerSetContentPacket" -> handlePacketPlayOutWindowItems(e)
+            "ClientboundSetCursorItemPacket" -> handlePacketClientboundSetCursorItem(e)
+        }
     }
 
     @SubscribeEvent
-    fun e(e: taboolib.module.nms.PacketReceiveEvent) {
-        if (e.packet.name == "PacketPlayInWindowClick" || e.packet.name == "ServerboundContainerClickPacket") {
-            Aiyatsbus.api().getMinecraftAPI().getPacketHandler().handleContainerClick(e)
+    fun e(e: PacketReceiveEvent) {
+        when (e.packet.name) {
+            "PacketPlayInSetCreativeSlot", "ServerboundSetCreativeModeSlotPacket" -> handlePacketPlayInSetCreativeSlot(e)
+            "PacketPlayInWindowClick", "ServerboundContainerClickPacket" -> Aiyatsbus.api().getMinecraftAPI().getPacketHandler().handleContainerClick(e)
         }
     }
 
-    class PacketDisplayListener : PacketListenerAbstract() {
-        override fun onPacketReceive(e: PacketReceiveEvent) {
-            val player = e.getPlayer<Player>()
-            when(e.packetType) {
-                PacketType.Play.Client.CREATIVE_INVENTORY_ACTION -> {
-                    val packet = WrapperPlayClientCreativeInventoryAction(e)
-                    packet.itemStack = recoverItem(packet.itemStack, player)
-                }
-
-//                PacketType.Play.Client.CLICK_WINDOW -> {
-//                    val packet = WrapperPlayClientClickWindow(e)
-//                    if (packet.windowClickType != WrapperPlayClientClickWindow.WindowClickType.QUICK_CRAFT) return
-//
-//                    val cursor = player.openInventory.cursor
-//                    if (packet.carriedHashedStack.isPresent) {
-//                        val reverted = SpigotConversionUtil.fromBukkitItemStack(cursor.toRevertMode(player))
-//                        val hashed = HashedStack.fromItemStack(recoverItem(reverted, player))
-//                        packet.carriedHashedStack = hashed
-//                    }
-//
-//                    if (packet.hashedSlots.size == 1 && cursor.amount == 1) {
-//                        val itemsToRecover = mutableMapOf<Int, Optional<HashedStack>>()
-//                        val reverted = SpigotConversionUtil.fromBukkitItemStack(cursor.toRevertMode(player))
-//                        val hashed = HashedStack.fromItemStack(recoverItem(reverted, player)) // 操你妈, 半残实现害我差一天
-//                        packet.hashedSlots.keys.forEach { itemsToRecover[it] = hashed }
-//                        packet.hashedSlots = itemsToRecover
-//                        e.markForReEncode(true)
-//                    }
-//                }
-            }
-        }
-
-        override fun onPacketSend(e: PacketSendEvent) {
-            val player = e.getPlayer<Player>()
-            when(e.packetType) {
-                PacketType.Play.Server.MERCHANT_OFFERS -> {
-                    val packet = WrapperPlayServerMerchantOffers(e)
-                    packet.merchantOffers.forEach {
-                        it.firstInputItem = renderItem(it.firstInputItem, player)
-                        it.secondInputItem = renderItem(it.secondInputItem, player)
-                        it.outputItem = renderItem(it.outputItem, player)
-                    }
-                }
-
-                PacketType.Play.Server.SET_PLAYER_INVENTORY -> {
-                    val packet = WrapperPlayServerSetPlayerInventory(e)
-                    packet.stack = renderItem(packet.stack, player)
-                }
-
-                PacketType.Play.Server.SET_SLOT -> {
-                    val packet = WrapperPlayServerSetSlot(e)
-                    packet.item = renderItem(packet.item, player)
-                }
-
-                PacketType.Play.Server.WINDOW_ITEMS -> {
-                    val packet = WrapperPlayServerWindowItems(e)
-                    packet.items = packet.items.map { renderItem(it, player) }
-                    packet.carriedItem.ifPresent {
-                        packet.setCarriedItem(renderItem(it, player))
-                    }
-                }
-
-                PacketType.Play.Server.SET_CURSOR_ITEM -> {
-                    val packet = WrapperPlayServerSetCursorItem(e)
-                    packet.stack = renderItem(packet.stack, player)
-                }
-
-                PacketType.Play.Server.ENTITY_METADATA -> {
-                    val packet = WrapperPlayServerEntityMetadata(e)
-                    @Suppress("UNCHECKED_CAST")
-                    packet.entityMetadata.forEach { data ->
-                        if (data.type == EntityDataTypes.ITEMSTACK) {
-                            data as EntityData<ItemStack>
-                            val item = data.value as ItemStack
-                            if (item.type == ItemTypes.ENCHANTED_BOOK) {
-                                data.value = renderItem(item, player)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    // Clientbound
+    fun handlePacketPlayOutOpenWindowMerchant(e: PacketSendEvent) {
+        // 1.16 - 1.20.4 全部版本都可以直接读 b, 1.20.5 改成 c
+        Aiyatsbus.api().getMinecraftAPI()
+            .getItemOperator()
+            .adaptMerchantRecipe(
+                e.packet.read<Any>("offers")!!,
+                e.player
+            )
     }
 
-    private fun renderItem(item: ItemStack?, player: Player): ItemStack? {
-        if (item == null) return null
-        return SpigotConversionUtil.fromBukkitItemStack(
-            SpigotConversionUtil.toBukkitItemStack(item).toDisplayMode(player)
-        )
+    fun handlePacketClientboundSetCursorItem(e: PacketSendEvent) {
+        e.packet.write("contents", renderItem(e.packet.read("contents")!!, e.player))
     }
 
-    private fun recoverItem(item: ItemStack?, player: Player): ItemStack? {
-        if (item == null) return null
-        return SpigotConversionUtil.fromBukkitItemStack(
-            SpigotConversionUtil.toBukkitItemStack(item).toRevertMode(player)
-        )
+    fun handlePacketClientboundSetPlayerInventory(e: PacketSendEvent) {
+        e.packet.write("contents", renderItem(e.packet.read("contents")!!, e.player))
+    }
+
+    fun handlePacketPlayOutSetSlot(e: PacketSendEvent) {
+        e.packet.write("itemStack", renderItem(e.packet.read("itemStack")!!, e.player))
+    }
+
+    fun handlePacketPlayOutWindowItems(e: PacketSendEvent) {
+        e.packet.write("items", e.packet.read<List<Any>>("items")!!.map { renderItem(it, e.player) })
+        e.packet.write("carriedItem", renderItem(e.packet.read("carriedItem")!!, e.player))
+    }
+
+    // Serverbound
+    fun handlePacketPlayInSetCreativeSlot(e: PacketReceiveEvent) {
+        e.packet.write("itemStack", recoverItem(e.packet.read("itemStack")!!, e.player))
+    }
+
+    private fun renderItem(item: Any, player: Player): Any {
+        val bkItem = Aiyatsbus.api().getMinecraftAPI().getHelper().asCraftMirror(item)
+        if (bkItem.isNull) return item
+        return Aiyatsbus.api().getMinecraftAPI().getHelper().getCraftItemStackHandle(bkItem.toDisplayMode(player))
+    }
+
+    private fun recoverItem(item: Any, player: Player): Any {
+        val bkItem = Aiyatsbus.api().getMinecraftAPI().getHelper().asCraftMirror(item)
+        if (bkItem.isNull) return item
+        return Aiyatsbus.api().getMinecraftAPI().getHelper().getCraftItemStackHandle(bkItem.toRevertMode(player))
     }
 }
