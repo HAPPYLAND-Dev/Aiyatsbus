@@ -16,12 +16,15 @@
  */
 package cc.polarastrum.aiyatsbus.module.compat.chat
 
-import taboolib.common.platform.event.EventPriority
-import taboolib.common.platform.event.SubscribeEvent
-import taboolib.library.reflex.Reflex.Companion.getProperty
-import taboolib.library.reflex.Reflex.Companion.setProperty
-import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.PacketSendEvent
+import cc.polarastrum.aiyatsbus.core.Aiyatsbus.packetEventManager
+import com.github.retrooper.packetevents.event.PacketListenerAbstract
+import com.github.retrooper.packetevents.event.PacketSendEvent
+import com.github.retrooper.packetevents.protocol.packettype.PacketType
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage
+import org.bukkit.entity.Player
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 
 /**
  * Aiyatsbus
@@ -32,26 +35,28 @@ import taboolib.module.nms.PacketSendEvent
  */
 object PacketSystemChat {
 
-    @SubscribeEvent(priority = EventPriority.MONITOR)
-    fun e(e: PacketSendEvent) {
-        val player = e.player
-        // 1.19 +
-        if (e.packet.name == "ClientboundSystemChatPacket") {
-            // 1.20.2 + 取消了 adventure$content, 所以要直接修改 IChatBaseComponent
-            if (MinecraftVersion.versionId > 12002) {
-                val content = e.packet.source.getProperty<Any>("content") ?: return
-                e.packet.source.setProperty("content", DisplayReplacer.inst.apply(content, player))
-            } else {
-                // 1.19 - 1.20.2 是有一个 adventure$content 存储 Adventure Component, 直接修改这个字段即可
-                val adventure = e.packet.source.getProperty<Any>("adventure\$content", remap = false) ?: return
-                e.packet.source.setProperty("adventure\$content", DisplayReplacer.inst.apply(adventure, player), remap = false)
+    @Awake(LifeCycle.ACTIVE)
+    fun registerListener() {
+        packetEventManager.registerListener(PacketChatListener())
+    }
+
+    class PacketChatListener : PacketListenerAbstract() {
+        override fun onPacketSend(e: PacketSendEvent) {
+            val player = e.getPlayer<Player>()
+            when(e.packetType) {
+                PacketType.Play.Server.CHAT_MESSAGE -> {
+                    val wrapper = WrapperPlayServerChatMessage(e)
+                    val message = wrapper.message
+                    val content = message.chatContent
+                    message.chatContent = DisplayReplacer.inst.apply(content, player)
+                    wrapper.message = message
+                }
+                PacketType.Play.Server.SYSTEM_CHAT_MESSAGE -> {
+                    val wrapper = WrapperPlayServerSystemChatMessage(e)
+                    val message = wrapper.message
+                    wrapper.message = DisplayReplacer.inst.apply(message, player)
+                }
             }
-        }
-        // 1.16 - 1.18 的数据包与高版本不同, 要修改 PacketPlayOutChat 的 message, message 是 IChatBaseComponent
-        if (e.packet.name == "PacketPlayOutChat") {
-            val field = if (MinecraftVersion.isUniversal) "message" else "a"
-            val message = e.packet.source.getProperty<Any>(field) ?: return
-            e.packet.source.setProperty(field, DisplayReplacer.inst.apply(message, player))
         }
     }
 }

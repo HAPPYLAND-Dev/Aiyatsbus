@@ -1,4 +1,4 @@
-rootProject.name = "Aiyatsbus"
+rootProject.name = "AiyatsbusH"
 
 include(
     "plugin",

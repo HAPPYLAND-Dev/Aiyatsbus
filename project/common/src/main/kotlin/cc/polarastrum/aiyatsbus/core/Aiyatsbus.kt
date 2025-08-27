@@ -16,6 +16,10 @@
  */
 package cc.polarastrum.aiyatsbus.core
 
+import com.github.retrooper.packetevents.PacketEvents
+import com.github.retrooper.packetevents.PacketEventsAPI
+import com.github.retrooper.packetevents.event.EventManager
+
 /**
  * Aiyatsbus 核心对象
  *
@@ -29,6 +33,8 @@ object Aiyatsbus {
 
     /** API 实例 */
     private var api: AiyatsbusAPI? = null
+    val packetEvents: PacketEventsAPI<*> by lazy { PacketEvents.getAPI() }
+    val packetEventManager: EventManager by lazy { packetEvents.eventManager }
 
     /**
      * 获取 API 实例
