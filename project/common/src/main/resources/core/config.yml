@@ -17,13 +17,7 @@ Settings:
   # 如果不需要, 将该项设为空集, 例如:
   # command-aliases: [ ]
   # 注: 更改后重启生效
-  command-aliases:
-#    - se # 该命令别称可能会引起和 CMI 的冲突, 所以默认关闭
-    - spe
-    - splendidenchants
-    - nerous
-    - nos
-    - nereusopus
+  command-aliases: [ ]
   # 是否开启 ItemsAdder 支持
   support-items-adder: true
   # 是否开启脚本预热, 会在附魔加载/重载时编译一次脚本
@@ -63,8 +57,4 @@ Settings:
   # 是否开启调试信息
   debug: false
   # 以下用户会收到 Debug 信息
-  debug-users:
-    - Y_Mical
-    - TabooLib
-    - xiaozhangup
-    - HamsterYDS
+  debug-users: [ ]

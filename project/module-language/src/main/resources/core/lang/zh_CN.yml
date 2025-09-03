@@ -322,8 +322,8 @@ command-script-reload-all:
 # message: 发送聊天栏信息
 # actionbar: 发送行为栏信息
 # title: 发送标题信息, 大小标题用分号隔开
-celebrate-notice-epic-message: "{prefix} &7恭喜玩家 {player} 获得了史诗附魔 {enchant}"
-celebrate-notice-legendary-message: "{prefix} &7恭喜玩家 {player} 获得了传奇附魔 {enchant}"
-celebrate-notice-legendary-title: "恭喜玩家 {player};获得了传奇附魔 {enchant}"
-celebrate-notice-splendid-message: "{prefix} &7恭喜玩家 {player} 获得了稀世附魔 {enchant}"
-celebrate-notice-splendid-title: "恭喜玩家 {player};获得了稀世附魔 {enchant}"
+# celebrate-notice-epic-message: "{prefix} &7恭喜玩家 {player} 获得了史诗附魔 {enchant}"
+# celebrate-notice-legendary-message: "{prefix} &7恭喜玩家 {player} 获得了传奇附魔 {enchant}"
+# celebrate-notice-legendary-title: "恭喜玩家 {player};获得了传奇附魔 {enchant}"
+# celebrate-notice-splendid-message: "{prefix} &7恭喜玩家 {player} 获得了稀世附魔 {enchant}"
+# celebrate-notice-splendid-title: "恭喜玩家 {player};获得了稀世附魔 {enchant}"
