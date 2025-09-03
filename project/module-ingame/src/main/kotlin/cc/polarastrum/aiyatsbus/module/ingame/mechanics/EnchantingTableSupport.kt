@@ -26,6 +26,7 @@ import cc.polarastrum.aiyatsbus.core.util.calcToDouble
 import cc.polarastrum.aiyatsbus.core.util.calcToInt
 import cc.polarastrum.aiyatsbus.core.util.serialized
 import com.google.common.collect.HashBasedTable
+import me.xiaozhangup.whale.service.network.NetworkService
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.enchantments.EnchantmentOffer
@@ -265,15 +266,12 @@ object EnchantingTableSupport {
             val rarity = (enchant as AiyatsbusEnchantment).rarity
             (celebrateNotice[rarity.name] ?: celebrateNotice[rarity.id])?.let { lines ->
                 lines.forEach { line ->
-                    val type = line.substringBefore(":")
-                    onlinePlayers.forEach {
-                        val text = it.asLangOrNull(line.substringAfter(":"), event.enchanter.name to "player", enchant.displayName(level, true) to "enchant") ?: return@forEach
-                        when (type) {
-                            "actionbar" -> it.sendActionBar(text)
-                            "message" -> it.sendMessage(text)
-                            "title" -> it.sendTitle(text.split(";")[0], text.split(";")[1])
-                        }
-                    }
+                    val text = player.asLangOrNull(
+                        line.substringAfter(":"),
+                        event.enchanter.name to "player",
+                        enchant.displayName(level, true) to "enchant"
+                    ) ?: return@forEach
+                    NetworkService.broadcastMessage(text)
                 }
             }
         }

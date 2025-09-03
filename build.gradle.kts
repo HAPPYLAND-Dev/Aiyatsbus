@@ -50,6 +50,7 @@ subprojects {
     // 仓库
     repositories {
         mavenCentral()
+        mavenLocal()
         maven("https://jitpack.io")
         maven("https://maven.citizensnpcs.co/repo")
         maven("https://repo.codemc.org/repository/maven-public/")
@@ -60,6 +61,7 @@ subprojects {
         compileOnly(kotlin("stdlib"))
         compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
         compileOnly("com.github.retrooper:packetevents-spigot:2.9.4")
+        compileOnly("me.xiaozhangup:WhaleMechanism:1.0.1")
     }
 
     // 编译配置

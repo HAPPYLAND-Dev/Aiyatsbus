@@ -3,7 +3,7 @@
 #         Powered by TabooLib 6.2         #
 
 
-prefix: '&8\[&{#D8D8FA}附魔&8\]'
+prefix: '&8[&{#D8D8FA}附魔&8]'
 
 loading-rarity: '{prefix} &a良好 &8| &a{0} &3个附魔品质已加载 &8({1} ms)'
 loading-target: '{prefix} &a良好 &8| &a{0} &3个附魔对象已加载 &8({1} ms)'
@@ -325,5 +325,5 @@ command-script-reload-all:
 # celebrate-notice-epic-message: "{prefix} &7恭喜玩家 {player} 获得了史诗附魔 {enchant}"
 # celebrate-notice-legendary-message: "{prefix} &7恭喜玩家 {player} 获得了传奇附魔 {enchant}"
 # celebrate-notice-legendary-title: "恭喜玩家 {player};获得了传奇附魔 {enchant}"
-# celebrate-notice-splendid-message: "{prefix} &7恭喜玩家 {player} 获得了稀世附魔 {enchant}"
-# celebrate-notice-splendid-title: "恭喜玩家 {player};获得了稀世附魔 {enchant}"
+celebrate-notice-splendid-message: "{prefix} &7恭喜玩家 {player} 获得了异宝附魔 {enchant}"
+# celebrate-notice-splendid-title: "恭喜玩家 {player};获得了异宝附魔 {enchant}"
