@@ -309,7 +309,8 @@ object EnchantingTableSupport {
                 val level = if (player.hasPermission(fullLevelPrivilege)) maxLevel else levelFormula.calcToInt(
                     "bonus" to bonus,
                     "max_level" to limit,
-                    "button" to i + 1
+                    "button" to i + 1,
+                    "rand" to random.nextDouble()
                 ).coerceIn(1, limit)
 
 //                if (result.values.any { it.first == enchant && it.second == level }) {
