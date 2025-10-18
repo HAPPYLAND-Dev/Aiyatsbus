@@ -46,7 +46,7 @@ class QuickShopComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(QuickShopComp())
+            AntiGriefChecker.registerNewCompatibility("QuickShop") { QuickShopComp() }
         }
     }
 }

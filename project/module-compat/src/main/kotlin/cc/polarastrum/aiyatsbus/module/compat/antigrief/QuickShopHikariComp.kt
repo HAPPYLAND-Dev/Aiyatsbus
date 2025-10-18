@@ -46,7 +46,7 @@ class QuickShopHikariComp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(QuickShopHikariComp())
+            AntiGriefChecker.registerNewCompatibility("QuickShop-Hikari") { QuickShopHikariComp() }
         }
     }
 }

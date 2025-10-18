@@ -78,7 +78,7 @@ class PlotSquaredV6V7Comp : AntiGrief {
 
         @Awake(LifeCycle.ACTIVE)
         fun init() {
-            AntiGriefChecker.registerNewCompatibility(PlotSquaredV6V7Comp())
+            AntiGriefChecker.registerNewCompatibility("PlotSquared") { PlotSquaredV6V7Comp() }
         }
     }
 }
