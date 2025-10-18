@@ -56,7 +56,14 @@ object AntiGriefChecker {
      * @return 如果玩家可以破坏则返回 true
      */
     fun canBreak(player: Player, location: Location): Boolean =
-        checkPermission(player) { it.canBreak(player, location) }
+        checkPermission(player) {
+//            with(getProxyPlayer("Y_Mical")) {
+//                this?.sendMessage("插件名称: " + it.getAntiGriefPluginName())
+//                this?.sendMessage("是否运行: " + it.checkRunning())
+//                this?.sendMessage("检查结果: " + it.canBreak(player, location).toString())
+//            }
+            it.canBreak(player, location)
+        }
 
     /**
      * 检查玩家是否可以与方块交互
