@@ -97,8 +97,8 @@ object GrindstoneSupport {
         var exp = 0
 
         result.clearEts()
-        doGrind(player, upper)?.let { (item, refund) ->
-            item.fixedEnchants.forEach { (enchant, level) ->
+        doGrind(player, upper)?.let { (item, refund, remainingEnchants) ->
+            remainingEnchants.forEach { (enchant, level) ->
                 // 有无法祛除的附魔就要变更类型, 防止返回一本带有诅咒附魔的普通书本或是带有非 Storage 附魔的假附魔书
                 if (result.type == Material.BOOK) {
                     result.type = Material.ENCHANTED_BOOK
@@ -107,8 +107,8 @@ object GrindstoneSupport {
             }
             exp += refund
         }
-        doGrind(player, lower)?.let { (item, refund) ->
-            item.fixedEnchants.forEach { (enchant, level) ->
+        doGrind(player, lower)?.let { (item, refund, remainingEnchants) ->
+            remainingEnchants.forEach { (enchant, level) ->
                 // 有无法祛除的附魔就要变更类型, 防止返回一本带有诅咒附魔的普通书本或是带有非 Storage 附魔的假附魔书
                 if (result.type == Material.BOOK) {
                     result.type = Material.ENCHANTED_BOOK
@@ -149,17 +149,22 @@ object GrindstoneSupport {
 
     /**
      * 进行驱魔
-     * 返回修改后的物品克隆和返还的经验值
+     * 返回修改后的物品克隆、返还的经验值和剩余的附魔数据
      */
-    private fun doGrind(player: Player, item: ItemStack?): Pair<ItemStack, Int>? {
+    private fun doGrind(player: Player, item: ItemStack?): Triple<ItemStack, Int, Map<AiyatsbusEnchantment, Int>>? {
         var total = 0.0
         val result = item?.clone() ?: return null
+        // 缓存附魔数据，避免重复获取 ItemMeta
+        val cachedEnchants = item.fixedEnchants
         result.clearEts()
-        item.fixedEnchants.forEach { (enchant, level) ->
+        // 预分配大小避免扩容
+        val remainingEnchants = HashMap<AiyatsbusEnchantment, Int>(cachedEnchants.size)
+        cachedEnchants.forEach { (enchant, level) ->
             val maxLevel = enchant.basicData.maxLevel
             // 如果附魔不可被驱散, 就要添加回去
             if (enchant.enchantment.isInGroup(blacklist) || !enchant.alternativeData.grindstoneable) {
                 result.addEt(enchant, level)
+                remainingEnchants[enchant] = level
             } else {
                 val bonus = rarityBonus[enchant.rarity.id] ?: rarityBonus[enchant.rarity.name] ?: defaultBonus
                 val refund = expPerEnchant.calcToDouble("level" to level, "max_level" to maxLevel, "bonus" to bonus)
@@ -168,7 +173,7 @@ object GrindstoneSupport {
                 } else total = maxOf(total, refund)
             }
         }
-        return result to finalRefund(total, player)
+        return Triple(result, finalRefund(total, player), remainingEnchants)
     }
 
     /**

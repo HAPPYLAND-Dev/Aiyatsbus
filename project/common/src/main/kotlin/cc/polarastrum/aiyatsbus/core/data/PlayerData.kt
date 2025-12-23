@@ -45,7 +45,10 @@ data class PlayerData(private val serializedData: String?) {
     init {
         serializedData?.let {
             serializedData.split("||") // 通过 || 分割数据
-                .map { pair -> pair.split("==")[0] to pair.split("==")[1] } // 等号拼接键和值
+                .map { pair ->
+                    val parts = pair.split("==", limit = 2)
+                    parts[0] to parts.getOrElse(1) { "" }
+                } // 等号拼接键和值
                 .forEach { (key, value) ->
                     when (key) {
                         "menu_mode" -> menuMode = MenuMode.valueOf(value)
@@ -58,8 +61,8 @@ data class PlayerData(private val serializedData: String?) {
                                 filters[AiyatsbusEnchantmentFilter.filterTypes[tot++]]!!.putAll(content.split(";")
                                     .filter { filter -> filter.isNotBlank() }
                                     .associate { filter ->
-                                        filter.split("=")[0] to
-                                                FilterStatement.valueOf(filter.split("=")[1])
+                                        val parts = filter.split("=", limit = 2)
+                                        parts[0] to FilterStatement.valueOf(parts[1])
                                     })
                             }
                         }
@@ -68,7 +71,10 @@ data class PlayerData(private val serializedData: String?) {
                             cooldown.putAll(value
                                 .split(";")
                                 .filter { pair -> pair.isNotBlank() }
-                                .associate { pair -> pair.split("=")[0] to pair.split("=")[1].clong })
+                                .associate { pair ->
+                                    val parts = pair.split("=", limit = 2)
+                                    parts[0] to parts[1].clong
+                                })
                         }
 
                         else -> {}

@@ -70,23 +70,28 @@ object VillagerSupport {
     fun acquireTrade(e: VillagerAcquireTradeEvent) {
         val origin = e.recipe
         val result = origin.result.clone()
+        val fixedEnchants = result.fixedEnchants
 
-        if (result.fixedEnchants.isEmpty()) return
-        if (!enableEnchantTrade) {
+        if (fixedEnchants.isEmpty() || !enableEnchantTrade) {
             e.isCancelled = true
             return
         }
 
         result.clearEts()
+        var addedAny = false
         repeat(amount) {
             val drawEt = (Group[tradeGroup]?.enchantments ?: listOf()).filter {
                 it.limitations.checkAvailable(CheckType.MERCHANT, result).isSuccess && it.alternativeData.isTradeable && !it.inaccessible
             }.drawEt() ?: return@repeat
             val level = random(1, drawEt.alternativeData.getTradeLevelLimit(drawEt.basicData.maxLevel, maxLevelLimit))
             result.addEt(drawEt, level)
+            addedAny = true
         }
-        if (result.fixedEnchants.isEmpty())
+
+        if (!addedAny) {
             e.isCancelled = true
+            return
+        }
 
         origin.run origin@{
             e.recipe = (if (MinecraftVersion.versionId >= 11801) {
