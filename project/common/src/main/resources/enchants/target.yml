@@ -16,6 +16,7 @@ swords:
     - STONE_SWORD
     - WOODEN_SWORD
     - NETHERITE_SWORD
+    - COPPER_SWORD
 axes:
   max: 12
   name: 斧
@@ -29,6 +30,23 @@ axes:
     - STONE_AXE
     - WOODEN_AXE
     - NETHERITE_AXE
+    - COPPER_AXE
+spears:
+  max: 12
+  name: 矛
+  skull: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRhNzNhYzhjMTUyZDgwZGJlNTYyNGQ5YWQ0MzFjNTA2MzhjMzU4Mjk2OGE1YmZmZmRkYjVhY2RmYzZjOGI5YSJ9fX0="
+  active-slots:
+    - HAND
+  types:
+    - WOODEN_SPEAR
+    - STONE_SPEAR
+    - COPPER_SPEAR
+    - IRON_SPEAR
+    - GOLDEN_SPEAR
+    - DIAMOND_SPEAR
+    - NETHERITE_SPEAR
+  dependencies:
+    supports: 12111
 maces:
   max: 7
   name: 重锤
@@ -63,6 +81,7 @@ pickaxes:
     - STONE_PICKAXE
     - WOODEN_PICKAXE
     - NETHERITE_PICKAXE
+    - COPPER_PICKAXE
 shovels:
   max: 6
   name: 铲
@@ -76,6 +95,7 @@ shovels:
     - STONE_SHOVEL
     - WOODEN_SHOVEL
     - NETHERITE_SHOVEL
+    - COPPER_SHOVEL
 hoes:
   max: 6
   name: 锄
@@ -90,6 +110,7 @@ hoes:
     - STONE_HOE
     - WOODEN_HOE
     - NETHERITE_HOE
+    - COPPER_HOE
 bow:
   max: 12
   name: 弓
@@ -128,6 +149,7 @@ helmets:
     - NETHERITE_HELMET
     - CHAINMAIL_HELMET
     - TURTLE_HELMET
+    - COPPER_HELMET
 chestplates:
   max: 8
   name: 胸甲
@@ -141,6 +163,7 @@ chestplates:
     - LEATHER_CHESTPLATE
     - NETHERITE_CHESTPLATE
     - CHAINMAIL_CHESTPLATE
+    - COPPER_CHESTPLATE
 leggings:
   max: 8
   name: 护腿
@@ -154,6 +177,7 @@ leggings:
     - LEATHER_LEGGINGS
     - NETHERITE_LEGGINGS
     - CHAINMAIL_LEGGINGS
+    - COPPER_LEGGINGS
 boots:
   max: 8
   name: 靴子
@@ -167,6 +191,7 @@ boots:
     - LEATHER_BOOTS
     - NETHERITE_BOOTS
     - CHAINMAIL_BOOTS
+    - COPPER_BOOTS
 elytra:
   max: 6
   name: 鞘翅
@@ -306,6 +331,21 @@ damageable:
     - STONE_SWORD
     - WOODEN_SWORD
     - NETHERITE_SWORD
+    - COPPER_SWORD
+    - WOODEN_SPEAR
+    - STONE_SPEAR
+    - COPPER_SPEAR
+    - IRON_SPEAR
+    - GOLDEN_SPEAR
+    - DIAMOND_SPEAR
+    - NETHERITE_SPEAR
+    - COPPER_PICKAXE
+    - COPPER_SHOVEL
+    - COPPER_HOE
+    - COPPER_HELMET
+    - COPPER_CHESTPLATE
+    - COPPER_LEGGINGS
+    - COPPER_BOOTS
 all:
   max: 16
   name: 所有物品
@@ -390,3 +430,18 @@ all:
     - STONE_SWORD
     - WOODEN_SWORD
     - NETHERITE_SWORD
+    - COPPER_SWORD
+    - WOODEN_SPEAR
+    - STONE_SPEAR
+    - COPPER_SPEAR
+    - IRON_SPEAR
+    - GOLDEN_SPEAR
+    - DIAMOND_SPEAR
+    - NETHERITE_SPEAR
+    - COPPER_PICKAXE
+    - COPPER_SHOVEL
+    - COPPER_HOE
+    - COPPER_HELMET
+    - COPPER_CHESTPLATE
+    - COPPER_LEGGINGS
+    - COPPER_BOOTS
