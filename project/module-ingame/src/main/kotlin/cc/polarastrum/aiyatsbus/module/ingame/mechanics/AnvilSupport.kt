@@ -114,7 +114,7 @@ object AnvilSupport {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onAnvil(e: PrepareAnvilEvent) {
         e.inventory.maximumRepairCost = maxCost
         val renameText = e.inventory.renameText ?: ""
