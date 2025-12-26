@@ -37,7 +37,7 @@ repositories {
 dependencies {
     taboo("ink.ptms:um:1.0.9")
     taboo("com.github.Redempt:Crunch:1.0.7")
-    taboo("org.tabooproject.fluxon:core:1.0-SNAPSHOT")
+    taboo("org.tabooproject.fluxon:core:1.4.0")
 }
 
 tasks {
