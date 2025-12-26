@@ -62,6 +62,13 @@ data class Target @JvmOverloads constructor(
         .mapNotNull { XMaterial.matchXMaterial(it).getOrNull()?.parseMaterial() },
     /** 头颅材质值，用于自定义头颅显示 */
     val skull: String = root.getString("skull", "")!!,
+    /** 不同材质的最大附魔数 */
+    val typesCapability: Map<Material, Int> = root.getStringList("max-types").mapNotNull {
+        val (material, num) = it.split(":", limit = 2)
+        XMaterial.matchXMaterial(material).getOrNull()?.parseMaterial()?.let { mat ->
+            mat to num.toInt()
+        }
+    }.toMap()
 ) : RegistryItem(root), Dependency {
 
     /**

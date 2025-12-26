@@ -57,8 +57,10 @@ abstract class AiyatsbusEnchantmentBase(
 
     override val variables: Variables = Variables(config.getConfigurationSection("variables"))
 
+    /** 手动缓存, 节约性能 */
+    private var _targets: List<Target>? = null
     override val targets: List<Target>
-        get() = config.getStringList("targets").mapNotNull(::aiyatsbusTarget)
+        get() = _targets ?: config.getStringList("targets").mapNotNull(::aiyatsbusTarget).also { _targets = it }
 
     override val displayer: Displayer = Displayer(config.getConfigurationSection("display")!!, this)
 

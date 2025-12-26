@@ -159,7 +159,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
                             add(
                                 componentFromRaw(
                                     settings.capabilityLine
-                                        .replace("capability" to item.type.capability - fixedEnchants.size)
+                                        .replace("capability" to item.capability - fixedEnchants.size)
                                         .component().buildColored().toRawMessage()
                                 )
                             )

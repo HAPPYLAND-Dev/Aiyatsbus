@@ -24,16 +24,20 @@ import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantmentBase
 import cc.polarastrum.aiyatsbus.core.fixedEnchants
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.toRevertMode
+import cc.polarastrum.aiyatsbus.core.util.set
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.persistence.PersistentDataType
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.common5.util.createBar
 import taboolib.module.chat.colored
 import taboolib.module.nms.NMSItemTag
 import taboolib.platform.util.giveItem
+import taboolib.platform.util.modifyMeta
 import kotlin.system.measureTimeMillis
 
 /**
@@ -45,61 +49,63 @@ import kotlin.system.measureTimeMillis
  */
 val devSubCommand = subCommand {
     execute<Player> { sender, _, _ ->
-//        sender.giveItem(sender.equipment.itemInMainHand.toDisplayMode(sender))
-        val item = sender.equipment.itemInMainHand
-        val clone = item.clone()
-
-        submitAsync {
-            testItemStackCopy(clone, sender)
-            testItemStackHandle(clone, sender)
-        }
-
-        sender.giveItem(clone.toDisplayMode(sender))
-        sender.giveItem(clone.toRevertMode(sender))
-
-        if (true) return@execute
-
-        sender.sendMessage("----- fixedEnchants -----")
-        val aiyatsbusEt = item.fixedEnchants.keys.firstOrNull()
-        if (aiyatsbusEt != null) {
-            sender.sendMessage(aiyatsbusEt.javaClass.name)
-            sender.sendMessage((aiyatsbusEt is AiyatsbusEnchantment).toString())
-            sender.sendMessage((aiyatsbusEt is AiyatsbusEnchantmentBase).toString())
-            sender.sendMessage((aiyatsbusEt is Enchantment).toString())
-        }
-        sender.sendMessage("----- enchantments -----")
-        val bukkitEt = item.enchantments.keys.firstOrNull()
-        if (bukkitEt != null) {
-            sender.sendMessage(bukkitEt.javaClass.name)
-            sender.sendMessage((bukkitEt is AiyatsbusEnchantment).toString())
-            sender.sendMessage((bukkitEt is AiyatsbusEnchantmentBase).toString())
-            sender.sendMessage((bukkitEt is Enchantment).toString())
-        }
-        sender.sendMessage("----- AiyatsbusEnchantmentManager -----")
-        val et3 = Aiyatsbus.api().getEnchantmentManager().getEnchant("accumulating")
-        if (et3 != null) {
-            sender.sendMessage(et3.javaClass.name)
-            sender.sendMessage((et3 is AiyatsbusEnchantment).toString())
-            sender.sendMessage((et3 is AiyatsbusEnchantmentBase).toString())
-            sender.sendMessage((et3 is Enchantment).toString())
-        }
-        sender.sendMessage("----- Bukkit Enchantment getByKey -----")
-        val et4 = Enchantment.getByKey(NamespacedKey.minecraft("accumulating"))
-        if (et4 != null) {
-            sender.sendMessage(et4.javaClass.name)
-            sender.sendMessage((et4 is AiyatsbusEnchantment).toString())
-            sender.sendMessage((et4 is AiyatsbusEnchantmentBase).toString())
-            sender.sendMessage((et4 is Enchantment).toString())
-        }
-        sender.sendMessage("----- Bukkit Enchantment getByName -----")
-        val et5 = Enchantment.getByName("accumulating")
-        if (et5 != null) {
-            sender.sendMessage(et5.javaClass.name)
-            sender.sendMessage((et5 is AiyatsbusEnchantment).toString())
-            sender.sendMessage((et5 is AiyatsbusEnchantmentBase).toString())
-            sender.sendMessage((et5 is Enchantment).toString())
-        }
+        sender.itemInHand.modifyMeta<ItemMeta> { this["aiyatsbus_item_capability", PersistentDataType.INTEGER] = 999 }
     }
+////        sender.giveItem(sender.equipment.itemInMainHand.toDisplayMode(sender))
+//        val item = sender.equipment.itemInMainHand
+//        val clone = item.clone()
+//
+//        submitAsync {
+//            testItemStackCopy(clone, sender)
+//            testItemStackHandle(clone, sender)
+//        }
+//
+//        sender.giveItem(clone.toDisplayMode(sender))
+//        sender.giveItem(clone.toRevertMode(sender))
+//
+//        if (true) return@execute
+//
+//        sender.sendMessage("----- fixedEnchants -----")
+//        val aiyatsbusEt = item.fixedEnchants.keys.firstOrNull()
+//        if (aiyatsbusEt != null) {
+//            sender.sendMessage(aiyatsbusEt.javaClass.name)
+//            sender.sendMessage((aiyatsbusEt is AiyatsbusEnchantment).toString())
+//            sender.sendMessage((aiyatsbusEt is AiyatsbusEnchantmentBase).toString())
+//            sender.sendMessage((aiyatsbusEt is Enchantment).toString())
+//        }
+//        sender.sendMessage("----- enchantments -----")
+//        val bukkitEt = item.enchantments.keys.firstOrNull()
+//        if (bukkitEt != null) {
+//            sender.sendMessage(bukkitEt.javaClass.name)
+//            sender.sendMessage((bukkitEt is AiyatsbusEnchantment).toString())
+//            sender.sendMessage((bukkitEt is AiyatsbusEnchantmentBase).toString())
+//            sender.sendMessage((bukkitEt is Enchantment).toString())
+//        }
+//        sender.sendMessage("----- AiyatsbusEnchantmentManager -----")
+//        val et3 = Aiyatsbus.api().getEnchantmentManager().getEnchant("accumulating")
+//        if (et3 != null) {
+//            sender.sendMessage(et3.javaClass.name)
+//            sender.sendMessage((et3 is AiyatsbusEnchantment).toString())
+//            sender.sendMessage((et3 is AiyatsbusEnchantmentBase).toString())
+//            sender.sendMessage((et3 is Enchantment).toString())
+//        }
+//        sender.sendMessage("----- Bukkit Enchantment getByKey -----")
+//        val et4 = Enchantment.getByKey(NamespacedKey.minecraft("accumulating"))
+//        if (et4 != null) {
+//            sender.sendMessage(et4.javaClass.name)
+//            sender.sendMessage((et4 is AiyatsbusEnchantment).toString())
+//            sender.sendMessage((et4 is AiyatsbusEnchantmentBase).toString())
+//            sender.sendMessage((et4 is Enchantment).toString())
+//        }
+//        sender.sendMessage("----- Bukkit Enchantment getByName -----")
+//        val et5 = Enchantment.getByName("accumulating")
+//        if (et5 != null) {
+//            sender.sendMessage(et5.javaClass.name)
+//            sender.sendMessage((et5 is AiyatsbusEnchantment).toString())
+//            sender.sendMessage((et5 is AiyatsbusEnchantmentBase).toString())
+//            sender.sendMessage((et5 is Enchantment).toString())
+//        }
+//    }
 }
 
 private fun testItemStackCopy(item: ItemStack, player: Player) {

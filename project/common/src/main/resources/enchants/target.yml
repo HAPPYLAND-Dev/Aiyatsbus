@@ -17,6 +17,8 @@ swords:
     - WOODEN_SWORD
     - NETHERITE_SWORD
     - COPPER_SWORD
+#  max-types:
+#    - DIAMOND_SWORD:12
 axes:
   max: 12
   name: 斧

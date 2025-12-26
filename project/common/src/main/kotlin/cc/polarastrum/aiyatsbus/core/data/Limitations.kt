@@ -288,7 +288,7 @@ data class Limitations(
         return when (type) {
             SLOT -> checkSlot(itemType, slot, ignoreSlot)
             TARGET -> checkTarget(checkType, creature, itemType, use)
-            MAX_CAPABILITY -> checkMaxCapability(itemType, enchants)
+            MAX_CAPABILITY -> checkMaxCapability(item, enchants)
             DEPENDENCE_ENCHANT -> checkDependenceEnchant(value, enchants)
             CONFLICT_ENCHANT -> checkConflictEnchant(value, enchants)
             DEPENDENCE_GROUP -> checkDependenceGroup(value, enchants)
@@ -350,8 +350,8 @@ data class Limitations(
      * @param enchants 当前附魔列表
      * @return 检查结果
      */
-    private fun checkMaxCapability(itemType: Material, enchants: Map<AiyatsbusEnchantment, Int>): Boolean {
-        return itemType.capability > enchants.size
+    private fun checkMaxCapability(item: ItemStack, enchants: Map<AiyatsbusEnchantment, Int>): Boolean {
+        return item.capability > enchants.size
     }
 
     /**
