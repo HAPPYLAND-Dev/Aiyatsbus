@@ -19,6 +19,7 @@ package cc.polarastrum.aiyatsbus.core
 import cc.polarastrum.aiyatsbus.core.data.*
 import cc.polarastrum.aiyatsbus.core.data.registry.*
 import cc.polarastrum.aiyatsbus.core.data.registry.Target
+import cc.polarastrum.aiyatsbus.core.util.get
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
@@ -27,9 +28,11 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.persistence.PersistentDataType
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.function.getProxyPlayer
 import taboolib.common5.RandomList
+import taboolib.module.nms.getItemTag
 import taboolib.platform.util.modifyMeta
 
 /**
@@ -396,7 +399,12 @@ val Material.belongedTargets get() = Target.values.filter(::isInTarget)
  *
  * @return 最大附魔数量，默认为 32
  */
-val Material.capability get() = belongedTargets.minOfOrNull { it.capability } ?: 32
+val Material.capability: Int get() {
+    val targets = belongedTargets
+    return targets.mapNotNull { it.typesCapability[this] }.minOrNull() ?: targets.minOfOrNull { it.capability } ?: 32
+}
+
+val ItemStack.capability get() = itemMeta["aiyatsbus_item_capability", PersistentDataType.INTEGER] ?: type.capability
 
 /**
  * 检查附魔是否处于某个分组

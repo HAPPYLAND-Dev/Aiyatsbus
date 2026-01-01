@@ -114,7 +114,7 @@ object AnvilSupport {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onAnvil(e: PrepareAnvilEvent) {
         e.inventory.maximumRepairCost = maxCost
         val renameText = e.inventory.renameText ?: ""
@@ -239,7 +239,10 @@ object AnvilSupport {
         val tempLeftItem = left.clone()
         val leftEnchants = left.fixedEnchants
         val rightEnchants = right.fixedEnchants
-        val outEnchants = leftEnchants.toMutableMap()
+        // 预分配大小避免扩容
+        val outEnchants = HashMap<AiyatsbusEnchantment, Int>(leftEnchants.size + rightEnchants.size).apply {
+            putAll(leftEnchants)
+        }
 
         for ((rightEnchant, level) in rightEnchants) {
             val maxLevel = rightEnchant.basicData.maxLevel

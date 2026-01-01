@@ -125,7 +125,32 @@ data class Limitations(
         item: ItemStack,
         creature: LivingEntity? = null,
         slot: EquipmentSlot? = null,
-        ignoreSlot: Boolean = false
+        ignoreSlot: Boolean = false,
+    ): CheckResult {
+        return checkAvailable(checkType, item, creature, slot, ignoreSlot, cachedEnchants = null)
+    }
+
+    /**
+     * 检查操作是否被允许
+     *
+     * 检查附魔是否可以应用到物品上、使用时是否可以生效、村民生成新交易等。
+     * 根据检查类型和物品信息进行相应的限制检查。
+     *
+     * @param checkType 检查类型
+     * @param item 相关物品（如正在被附魔的书、正在使用的剑等）
+     * @param creature 生物实体（通常是玩家）
+     * @param slot 装备槽位
+     * @param ignoreSlot 是否忽略槽位检查（如烙印诅咒等）
+     * @param cachedEnchants 缓存的附魔数据，避免重复获取 ItemMeta
+     * @return 检查结果
+     */
+    fun checkAvailable(
+        checkType: CheckType,
+        item: ItemStack,
+        creature: LivingEntity? = null,
+        slot: EquipmentSlot? = null,
+        ignoreSlot: Boolean = false,
+        cachedEnchants: Map<AiyatsbusEnchantment, Int>? = null
     ): CheckResult {
         // 获取语言发送者
         val sender = creature as? Player ?: Bukkit.getConsoleSender()
@@ -143,7 +168,7 @@ data class Limitations(
                 PAPI_EXPRESSION -> checkPapiExpression(value, creature)
                 PERMISSION -> checkPermission(value, creature)
                 DISABLE_WORLD -> checkDisableWorld(creature)
-                else -> checkItem(checkType, type, item, value, creature, slot, checkType == CheckType.USE, ignoreSlot)
+                else -> checkItem(checkType, type, item, value, creature, slot, checkType == CheckType.USE, ignoreSlot, cachedEnchants)
             }
 
             if (!result) {
@@ -221,21 +246,49 @@ data class Limitations(
      */
     private fun checkItem(
         checkType: CheckType,
-        type: LimitType, 
-        item: ItemStack, 
+        type: LimitType,
+        item: ItemStack,
         value: String,
         creature: LivingEntity?,
-        slot: EquipmentSlot?, 
-        use: Boolean, 
-        ignoreSlot: Boolean
+        slot: EquipmentSlot?,
+        use: Boolean,
+        ignoreSlot: Boolean,
+    ): Boolean {
+        return checkItem(checkType, type, item, value, creature, slot, use, ignoreSlot, cachedEnchants = null)
+    }
+
+    /**
+     * 检查物品相关限制
+     *
+     * 根据限制类型检查物品相关的限制条件。
+     *
+     * @param type 限制类型
+     * @param item 物品
+     * @param value 限制值
+     * @param slot 装备槽位
+     * @param use 是否为使用操作
+     * @param ignoreSlot 是否忽略槽位检查
+     * @param cachedEnchants 缓存的附魔数据，避免重复获取 ItemMeta
+     * @return 检查结果
+     */
+    private fun checkItem(
+        checkType: CheckType,
+        type: LimitType,
+        item: ItemStack,
+        value: String,
+        creature: LivingEntity?,
+        slot: EquipmentSlot?,
+        use: Boolean,
+        ignoreSlot: Boolean,
+        cachedEnchants: Map<AiyatsbusEnchantment, Int>? = null
     ): Boolean {
         val itemType = item.type
-        val enchants = item.fixedEnchants
+        val enchants = cachedEnchants ?: item.fixedEnchants
         
         return when (type) {
             SLOT -> checkSlot(itemType, slot, ignoreSlot)
             TARGET -> checkTarget(checkType, creature, itemType, use)
-            MAX_CAPABILITY -> checkMaxCapability(itemType, enchants)
+            MAX_CAPABILITY -> checkMaxCapability(item, enchants)
             DEPENDENCE_ENCHANT -> checkDependenceEnchant(value, enchants)
             CONFLICT_ENCHANT -> checkConflictEnchant(value, enchants)
             DEPENDENCE_GROUP -> checkDependenceGroup(value, enchants)
@@ -297,8 +350,8 @@ data class Limitations(
      * @param enchants 当前附魔列表
      * @return 检查结果
      */
-    private fun checkMaxCapability(itemType: Material, enchants: Map<AiyatsbusEnchantment, Int>): Boolean {
-        return itemType.capability > enchants.size
+    private fun checkMaxCapability(item: ItemStack, enchants: Map<AiyatsbusEnchantment, Int>): Boolean {
+        return item.capability > enchants.size
     }
 
     /**

@@ -243,14 +243,16 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
 
     private fun ItemStack.triggerEts(listen: String, event: Event, entity: LivingEntity, slot: EquipmentSlot?, ignoreSlot: Boolean = false) {
 
-        val enchants = fixedEnchants.entries
+        // 缓存附魔数据，避免在循环中重复获取 ItemMeta
+        val cachedEnchants = fixedEnchants
+        val enchants = cachedEnchants.entries
             .filter { it.key.trigger != null }
             .sortedBy { it.key.trigger!!.listenerPriority }
 
         for (enchantPair in enchants) {
             val enchant = enchantPair.key
 
-            val checkResult = enchant.limitations.checkAvailable(CheckType.USE, this, entity, slot, ignoreSlot)
+            val checkResult = enchant.limitations.checkAvailable(CheckType.USE, this, entity, slot, ignoreSlot, cachedEnchants)
 
             if (checkResult.isFailure) {
                 sendDebug("----- DefaultAiyatsbusEventExecutor -----")

@@ -70,7 +70,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
     /**
      * 生成展示物品的 Lore
      */
-    private fun generateLore(item: ItemStack? = null, player: Player? = null): List<String> {
+    private fun generateLore(item: ItemStack? = null, player: Player? = null, cachedEnchants: Map<AiyatsbusEnchantment, Int>? = null): List<String> {
         val settings = getSettings()
 
         /** 判断附魔是否需要在最后单独显示 */
@@ -80,8 +80,8 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
 
         // 首先确保物品必须存在
         if (item == null) return emptyList()
-        // 整理附魔
-        val sortedEnchants = item.fixedEnchants.ifEmpty { return emptyList() }.filter { it.key.displayer.display }.let(::sortEnchants)
+        // 整理附魔 - 优先使用缓存的附魔数据
+        val sortedEnchants = (cachedEnchants ?: item.fixedEnchants).ifEmpty { return emptyList() }.filter { it.key.displayer.display }.let(::sortEnchants)
         return buildList {
             // 如果合并模式已打开, 且达到附魔数量的最低要求
             if (settings.combine && sortedEnchants.size >= settings.combineMinimal) {
@@ -120,10 +120,12 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
         // 首先确保物品必须存在
         if (item.isNull) return item
 
+        val fixedENchants = item.fixedEnchants
+
         // 必须 **克隆** 物品, 不得修改原物品
         return item.clone().modifyMeta<ItemMeta> {
             // 如果没有任何附魔则不进行任何处理
-            item.fixedEnchants.ifEmpty { return@modifyMeta }
+            fixedEnchants.ifEmpty { return@modifyMeta }
             // 已经展示过了就不再展示 (不是重新展示)
             // NOTICE 从 0.7 版本, 我遵循白熊的嘱托, 废除了 display_mark, 以节省性能
             val loreIndex = this["lore_index", PersistentDataType.INTEGER_ARRAY]
@@ -140,8 +142,8 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             // 记录原始 Lore 在展示后的物品里对应的索引范围
             var firstIndex = 0
             var lastIndex = 0
-            // 生成附魔展示 Lore
-            val generatedLore = generateLore(item, player)
+            // 生成附魔展示 Lore - 传入缓存的附魔数据
+            val generatedLore = generateLore(item, player, fixedEnchants)
             // 物品的原始 Lore
             val originLore = lore() ?: emptyList()
             // 获取附魔显示格式
@@ -157,7 +159,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
                             add(
                                 componentFromRaw(
                                     settings.capabilityLine
-                                        .replace("capability" to item.type.capability - item.fixedEnchants.size)
+                                        .replace("capability" to item.capability - fixedEnchants.size)
                                         .component().buildColored().toRawMessage()
                                 )
                             )
@@ -174,7 +176,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             // 设置显示 Lore
             lore(result)
             if (item.type == Material.ENCHANTED_BOOK && !hasCustomModelData()) {
-                val rarity = item.fixedEnchants.minBy { it.key.rarity.weight }.key.rarity
+                val rarity = fixedEnchants.minBy { it.key.rarity.weight }.key.rarity
                 if (rarity.isCustomModelBookEnabled) {
                     setCustomModelData(rarity.customModelBook)
                     this["custom_book", PersistentDataType.STRING] = "true" // 记录这物品被打上了自定义模型
@@ -184,7 +186,7 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
             // 加附魔序列化数据
             // TODO: 尝试减少字符串的拼接与分割操作
             this["enchants_serialized", PersistentDataType.STRING] =
-                item.fixedEnchants.map { (enchant, level) -> "${enchant.basicData.id}:$level" }.joinToString("|")
+                fixedEnchants.map { (enchant, level) -> "${enchant.basicData.id}:$level" }.joinToString("|")
         }
     }
 
