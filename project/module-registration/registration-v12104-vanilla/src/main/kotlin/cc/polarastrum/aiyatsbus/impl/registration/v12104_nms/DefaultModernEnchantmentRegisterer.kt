@@ -90,7 +90,7 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
     private val unregisteredIntrusiveHoldersField = RegistryMaterials::class.java
         .declaredFields
         .filter { it.type == Map::class.java }
-        .filter { it.isAnnotationPresent(Nullable::class.java) }[0]
+        .filterNot { Modifier.isFinal(it.modifiers) }[0]
         .apply { isAccessible = true }
 
     // 1.21.4+ only has minecraftToBukkit in CraftRegistry, removing the duplicate in WritableCraftRegistry
