@@ -20,6 +20,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.util.Vector
+import taboolib.library.xseries.XAttribute
 import kotlin.math.max
 
 /**
@@ -129,7 +130,7 @@ object Vectors {
      */
     fun addVelocity(entity: Entity, vector: Vector, checkKnockback: Boolean) {
         if (checkKnockback && entity is LivingEntity) {
-            val instance = entity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE)
+            val instance = XAttribute.KNOCKBACK_RESISTANCE.get()?.let { entity.getAttribute(it) }
             if (instance != null) {
                 val value = instance.value
                 if (value >= 1) {
