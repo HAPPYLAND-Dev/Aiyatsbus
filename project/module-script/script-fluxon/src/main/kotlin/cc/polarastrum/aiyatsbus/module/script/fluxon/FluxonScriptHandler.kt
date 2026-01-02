@@ -18,6 +18,12 @@ package cc.polarastrum.aiyatsbus.module.script.fluxon
 
 import cc.polarastrum.aiyatsbus.core.script.ScriptHandler
 import cc.polarastrum.aiyatsbus.core.util.coerceInt
+import cc.polarastrum.aiyatsbus.module.script.fluxon.function.FnCommand
+import cc.polarastrum.aiyatsbus.module.script.fluxon.function.FnFunctions
+import cc.polarastrum.aiyatsbus.module.script.fluxon.function.FnPlayer
+import cc.polarastrum.aiyatsbus.module.script.fluxon.function.FnVariables
+import cc.polarastrum.aiyatsbus.module.script.fluxon.function.game.FnGuard
+import cc.polarastrum.aiyatsbus.module.script.fluxon.function.game.FnBlock
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.tabooproject.fluxon.Fluxon
@@ -49,6 +55,12 @@ class FluxonScriptHandler : ScriptHandler {
 
     init {
         FluxonFeatures.DEFAULT_ALLOW_INVALID_REFERENCE = true
+        FnGuard.init()
+        FnBlock.init()
+        FnCommand.init()
+        FnFunctions.init()
+        FnPlayer.init()
+        FnVariables.init()
     }
 
     override fun invoke(
