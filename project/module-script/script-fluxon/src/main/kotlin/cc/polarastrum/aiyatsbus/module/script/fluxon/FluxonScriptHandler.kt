@@ -44,6 +44,8 @@ class FluxonScriptHandler : ScriptHandler {
 
     companion object {
 
+        val DEFAULT_PACKAGE_AUTO_IMPORT = mutableSetOf<String>()
+
         lateinit var fluxonHandler: FluxonHandler
     }
 }

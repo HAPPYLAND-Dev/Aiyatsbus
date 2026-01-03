@@ -28,7 +28,7 @@ taboolib {
 
     relocate("ink.ptms.um", "cc.polarastrum.aiyatsbus.module.compat.library.um")
     relocate("redempt", "cc.polarastrum.aiyatsbus.library")
-    relocate("org.tabooproject.fluxon", "cc.polarastrum.aiyatsbus.module.script.fluxon.library.fluxon")
+    relocate("org.tabooproject.fluxon", "cc.polarastrum.aiyatsbus.module.script.fluxon.core")
 }
 
 repositories {
@@ -38,15 +38,10 @@ repositories {
 dependencies {
     taboo("ink.ptms:um:1.0.9")
     taboo("com.github.Redempt:Crunch:1.0.7")
-    taboo("org.tabooproject.fluxon:core:1.4.5") {
-        isTransitive = false
-    }
-    taboo("org.tabooproject.fluxon.plugin:core:1.0.0") {
-        isTransitive = false
-    }
-    taboo("org.tabooproject.fluxon.plugin:platform-bukkit:1.0.0") {
-        isTransitive = false
-    }
+    taboo("org.tabooproject.fluxon:core:1.4.5") { isTransitive = false }
+    taboo("org.tabooproject.fluxon:inst-core:1.4.5") { isTransitive = false }
+    taboo("org.tabooproject.fluxon.plugin:core:1.0.0") { isTransitive = false }
+    taboo("org.tabooproject.fluxon.plugin:platform-bukkit:1.0.0") { isTransitive = false }
 }
 
 tasks {

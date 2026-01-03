@@ -1,9 +1,11 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function
 
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantment
+import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.inventory.ItemStack
 import org.tabooproject.fluxon.runtime.FluxonRuntime
+import org.tabooproject.fluxon.runtime.java.Export
 import taboolib.common.LifeCycle
 import taboolib.common.Requires
 import taboolib.common.platform.Awake
@@ -21,35 +23,30 @@ object FnVariables {
 
     @Awake(LifeCycle.LOAD)
     fun init() {
+        FluxonScriptHandler.DEFAULT_PACKAGE_AUTO_IMPORT += "aiy:variables"
         with(FluxonRuntime.getInstance()) {
-            registerFunction("ordinary", 2) { context ->
-                val enchant = context.arguments[0] as AiyatsbusEnchantment
-                val name = context.arguments[1] as String
-                enchant.variables.ordinary(name)
-            }
-
-            registerFunction("leveled", 4) { context ->
-                val enchant = context.arguments[0] as AiyatsbusEnchantment
-                val name = context.arguments[1] as String
-                val level = context.arguments[2] as Int
-                val withUnit = context.arguments[3] as Boolean
-                enchant.variables.leveled(name, level, withUnit)
-            }
-
-            registerFunction("modifiable", 3) { context ->
-                val enchant = context.arguments[0] as AiyatsbusEnchantment
-                val item = context.arguments[1] as ItemStack
-                val name = context.arguments[2] as String
-                enchant.variables.modifiable(name, item)
-            }
-
-            registerFunction("setModifiable", 4) { context ->
-                val enchant = context.arguments[0] as AiyatsbusEnchantment
-                val item = context.arguments[1] as ItemStack
-                val name = context.arguments[2] as String
-                val value = context.arguments[3]
-                enchant.variables.modifyVariable(item, name, value.toString())
-            }
+            registerFunction("aiy:variables", "variables", 0) { FnVariables }
+            exportRegistry.registerClass(FnVariables::class.java, "aiy:variables")
         }
+    }
+
+    @Export
+    fun ordinary(enchant: AiyatsbusEnchantment, name: String): Any? {
+        return enchant.variables.ordinary(name).also { println(it) }
+    }
+
+    @Export
+    fun leveled(enchant: AiyatsbusEnchantment, name: String, level: Int, withUnit: Boolean): Any {
+        return enchant.variables.leveled(name, level, withUnit)
+    }
+
+    @Export
+    fun modifiable(enchant: AiyatsbusEnchantment, item: ItemStack, name: String): Any {
+        return enchant.variables.modifiable(name, item)
+    }
+
+    @Export
+    fun setModifiable(enchant: AiyatsbusEnchantment, item: ItemStack, name: String, value: Any?): ItemStack {
+        return enchant.variables.modifyVariable(item, name, value.toString())
     }
 }

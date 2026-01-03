@@ -1,5 +1,6 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function.game
 
+import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
@@ -24,6 +25,7 @@ object FnBlock {
 
     @Awake(LifeCycle.LOAD)
     fun init() {
+        FluxonScriptHandler.DEFAULT_PACKAGE_AUTO_IMPORT += "aiy:block"
         with(FluxonRuntime.getInstance()) {
             registerFunction("aiy:block", "block", 0) { FnBlock }
             exportRegistry.registerClass(FnBlock::class.java, "aiy:block")

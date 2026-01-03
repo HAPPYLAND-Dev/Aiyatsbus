@@ -1,10 +1,12 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.handler
 
 import cc.polarastrum.aiyatsbus.core.util.coerceInt
+import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.tabooproject.fluxon.Fluxon
+import org.tabooproject.fluxon.compiler.CompilationContext
 import org.tabooproject.fluxon.interpreter.bytecode.FluxonClassLoader
 import org.tabooproject.fluxon.runtime.FluxonRuntime
 import org.tabooproject.fluxon.runtime.RuntimeScriptBase
@@ -57,6 +59,9 @@ object Fluxon : FluxonHandler {
             } catch (ex: FluxonRuntimeError) {
                 ex.printError()
                 null
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+                null
             }
         }
     }
@@ -76,7 +81,12 @@ object Fluxon : FluxonHandler {
         }
 
         try {
-            val result = Fluxon.compile(source, className, environment, BukkitPlugin::class.java.classLoader)
+            val result = Fluxon.compile(
+                environment,
+                CompilationContext(source).apply { packageAutoImport += FluxonScriptHandler.DEFAULT_PACKAGE_AUTO_IMPORT },
+                className,
+                classLoader
+            )
             compiledScripts[uuid] = result.createInstance(classLoader) as RuntimeScriptBase
         } catch (ex: ParseException) {
             warning("编译脚本 $source 时发生错误:")

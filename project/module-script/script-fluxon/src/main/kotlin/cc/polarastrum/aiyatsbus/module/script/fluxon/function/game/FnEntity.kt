@@ -2,6 +2,7 @@ package cc.polarastrum.aiyatsbus.module.script.fluxon.function.game
 
 import cc.polarastrum.aiyatsbus.core.util.isBehind
 import cc.polarastrum.aiyatsbus.core.util.realDamage
+import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.Location
 import org.bukkit.entity.Entity
@@ -29,6 +30,7 @@ object FnEntity {
 
     @Awake(LifeCycle.LOAD)
     fun init() {
+        FluxonScriptHandler.DEFAULT_PACKAGE_AUTO_IMPORT += "aiy:entity"
         with(FluxonRuntime.getInstance()) {
             registerFunction("aiy:entity", "entity", 0) { FnEntity }
             exportRegistry.registerClass(FnEntity::class.java, "aiy:entity")

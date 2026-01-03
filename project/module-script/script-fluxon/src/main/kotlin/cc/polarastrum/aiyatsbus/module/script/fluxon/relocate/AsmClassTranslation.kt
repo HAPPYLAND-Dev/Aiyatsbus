@@ -1,5 +1,6 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.relocate
 
+import org.bukkit.Bukkit
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.commons.ClassRemapper
@@ -7,6 +8,7 @@ import taboolib.common.TabooLib
 import taboolib.common.platform.function.debug
 import taboolib.common.util.execution
 import taboolib.common.util.t
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 
 /**
  * Aiyatsbus
@@ -17,17 +19,8 @@ import taboolib.common.util.t
  */
 object AsmClassTranslation {
 
-    const val PACKAGE_BEFORE = "cc/polarastrum/aiyatsbus/module/script/fluxon/library/fluxon"
+    const val PACKAGE_BEFORE = "cc/polarastrum/aiyatsbus/module/script/fluxon/core"
     const val PACKAGE_AFTER = "org/tabooproject/fluxon"
-
-    // 自定义 ClassLoader，使用原始 ClassLoader 作为 parent
-    private class TranslationClassLoader(parent: ClassLoader) : ClassLoader(parent) {
-        fun defineClass(name: String, bytes: ByteArray): Class<*> {
-            return defineClass(name, bytes, 0, bytes.size)
-        }
-    }
-
-    private val classLoader = TranslationClassLoader(AsmClassTranslation::class.java.classLoader)
 
     @Synchronized
     fun createNewClass(source: String): Class<*> {
@@ -53,9 +46,13 @@ object AsmClassTranslation {
             // 转译器
             classReader.accept(ClassRemapper(classWriter, renameRemapper), 0)
             // 使用自定义 ClassLoader 定义类
-            classLoader.defineClass("${source}T", classWriter.toByteArray())
+            defineClass("${source}T", classWriter.toByteArray())
         }
         debug("[AsmClassTranslation] 转译 $source，用时 $cost2 毫秒。")
         return newClass
+    }
+
+    fun defineClass(name: String, bytes: ByteArray): Class<*> {
+        return Bukkit.getPluginManager().getPlugin("FluxonPlugin")!!.javaClass.classLoader.invokeMethod<Class<*>>("defineClass", name, bytes, 0, bytes.size)!!
     }
 }

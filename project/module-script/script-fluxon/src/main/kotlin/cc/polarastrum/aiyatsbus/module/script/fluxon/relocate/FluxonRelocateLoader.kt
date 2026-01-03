@@ -22,7 +22,7 @@ import kotlin.collections.iterator
 object FluxonRelocateLoader {
 
     private var propertySetted = false
-    private var needToTranslate = false
+    var needToTranslate = false
 
     @Awake(LifeCycle.CONST)
     fun init() {
