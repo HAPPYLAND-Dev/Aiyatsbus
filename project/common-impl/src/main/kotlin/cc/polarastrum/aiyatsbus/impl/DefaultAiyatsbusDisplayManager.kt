@@ -234,24 +234,15 @@ class DefaultAiyatsbusDisplayManager : AiyatsbusDisplayManager {
      * Spigot: ItemFlag.HIDE_ADDITIONAL_TOOLTIP
      */
     private fun hideBookEnchants(item: ItemMeta) {
-        item.addItemFlags(
-            if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
-            else ItemFlag.HIDE_POTION_EFFECTS
-        )
+        item.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS)
     }
 
     private fun isBookEnchantsHidden(item: ItemMeta): Boolean {
-        return item.hasItemFlag(
-            if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
-            else ItemFlag.HIDE_POTION_EFFECTS
-        )
+        return item.hasItemFlag(ItemFlag.HIDE_STORED_ENCHANTS)
     }
 
     private fun removeBookEnchantsHidden(item: ItemMeta) {
-        item.removeItemFlags(
-            if (MinecraftVersion.versionId >= 12005) ItemFlag.valueOf("HIDE_STORED_ENCHANTS")
-            else ItemFlag.HIDE_POTION_EFFECTS
-        )
+        item.removeItemFlags(ItemFlag.HIDE_STORED_ENCHANTS)
     }
 
     private fun componentFromRaw(raw: String) : Component {

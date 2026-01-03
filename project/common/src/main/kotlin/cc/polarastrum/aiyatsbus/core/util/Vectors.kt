@@ -129,7 +129,7 @@ object Vectors {
      */
     fun addVelocity(entity: Entity, vector: Vector, checkKnockback: Boolean) {
         if (checkKnockback && entity is LivingEntity) {
-            val instance = entity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE)
+            val instance = entity.getAttribute(Attribute.KNOCKBACK_RESISTANCE)
             if (instance != null) {
                 val value = instance.value
                 if (value >= 1) {

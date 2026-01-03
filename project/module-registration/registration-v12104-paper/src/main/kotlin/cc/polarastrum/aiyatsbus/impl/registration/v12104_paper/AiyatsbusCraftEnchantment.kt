@@ -28,7 +28,6 @@ import net.minecraft.core.Holder
 import net.minecraft.world.item.enchantment.Enchantment
 import org.bukkit.NamespacedKey
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment
-import org.bukkit.enchantments.EnchantmentTarget
 import org.bukkit.entity.EntityCategory
 import org.bukkit.inventory.ItemStack
 
@@ -69,8 +68,6 @@ class AiyatsbusCraftEnchantment(
     }
 
     override fun getStartLevel(): Int = 1
-
-    override fun getItemTarget(): EnchantmentTarget = EnchantmentTarget.ALL
 
     override fun isTreasure(): Boolean {
         return enchant.alternativeData.isTreasure

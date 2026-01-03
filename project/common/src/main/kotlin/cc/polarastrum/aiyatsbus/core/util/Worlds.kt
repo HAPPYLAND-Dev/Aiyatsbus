@@ -82,7 +82,7 @@ val World.isNight: Boolean
  * val custom = block["key", PersistentDataType.STRING, "myplugin"]
  * ```
  */
-operator fun <T, Z> PersistentDataHolder.get(key: String, type: PersistentDataType<T, Z>, namespace: String = "aiyatsbus"): Z? {
+operator fun <T : Any, Z : Any> PersistentDataHolder.get(key: String, type: PersistentDataType<T, Z>, namespace: String = "aiyatsbus"): Z? {
     return persistentDataContainer.get(NamespacedKey(namespace, key), type)
 }
 
@@ -166,7 +166,7 @@ operator fun <T, Z : Any> PersistentDataHolder.set(key: String, type: Persistent
  * }
  * ```
  */
-fun <T, Z : Any> PersistentDataHolder.has(key: String, type: PersistentDataType<T, Z>, namespace: String = "aiyatsbus"): Boolean {
+fun <T : Any, Z : Any> PersistentDataHolder.has(key: String, type: PersistentDataType<T, Z>, namespace: String = "aiyatsbus"): Boolean {
     return persistentDataContainer.has(NamespacedKey(namespace, key), type)
 }
 

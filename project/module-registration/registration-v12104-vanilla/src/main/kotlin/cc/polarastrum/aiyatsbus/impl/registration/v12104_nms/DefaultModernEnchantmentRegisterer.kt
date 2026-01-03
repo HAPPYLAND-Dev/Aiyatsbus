@@ -36,11 +36,11 @@ import net.minecraft.world.item.Item
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
-import org.bukkit.craftbukkit.v1_21_R3.CraftRegistry
-import org.bukkit.craftbukkit.v1_21_R3.CraftServer
-import org.bukkit.craftbukkit.v1_21_R3.enchantments.CraftEnchantment
-import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
-import org.bukkit.craftbukkit.v1_21_R3.util.CraftNamespacedKey
+import org.bukkit.craftbukkit.v1_21_R7.CraftRegistry
+import org.bukkit.craftbukkit.v1_21_R7.CraftServer
+import org.bukkit.craftbukkit.v1_21_R7.enchantments.CraftEnchantment
+import org.bukkit.craftbukkit.v1_21_R7.util.CraftChatMessage
+import org.bukkit.craftbukkit.v1_21_R7.util.CraftNamespacedKey
 import org.bukkit.enchantments.Enchantment
 import taboolib.common.LifeCycle
 import taboolib.common.platform.PlatformFactory
@@ -51,7 +51,7 @@ import taboolib.module.chat.component
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.function.BiFunction
-import javax.annotation.Nullable
+import org.jspecify.annotations.Nullable
 import kotlin.collections.HashMap
 
 /**
@@ -83,14 +83,11 @@ class DefaultModernEnchantmentRegisterer : ModernEnchantmentRegisterer {
         .apply { isAccessible = true }
 
     private val frozenTags = RegistryMaterials::class.java
-        .declaredFields
-        .filter { it.type == Map::class.java }[4]
+        .getDeclaredField("frozenTags")
         .apply { isAccessible = true }
 
     private val unregisteredIntrusiveHoldersField = RegistryMaterials::class.java
-        .declaredFields
-        .filter { it.type == Map::class.java }
-        .filter { it.isAnnotationPresent(Nullable::class.java) }[0]
+        .getDeclaredField("unregisteredIntrusiveHolders")
         .apply { isAccessible = true }
 
     // 1.21.4+ only has minecraftToBukkit in CraftRegistry, removing the duplicate in WritableCraftRegistry

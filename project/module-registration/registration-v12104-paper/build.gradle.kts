@@ -1,6 +1,6 @@
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("paper:v12104:12104:core")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("paper:v12107:12107:core")
     compileOnly(project(":project:common"))
 }
 

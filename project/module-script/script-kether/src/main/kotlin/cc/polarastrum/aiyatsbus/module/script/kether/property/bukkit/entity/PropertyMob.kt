@@ -38,7 +38,7 @@ class PropertyMob : AiyatsbusGenericProperty<Mob>("mob") {
 
     override fun readProperty(instance: Mob, key: String): OpenResult {
         val property: Any? = when (key) {
-            "ambientSound", "ambient-sound", "sound" -> instance.ambientSound?.name
+            "ambientSound", "ambient-sound", "sound" -> instance.ambientSound?.name()
             "target" -> instance.target
             "isAware", "is-aware", "aware" -> instance.isAware
             "isAggressive", "is-aggressive", "aggressive" -> instance.isAggressive

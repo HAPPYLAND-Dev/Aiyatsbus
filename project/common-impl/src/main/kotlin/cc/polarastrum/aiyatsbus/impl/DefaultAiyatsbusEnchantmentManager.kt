@@ -27,7 +27,6 @@ import cc.polarastrum.aiyatsbus.core.util.deepRead
 import cc.polarastrum.aiyatsbus.core.util.reloadable
 import cc.polarastrum.aiyatsbus.impl.DefaultAiyatsbusAPI.Companion.proxy
 import cc.polarastrum.aiyatsbus.impl.enchant.InternalAiyatsbusEnchantment
-import cc.polarastrum.aiyatsbus.impl.registration.legacy.DefaultLegacyEnchantmentRegisterer
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
@@ -254,6 +253,7 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
         fun init() {
             PlatformFactory.registerAPI<AiyatsbusEnchantmentManager>(DefaultAiyatsbusEnchantmentManager())
 
+            /**
             val registerer = when {
                 versionId >= 12104 -> modern(12104)
                 versionId >= 12102 -> modern(12103)
@@ -265,26 +265,26 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
                 versionId >= 12003 -> modern(12004)
                 else -> DefaultLegacyEnchantmentRegisterer
             }
+            **/
+            val registerer = modern(12104)
             DefaultAiyatsbusAPI.registerer = registerer
 
-            if (registerer is ModernEnchantmentRegisterer) {
-                try {
-                    registerer.replaceRegistry()
-                } catch (ex: Throwable) {
-                    severe("""
-                        无法替换注册表，为避免数据丢失，服务器将会被强制关闭！
-                        Failed to replace registry. To avoid data loss, the server will be forced to shut down!
-                    """.t())
-                    ex.printStackTrace()
-                    Thread.sleep(5000)
-                    Runtime.getRuntime().halt(-1)
-                }
-                registerLifeCycleTask(LifeCycle.ACTIVE) {
-                    registerer.replaceRegistry()
-                }
-                registerLifeCycleTask(LifeCycle.DISABLE) {
-                    Aiyatsbus.api().getEnchantmentManager().clearEnchantments()
-                }
+            try {
+                registerer.replaceRegistry()
+            } catch (ex: Throwable) {
+                severe("""
+                    无法替换注册表，为避免数据丢失，服务器将会被强制关闭！
+                    Failed to replace registry. To avoid data loss, the server will be forced to shut down!
+                """.t())
+                ex.printStackTrace()
+                Thread.sleep(5000)
+                Runtime.getRuntime().halt(-1)
+            }
+            registerLifeCycleTask(LifeCycle.ACTIVE) {
+                registerer.replaceRegistry()
+            }
+            registerLifeCycleTask(LifeCycle.DISABLE) {
+                Aiyatsbus.api().getEnchantmentManager().clearEnchantments()
             }
             reloadable {
                 registerLifeCycleTask(LifeCycle.ENABLE, StandardPriorities.ENCHANTMENT) {

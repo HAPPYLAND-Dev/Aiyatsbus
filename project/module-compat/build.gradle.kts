@@ -54,7 +54,7 @@ dependencies {
     compileOnly("public:PreciousStones:1.17.1.2:minimize")                        // PreciousStones, 为维护作者权益已去除所有逻辑代码
     compileOnly("public:SuperiorSkyblock2:2023.3:minimize")                       // SuperiorSkyblock2, 为维护作者权益已去除所有逻辑代码
     compileOnly("public:XClaim:minimize")
-    compileOnly("me.xiaozhangup:SlimeCargoNext:1.0.1")                        // SlimeCargoNext
+    compileOnly("me.xiaozhangup:SlimeCargoNext:1.0.2")                        // SlimeCargoNext
     compileOnly("me.xiaozhangup:OrangDomain:1.0.1")                           // OrangDomain                                      // XClaim, 为维护作者权益已去除所有逻辑代码
 
     compileOnly("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1") { exclude(group = "*") }        // RedProtect

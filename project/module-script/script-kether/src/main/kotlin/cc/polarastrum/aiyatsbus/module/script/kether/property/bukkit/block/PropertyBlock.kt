@@ -58,7 +58,7 @@ class PropertyBlock : AiyatsbusGenericProperty<Block>("block") {
             "isLiquid","is-liquid" -> instance.isLiquid
             "isPassable", "is-passable" -> instance.isPassable
 
-            "biome" -> instance.biome.name
+            "biome" -> instance.biome.name()
             "drops" -> instance.drops
 
             "lightLevel", "light-level", "light" -> instance.lightLevel
@@ -94,7 +94,7 @@ class PropertyBlock : AiyatsbusGenericProperty<Block>("block") {
             "biome" -> {
                 val name = value?.toString() ?: return OpenResult.successful()
                 instance.biome = Biome.values().firstOrNull {
-                    it.name.equals(name, true)
+                    it.name().equals(name, true)
                 } ?: return OpenResult.successful()
             }
             "type", "material", "mat" -> {

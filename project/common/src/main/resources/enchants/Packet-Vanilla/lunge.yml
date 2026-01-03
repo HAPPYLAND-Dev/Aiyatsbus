@@ -14,12 +14,15 @@ alternative:
 dependencies:
   supports: 12111
 
-rarity: 罕见
+rarity: 稀有
 targets:
   - 矛
 
 display:
   description:
     general: "戳刺攻击时向前推进"
+    specific: "&7获得&a{速度}&7米/秒的加速"
 
-# TODO 数据录入
+variables:
+  leveled:
+    速度: "%:9.16*{level}"

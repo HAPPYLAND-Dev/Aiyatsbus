@@ -40,7 +40,7 @@ subprojects {
             disableWhenPrimitiveLoaderError = true
         }
         version {
-            taboolib = "6.2.4-test-12-23-1"
+            taboolib = "6.2.4-5902762"
             coroutines = "1.10.2"
             skipKotlin = true
             skipKotlinRelocate = true
@@ -59,7 +59,7 @@ subprojects {
     // 依赖
     dependencies {
         compileOnly(kotlin("stdlib"))
-        compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+        compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
         compileOnly("com.github.retrooper:packetevents-spigot:2.9.4")
         compileOnly("me.xiaozhangup:WhaleMechanism:1.0.1")
     }
