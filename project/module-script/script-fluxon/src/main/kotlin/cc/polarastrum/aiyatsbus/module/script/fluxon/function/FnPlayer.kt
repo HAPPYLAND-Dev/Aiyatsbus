@@ -2,11 +2,13 @@
 
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function
 
+import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.tabooproject.fluxon.runtime.FluxonRuntime
 import org.tabooproject.fluxon.runtime.stdlib.Coerce
+import taboolib.common.Requires
 import java.util.function.BiConsumer
 import java.util.function.Function
 
@@ -17,6 +19,8 @@ import java.util.function.Function
  * @author lynn
  * @since 2025/7/20
  */
+@Requires(missingClasses = ["!org.tabooproject.fluxon.ParseScript"])
+@FluxonRelocate
 enum class FnPlayer(
     private val func: String,
     private val reader: Function<Player, Any?>? = null,

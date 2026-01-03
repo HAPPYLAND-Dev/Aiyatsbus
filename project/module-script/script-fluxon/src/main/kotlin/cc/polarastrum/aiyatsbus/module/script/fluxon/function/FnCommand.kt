@@ -1,9 +1,11 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function
 
-import cc.polarastrum.aiyatsbus.core.util.replace
-import org.bukkit.command.CommandSender
+import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.entity.Player
 import org.tabooproject.fluxon.runtime.FluxonRuntime
+import taboolib.common.LifeCycle
+import taboolib.common.Requires
+import taboolib.common.platform.Awake
 import taboolib.common.platform.function.console
 
 /**
@@ -13,8 +15,11 @@ import taboolib.common.platform.function.console
  * @author mical
  * @since 2025/8/27 20:02
  */
+@Requires(missingClasses = ["!org.tabooproject.fluxon.ParseScript"])
+@FluxonRelocate
 object FnCommand {
 
+    @Awake(LifeCycle.LOAD)
     fun init() {
         with(FluxonRuntime.getInstance()) {
             registerExtensionFunction(Player::class.java, "runCommand", 1) { context ->

@@ -1,8 +1,12 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function
 
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantment
+import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.inventory.ItemStack
 import org.tabooproject.fluxon.runtime.FluxonRuntime
+import taboolib.common.LifeCycle
+import taboolib.common.Requires
+import taboolib.common.platform.Awake
 
 /**
  * Aiyatsbus
@@ -11,8 +15,11 @@ import org.tabooproject.fluxon.runtime.FluxonRuntime
  * @author lynn
  * @since 2025/7/5
  */
+@Requires(missingClasses = ["!org.tabooproject.fluxon.ParseScript"])
+@FluxonRelocate
 object FnVariables {
 
+    @Awake(LifeCycle.LOAD)
     fun init() {
         with(FluxonRuntime.getInstance()) {
             registerFunction("ordinary", 2) { context ->

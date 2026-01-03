@@ -1,7 +1,11 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function
 
+import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.command.CommandSender
 import org.tabooproject.fluxon.runtime.FluxonRuntime
+import taboolib.common.LifeCycle
+import taboolib.common.Requires
+import taboolib.common.platform.Awake
 
 
 /**
@@ -11,8 +15,11 @@ import org.tabooproject.fluxon.runtime.FluxonRuntime
  * @author mical
  * @since 2025/8/27 20:17
  */
+@Requires(missingClasses = ["!org.tabooproject.fluxon.ParseScript"])
+@FluxonRelocate
 object FnFunctions {
 
+    @Awake(LifeCycle.LOAD)
     fun init() {
         with(FluxonRuntime.getInstance()) {
             registerFunction("tell", listOf(1, 2)) { context ->

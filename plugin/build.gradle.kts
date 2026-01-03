@@ -18,6 +18,7 @@ taboolib {
             name("QuickShop").optional(true)
             name("QuickShop-Hikari").optional(true)
             name("Citizens").optional(true)
+            name("FluxonPlugin").optional(true)
         }
 
         desc("Aiyatsbus is a powerful enchantment framework for Paper servers.")
@@ -37,7 +38,15 @@ repositories {
 dependencies {
     taboo("ink.ptms:um:1.0.9")
     taboo("com.github.Redempt:Crunch:1.0.7")
-    taboo("org.tabooproject.fluxon:core:1.4.0")
+    taboo("org.tabooproject.fluxon:core:1.4.5") {
+        isTransitive = false
+    }
+    taboo("org.tabooproject.fluxon.plugin:core:1.0.0") {
+        isTransitive = false
+    }
+    taboo("org.tabooproject.fluxon.plugin:platform-bukkit:1.0.0") {
+        isTransitive = false
+    }
 }
 
 tasks {

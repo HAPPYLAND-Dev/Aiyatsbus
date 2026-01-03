@@ -2,6 +2,7 @@ package cc.polarastrum.aiyatsbus.module.script.fluxon.function.game
 
 import cc.polarastrum.aiyatsbus.core.util.isBehind
 import cc.polarastrum.aiyatsbus.core.util.realDamage
+import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
@@ -10,6 +11,9 @@ import org.bukkit.entity.Player
 import org.tabooproject.fluxon.runtime.FluxonRuntime
 import org.tabooproject.fluxon.runtime.java.Export
 import org.tabooproject.fluxon.runtime.java.Optional
+import taboolib.common.LifeCycle
+import taboolib.common.Requires
+import taboolib.common.platform.Awake
 import taboolib.module.nms.getI18nName
 
 /**
@@ -19,12 +23,15 @@ import taboolib.module.nms.getI18nName
  * @author mical
  * @since 2026/1/2 00:09
  */
+@Requires(missingClasses = ["!org.tabooproject.fluxon.ParseScript"])
+@FluxonRelocate
 object FnEntity {
 
+    @Awake(LifeCycle.LOAD)
     fun init() {
         with(FluxonRuntime.getInstance()) {
-            registerFunction("aiy:entity", "entity", 0) { FnBlock }
-            exportRegistry.registerClass(FnBlock::class.java, "aiy:entity")
+            registerFunction("aiy:entity", "entity", 0) { FnEntity }
+            exportRegistry.registerClass(FnEntity::class.java, "aiy:entity")
         }
     }
 
