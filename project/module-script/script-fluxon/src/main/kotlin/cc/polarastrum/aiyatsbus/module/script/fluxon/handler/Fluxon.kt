@@ -18,7 +18,6 @@ import taboolib.common.platform.function.warning
 import taboolib.platform.BukkitPlugin
 import java.text.ParseException
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -40,7 +39,7 @@ object Fluxon : FluxonHandler {
         source: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
-    ): CompletableFuture<Any?>? {
+    ): Any? {
         val uuid = UUID.nameUUIDFromBytes(source.toByteArray())
         if (!compiledScripts.containsKey(uuid)) preheat(source)
 
@@ -53,16 +52,14 @@ object Fluxon : FluxonHandler {
             environment.defineRootVariable("player", sender)
         }
 
-        return CompletableFuture.supplyAsync {
-            try {
-                scriptBase.eval(environment)?.exceptFluxonCompletableFutureError()
-            } catch (ex: FluxonRuntimeError) {
-                ex.printError()
-                null
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-                null
-            }
+        return try {
+            scriptBase.eval(environment)?.exceptFluxonCompletableFutureError()
+        } catch (ex: FluxonRuntimeError) {
+            ex.printError()
+            null
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            null
         }
     }
 

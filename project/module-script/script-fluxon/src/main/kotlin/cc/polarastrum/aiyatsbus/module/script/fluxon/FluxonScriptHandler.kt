@@ -19,7 +19,6 @@ package cc.polarastrum.aiyatsbus.module.script.fluxon
 import cc.polarastrum.aiyatsbus.core.script.ScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.handler.FluxonHandler
 import org.bukkit.command.CommandSender
-import java.util.concurrent.CompletableFuture
 
 /**
  * Aiyatsbus
@@ -34,7 +33,7 @@ class FluxonScriptHandler : ScriptHandler {
         source: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
-    ): CompletableFuture<Any?>? {
+    ): Any? {
         return fluxonHandler.invoke(source, sender, variables)
     }
 

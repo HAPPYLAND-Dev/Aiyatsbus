@@ -1,7 +1,6 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.handler
 
 import org.bukkit.command.CommandSender
-import java.util.concurrent.CompletableFuture
 
 /**
  * Aiyatsbus
@@ -16,7 +15,7 @@ interface FluxonHandler {
         source: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
-    ): CompletableFuture<Any?>?
+    ): Any?
 
     fun preheat(source: String)
 }

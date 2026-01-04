@@ -26,7 +26,6 @@ import taboolib.module.kether.KetherShell
 import taboolib.module.kether.ScriptOptions
 import taboolib.module.kether.parseKetherScript
 import taboolib.module.kether.runKether
-import java.util.concurrent.CompletableFuture
 
 /**
  * Aiyatsbus
@@ -41,7 +40,7 @@ class KetherScriptHandler : ScriptHandler {
         source: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
-    ): CompletableFuture<Any?>? {
+    ): Any? {
         val player = sender as? Player
         return runKether(detailError = true) {
             KetherShell.eval(source,
