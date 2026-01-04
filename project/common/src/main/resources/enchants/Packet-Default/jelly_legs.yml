@@ -31,25 +31,26 @@ variables:
 mechanisms:
   listeners:
     on-entity-damage:
+      type: "fluxon"
       listen: "entity-damage"
       # 下面有个公式建议不要修改, 已调整至最平衡 (set y to calc "0.1804 * height - 0.0044 * height * height + 0.00004 * height * height * height")
       # 受到伤害小于0时取消伤害
       handle: |-
-        set fallDistance to &event[entity.fallDistance]
-        set height to calc "fallDistance / 2"
-        set eventDamage to &event[damage]
-        set damage to type double &减少伤害
+        fallDistance = &event::entity()::fallDistance()
+        height = &fallDistance / 2.0
 
-        if check &event[cause] is FALL then {
-          if check &fallDistance <= type double &最大高度 then {
-            set y to calc "0.1804 * height - 0.0044 * height * height + 0.00004 * height * height * height"
-            set velocity to vec build 0.0 &y 0.0
+        if string(&event::cause()) == FALL then {
+            if &fallDistance <= &最大高度 then {
+                // 这个公式不建议修改, 已调整至最平衡
+                y = 0.1804 * &height - 0.0044 * &height + 0.00004 * pow(&height, 3)
+                &event::entity()::setVelocity(vector(0, &y, 0))
 
-            set &event[entity.velocity] to &velocity
-            if check calc "eventDamage - damage" <= 0.0 then {
-              set &event[is-cancelled] to true
-            } else {
-              set &event[damage] to calc "eventDamage - damage"
+                delta = &event::damage() - &减少伤害
+                // FIXME: 受到伤害小于 0 时取消伤害暂时有一些问题
+                if &event::damage() - &减少伤害 <= 0.0 then {
+                    &event::setCancelled(true)
+                } else {
+                    &event::setDamage(&delta)
+                }
             }
-          }
         }
