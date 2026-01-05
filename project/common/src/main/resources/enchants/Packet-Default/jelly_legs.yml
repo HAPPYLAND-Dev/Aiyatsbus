@@ -33,8 +33,6 @@ mechanisms:
     on-entity-damage:
       type: "fluxon"
       listen: "entity-damage"
-      # 下面有个公式建议不要修改, 已调整至最平衡 (set y to calc "0.1804 * height - 0.0044 * height * height + 0.00004 * height * height * height")
-      # 受到伤害小于0时取消伤害
       handle: |-
         fallDistance = &event::entity()::fallDistance()
         height = &fallDistance / 2.0
@@ -46,7 +44,7 @@ mechanisms:
                 &event::entity()::setVelocity(vector(0, &y, 0))
 
                 delta = &event::damage() - &减少伤害
-                // FIXME: 受到伤害小于 0 时取消伤害暂时有一些问题
+                // 受到伤害小于 0 时取消伤害
                 if &event::damage() - &减少伤害 <= 0.0 then {
                     &event::setCancelled(true)
                 } else {

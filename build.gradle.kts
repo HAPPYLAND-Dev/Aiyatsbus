@@ -23,6 +23,7 @@ subprojects {
         }
         env {
             install(
+                CommandHelper,
                 Bukkit,
                 BukkitHook,
                 BukkitNMSItemTag,

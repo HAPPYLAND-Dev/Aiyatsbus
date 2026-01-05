@@ -38,25 +38,25 @@ mechanisms:
       type: fluxon
       listen: "entity-damage-other"
       handle: |-
-        total = int(variables :: modifiable(&enchant, &item, "当前累计"))
+        total = int(variables::modifiable(&enchant, &item, "当前累计"))
         damage = &event :: damage()
         
         if &total >= &击杀累计 then {
-            variables :: setModifiable(&enchant, &item, "当前累计", 0)
-            variables :: setModifiable(&enchant, &item, "是否充能完毕", "充能中")
-            &event :: setDamage(&damage*(1.0+&伤害增加百分比/100.0))
+            variables::setModifiable(&enchant, &item, "当前累计", 0)
+            variables::setModifiable(&enchant, &item, "是否充能完毕", "充能中")
+            &event::setDamage(&damage * (1.0 + &伤害增加百分比 / 100.0))
         }
         
-        total = int(variables :: modifiable(&enchant, &item, "当前累计"))
+        total = int(variables::modifiable(&enchant, &item, "当前累计"))
 
     on-kill:
       type: fluxon
       listen: "entity-death"
       handle: |-
-        total = int(variables :: modifiable(&enchant, &item, "当前累计"))
-        variables :: setModifiable(&enchant, &item, "当前累计", &total + 1)
+        total = int(variables::modifiable(&enchant, &item, "当前累计"))
+        variables::setModifiable(&enchant, &item, "当前累计", &total + 1)
 
-        total = int(variables :: modifiable(&enchant, &item, "当前累计"))
+        total = int(variables::modifiable(&enchant, &item, "当前累计"))
         if &total >= &击杀累计 then {
-            variables :: setModifiable(&enchant, &item, "是否充能完毕", "充能完毕")
+            variables::setModifiable(&enchant, &item, "是否充能完毕", "充能完毕")
         }
