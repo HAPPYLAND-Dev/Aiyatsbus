@@ -17,7 +17,6 @@
 package cc.polarastrum.aiyatsbus.core.script
 
 import org.bukkit.command.CommandSender
-import java.util.concurrent.CompletableFuture
 
 /**
  * 脚本处理器接口
@@ -39,21 +38,9 @@ interface ScriptHandler {
      * @param source 脚本源代码
      * @param sender 命令发送者，用于权限检查和上下文
      * @param variables 传递给脚本的变量映射
-     * @return 脚本执行结果的 CompletableFuture，如果执行失败则返回 null
+     * @return 脚本执行结果
      */
-    fun invoke(source: String, sender: CommandSender?, variables: Map<String, Any?> = emptyMap()): CompletableFuture<Any?>?
-
-    /**
-     * 执行脚本（列表版本）
-     *
-     * 执行脚本列表，支持批量脚本处理。
-     *
-     * @param source 脚本源代码列表
-     * @param sender 命令发送者，用于权限检查和上下文
-     * @param variables 传递给脚本的变量映射
-     * @return 脚本执行结果的 CompletableFuture，如果执行失败则返回 null
-     */
-    fun invoke(source: List<String>, sender: CommandSender?, variables: Map<String, Any?> = emptyMap()): CompletableFuture<Any?>?
+    fun invoke(source: String, sender: CommandSender?, variables: Map<String, Any?> = emptyMap()): Any?
 
     /**
      * 预热脚本（字符串版本）
@@ -63,13 +50,4 @@ interface ScriptHandler {
      * @param source 脚本源代码
      */
     fun preheat(source: String)
-
-    /**
-     * 预热脚本（列表版本）
-     *
-     * 预编译脚本列表以提高后续执行性能。
-     *
-     * @param source 脚本源代码列表
-     */
-    fun preheat(source: List<String>)
 }

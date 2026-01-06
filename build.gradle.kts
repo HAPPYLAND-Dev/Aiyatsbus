@@ -23,6 +23,7 @@ subprojects {
         }
         env {
             install(
+                CommandHelper,
                 Bukkit,
                 BukkitHook,
                 BukkitNMSItemTag,
@@ -33,7 +34,7 @@ subprojects {
                 Kether,
                 MinecraftChat,
                 MinecraftEffect,
-                Metrics
+                Metrics,
             )
             forceDownloadInDev = false
             disableOnSkippedVersion = false

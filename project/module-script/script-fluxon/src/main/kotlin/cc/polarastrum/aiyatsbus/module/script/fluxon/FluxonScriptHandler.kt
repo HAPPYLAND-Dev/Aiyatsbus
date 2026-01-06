@@ -17,8 +17,8 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon
 
 import cc.polarastrum.aiyatsbus.core.script.ScriptHandler
+import cc.polarastrum.aiyatsbus.module.script.fluxon.handler.FluxonHandler
 import org.bukkit.command.CommandSender
-import java.util.concurrent.CompletableFuture
 
 /**
  * Aiyatsbus
@@ -29,29 +29,22 @@ import java.util.concurrent.CompletableFuture
  */
 class FluxonScriptHandler : ScriptHandler {
 
-    // 服了脚本
-
     override fun invoke(
         source: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
-    ): CompletableFuture<Any?>? {
-        TODO("Not yet implemented")
-    }
-
-    override fun invoke(
-        source: List<String>,
-        sender: CommandSender?,
-        variables: Map<String, Any?>
-    ): CompletableFuture<Any?>? {
-        TODO("Not yet implemented")
+    ): Any? {
+        return fluxonHandler.invoke(source, sender, variables)
     }
 
     override fun preheat(source: String) {
-        TODO("Not yet implemented")
+        return fluxonHandler.preheat(source)
     }
 
-    override fun preheat(source: List<String>) {
-        TODO("Not yet implemented")
+    companion object {
+
+        val DEFAULT_PACKAGE_AUTO_IMPORT = mutableSetOf<String>()
+
+        lateinit var fluxonHandler: FluxonHandler
     }
 }
