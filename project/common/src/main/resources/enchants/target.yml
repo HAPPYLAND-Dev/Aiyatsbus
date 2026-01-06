@@ -254,6 +254,7 @@ headable:
     - CARVED_PUMPKIN
     - CREEPER_HEAD
     - ZOMBIE_HEAD
+    - PIGLIN_HEAD
     - SKELETON_SKULL
     - WITHER_SKELETON_SKULL
 damageable:
