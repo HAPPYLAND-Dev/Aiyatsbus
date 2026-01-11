@@ -72,7 +72,8 @@ object VillagerSupport {
         val result = origin.result.clone()
         val fixedEnchants = result.fixedEnchants
 
-        if (fixedEnchants.isEmpty() || !enableEnchantTrade) {
+        if (fixedEnchants.isEmpty()) return
+        if (!enableEnchantTrade) {
             e.isCancelled = true
             return
         }
