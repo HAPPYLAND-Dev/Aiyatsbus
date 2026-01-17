@@ -54,7 +54,7 @@ mechanisms:
       listen: "entity-death"
       handle: |-
         total = int(variables::modifiable(&enchant, &item, "当前累计"))
-        variables::setModifiable(&enchant, &item, "当前累计", &total + 1)
+        variables::setModifiable(&enchant, &item, "当前累计", max(&total + 1, &击杀累计))
 
         total = int(variables::modifiable(&enchant, &item, "当前累计"))
         if &total >= &击杀累计 then {
