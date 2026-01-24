@@ -104,6 +104,19 @@ fun Double.isInteger(): Boolean {
 }
 
 /**
+ * 是否为整数
+ */
+fun Any.isInt(): Boolean {
+    return try {
+        Integer.parseInt(toString())
+        true
+    } catch (ex: Exception) {
+        false
+    }
+}
+
+
+/**
  * 数学工具对象
  * 
  * 提供表达式计算和权重选择功能。

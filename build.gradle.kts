@@ -26,7 +26,7 @@ subprojects {
                 CommandHelper,
                 Bukkit,
                 BukkitHook,
-                BukkitNMSItemTag,
+                BukkitNMSUtil,
                 BukkitUI,
                 BukkitUtil,
                 I18n,
@@ -41,7 +41,7 @@ subprojects {
             disableWhenPrimitiveLoaderError = true
         }
         version {
-            taboolib = "6.2.4-8d51195"
+            taboolib = "6.2.4-1645904"
         }
     }
 

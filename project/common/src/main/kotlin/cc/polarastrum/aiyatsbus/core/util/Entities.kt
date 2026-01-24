@@ -145,6 +145,7 @@ fun LivingEntity.isBehind(entity: LivingEntity): Boolean {
  */
 val Entity.equippedItems: Map<EquipmentSlot, ItemStack>
     get() = if (this is LivingEntity) EquipmentSlot.values()
+        .filterNot { it.name == "BODY" || it.name == "SADDLE" }
         .associateWith { (equipment?.getItem(it) ?: ItemStack(Material.AIR)) } else emptyMap()
 
 /**

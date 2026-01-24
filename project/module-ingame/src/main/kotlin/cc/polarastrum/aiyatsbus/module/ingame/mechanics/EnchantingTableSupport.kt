@@ -210,8 +210,9 @@ object EnchantingTableSupport {
             // 预先为所有附魔项生成一个附魔
             val enchants = doPrepareEnchant(event.enchanter, event.item, bonus)
             for (i in 0..2) {
-                event.offers[i]?.enchantment = enchants[i]!!.first.enchantment
-                event.offers[i]?.enchantmentLevel = enchants[i]!!.second
+                val entry = enchants[i] ?: continue
+                event.offers[i]?.enchantment = entry.first.enchantment
+                event.offers[i]?.enchantmentLevel = entry.second
             }
         }
     }
@@ -298,11 +299,12 @@ object EnchantingTableSupport {
                 }
         }
 
-        val random = Random(item.serializeToByteArray().sum() + player.world.seed + player.enchantmentSeed )
+        val random = Random(item.serializeToByteArray().sum() + player.world.seed + player.enchantmentSeed)
         val pool = item.etsAvailable(CheckType.ATTAIN, player).filterNot { it.alternativeData.isTreasure }
         val result = LinkedHashMap<Int, Pair<AiyatsbusEnchantment, Int>>()
         for (i in 0..2) {
             // 从特定附魔列表中根据品质和附魔的权重抽取一个附魔
+            // FIXME: 有死循环的风险，等待优化
             while (true) {
                 val enchant = pool.drawEt(random) ?: continue
                 val maxLevel = enchant.basicData.maxLevel

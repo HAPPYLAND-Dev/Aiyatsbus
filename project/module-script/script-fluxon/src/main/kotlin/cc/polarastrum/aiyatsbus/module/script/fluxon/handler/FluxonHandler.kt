@@ -13,9 +13,10 @@ interface FluxonHandler {
 
     fun invoke(
         source: String,
+        id: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
     ): Any?
 
-    fun preheat(source: String)
+    fun preheat(source: String, id: String)
 }

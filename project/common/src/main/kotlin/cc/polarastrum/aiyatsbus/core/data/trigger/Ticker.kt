@@ -23,7 +23,6 @@ import cc.polarastrum.aiyatsbus.core.script.ScriptType
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
-import taboolib.library.kether.LocalizedException
 
 /**
  * 定时器触发器类
@@ -51,15 +50,18 @@ data class Ticker @JvmOverloads constructor(
     val interval: Long = root.getLong("interval", 20L)
 ) {
 
+    private val internalId: String =
+        "Enchantment_" + enchant.basicData.id + "_Ticker_" + root.name.replace("-", "_") + "_"
+
     init {
         if (AiyatsbusSettings.enableKetherPreheat) {
             try {
                 with(Aiyatsbus.api().getScriptHandler().getScriptHandler(scriptType)) {
-                    preheat(preHandle)
-                    preheat(handle)
-                    preheat(postHandle)
+                    preheat(preHandle, "${internalId}PreHandle")
+                    preheat(handle, "${internalId}Handle")
+                    preheat(postHandle, "${internalId}PostHandle")
                 }
-            } catch (ex: LocalizedException) {
+            } catch (ex: Throwable) {
                 warning("Unable to preheat the ticker ${root.name} of enchantment ${enchant.id}: $ex")
             }
         }
@@ -79,8 +81,20 @@ data class Ticker @JvmOverloads constructor(
      * ticker.execute("say Hello", player, mapOf("level" to 5))
      * ```
      */
-    fun execute(source: String, sender: CommandSender, vars: Map<String, Any>) {
+    private fun execute(source: String, id: String, sender: CommandSender, vars: Map<String, Any>) {
         Aiyatsbus.api().getScriptHandler().getScriptHandler(scriptType)
-            .invoke(source, sender, vars)
+            .invoke(source, id, sender, vars)
+    }
+
+    fun executePreHandle(sender: CommandSender, vars: Map<String, Any>) {
+        execute(preHandle, "${internalId}PreHandle", sender, vars)
+    }
+
+    fun executeHandle(sender: CommandSender, vars: Map<String, Any>) {
+        execute(handle, "${internalId}Handle", sender, vars)
+    }
+
+    fun executePostHandle(sender: CommandSender, vars: Map<String, Any>) {
+        execute(postHandle, "${internalId}PostHandle", sender, vars)
     }
 }

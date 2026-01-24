@@ -27,11 +27,14 @@ import cc.polarastrum.aiyatsbus.core.util.*
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
+import org.bukkit.entity.Trident
 import org.bukkit.event.Event
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockDamageEvent
 import org.bukkit.event.block.BlockDropItemEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.enchantment.EnchantItemEvent
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntityEvent
@@ -87,9 +90,19 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         resolvers += Event::class.java to EventResolver<Event>(
             // 最后面返回 true 是因为这是最后一步直接解析, 如果这都解析不到那就没必要再重复一次解析了
             entityResolver = { event, playerReference ->
-                event.invokeMethodDeep<LivingEntity?>(playerReference ?: return@EventResolver null to1 true).checkedIfIsNPC()
+                event.invokeMethodDeep<LivingEntity?>(playerReference ?: return@EventResolver null to1 true)
+                    .checkedIfIsNPC()
             },
-            itemResolver = { event, itemReference, _ -> event.invokeMethodDeep<ItemStack?>(itemReference ?: return@EventResolver null to1 true) to1 true }
+            itemResolver = { event, itemReference, entity, slot ->
+                val (item, itemResolved) = EventResolver.defaultItemResolver(entity, slot)
+                if (!itemResolved || item.isNull) {
+                    return@EventResolver event.invokeMethodDeep<ItemStack?>(
+                        itemReference ?: return@EventResolver null to1 true
+                    ) to1 true
+                } else {
+                    return@EventResolver item to1 true
+                }
+            }
         )
         resolvers += PlayerEvent::class.java to EventResolver<PlayerEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += PlayerMoveEvent::class.java to EventResolver<PlayerMoveEvent>(
@@ -103,29 +116,46 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         resolvers += BlockDamageEvent::class.java to EventResolver<BlockDamageEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += BlockPlaceEvent::class.java to EventResolver<BlockPlaceEvent>({ event, _ -> event.player.checkedIfIsNPC() })
         resolvers += BlockBreakEvent::class.java to EventResolver<BlockBreakEvent>({ event, _ -> event.player.checkedIfIsNPC() })
-        resolvers += ProjectileHitEvent::class.java to EventResolver<ProjectileHitEvent>({ event, _ -> (event.entity.shooter as? LivingEntity).checkedIfIsNPC() })
-        resolvers += EntityDamageByEntityEvent::class.java to EventResolver<EntityDamageByEntityEvent>({ event, playerReference ->
-            // 攻击者和受害者有任何一方是 NPC 就都不应触发此事件
-            if (event.damager.checkIfIsNPC() || event.entity.checkIfIsNPC()) {
-                null to false
+        resolvers += ProjectileHitEvent::class.java to EventResolver<ProjectileHitEvent>(
+            entityResolver = { event, _ -> (event.entity.shooter as? LivingEntity).checkedIfIsNPC() },
+            itemResolver = { event, _, entity, slot ->
+                if (event.entity is Trident) {
+                    return@EventResolver (event.entity as Trident).item to1 true
+                }
+                return@EventResolver EventResolver.defaultItemResolver(entity, slot)
             }
-            when (playerReference) {
-                "damager", null -> when (event.damager) {
-                    is Player -> event.damager as? LivingEntity
-                    is Projectile -> ((event.damager as Projectile).shooter as? LivingEntity)
-                    else -> null
-                }.checkedIfIsNPC()
-                "entity" -> (event.entity as? LivingEntity).checkedIfIsNPC()
-                else -> null to1 false
+        )
+        resolvers += EntityDamageByEntityEvent::class.java to EventResolver<EntityDamageByEntityEvent>(
+            entityResolver = { event, playerReference ->
+                // 攻击者和受害者有任何一方是 NPC 就都不应触发此事件
+                if (event.damager.checkIfIsNPC() || event.entity.checkIfIsNPC()) {
+                    null to false
+                }
+                when (playerReference) {
+                    "damager", null -> when (event.damager) {
+                        is Player -> event.damager as? LivingEntity
+                        is Projectile -> ((event.damager as Projectile).shooter as? LivingEntity)
+                        else -> null
+                    }.checkedIfIsNPC()
+
+                    "entity" -> (event.entity as? LivingEntity).checkedIfIsNPC()
+                    else -> null to1 false
+                }
+            },
+            itemResolver = { event, _, entity, slot ->
+                if (event.damager is Trident) {
+                    return@EventResolver (event.damager as Trident).item to1 true
+                }
+                return@EventResolver EventResolver.defaultItemResolver(entity, slot)
             }
-        })
+        )
         resolvers += EntityDeathEvent::class.java to EventResolver<EntityDeathEvent>({ event, _ -> event.killer.checkedIfIsNPC() })
         resolvers += EntityEvent::class.java to EventResolver<EntityEvent>({ event, _ -> (event.entity as? LivingEntity).checkedIfIsNPC() })
         resolvers += InventoryClickEvent::class.java to EventResolver<InventoryClickEvent>({ event, _ -> (event.whoClicked).checkedIfIsNPC() })
         resolvers += InventoryEvent::class.java to EventResolver<InventoryEvent>({ event, _ -> (event.view.player).checkedIfIsNPC() })
         resolvers += AiyatsbusPrepareAnvilEvent::class.java to EventResolver<AiyatsbusPrepareAnvilEvent>(
             entityResolver = { event, _ -> event.player.checkedIfIsNPC() },
-            itemResolver = { event, itemReference, _ ->
+            itemResolver = { event, itemReference, _, _ ->
                 when (itemReference) {
                     "left" -> event.left to1 true
                     "right" -> event.right to1 true
@@ -134,6 +164,8 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
                 }
             }
         )
+        resolvers += EnchantItemEvent::class.java to EventResolver<EnchantItemEvent>({ event, _ -> event.enchanter.checkedIfIsNPC() })
+        resolvers += PrepareItemEnchantEvent::class.java to EventResolver<PrepareItemEnchantEvent>({ event, _ -> event.enchanter.checkedIfIsNPC() })
 //        resolvers += AiyatsbusBowChargeEvent.Prepare::class.java to EventResolver<AiyatsbusBowChargeEvent.Prepare>({ event, _ -> (event.player).checkedIfIsNPC() })
 //        resolvers += AiyatsbusBowChargeEvent.Released::class.java to EventResolver<AiyatsbusBowChargeEvent.Released>({ event, _ -> (event.player).checkedIfIsNPC() })
     }
@@ -178,7 +210,7 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T: Event> getResolver(instance: T): EventResolver<T>? {
+    override fun <T : Event> getResolver(instance: T): EventResolver<T>? {
         var currentClass: Class<*>? = instance::class.java
         while (currentClass != null) {
             val resolver = resolvers[currentClass] as? EventResolver<T>
@@ -213,24 +245,14 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         if (eventMapping.slots.isNotEmpty()) {
             eventMapping.slots.forEach { slot ->
 //                println("检测槽位: $slot")
-                val item: ItemStack?
-                try {
-                    item = entity.equipment?.getItem(slot)
-                } catch (_: Throwable) {
-                    // 离谱的低版本报错:
-                    // java.lang.NullPointerException: player.inventory.getItem(slot) must not be null
-                    return@forEach
-                }
+                val (item, itemResolved) = resolver.itemResolver.apply(event, eventMapping.itemReference, entity, slot)
 //                println("尝试锁定物品: $item")
-
-                if (item.isNull) return@forEach
-
+                if (!itemResolved || item.isNull) return@forEach
 //                println("锁定物品: $item")
-
                 item!!.triggerEts(listen, event, entity, slot, false)
             }
         } else {
-            var (item, itemResolved) = resolver.itemResolver.apply(event, eventMapping.itemReference, entity)
+            var (item, itemResolved) = resolver.itemResolver.apply(event, eventMapping.itemReference, entity, null)
 //            println("我尝试使用 resolver 获取物品, 结果是: $item")
             if (item.isAir && !itemResolved) {
                 item = event.invokeMethodDeep(eventMapping.itemReference ?: return) as? ItemStack ?: return
@@ -241,7 +263,13 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         }
     }
 
-    private fun ItemStack.triggerEts(listen: String, event: Event, entity: LivingEntity, slot: EquipmentSlot?, ignoreSlot: Boolean = false) {
+    private fun ItemStack.triggerEts(
+        listen: String,
+        event: Event,
+        entity: LivingEntity,
+        slot: EquipmentSlot?,
+        ignoreSlot: Boolean = false
+    ) {
 
         // 缓存附魔数据，避免在循环中重复获取 ItemMeta
         val cachedEnchants = fixedEnchants
@@ -252,7 +280,8 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
         for (enchantPair in enchants) {
             val enchant = enchantPair.key
 
-            val checkResult = enchant.limitations.checkAvailable(CheckType.USE, this, entity, slot, ignoreSlot, cachedEnchants)
+            val checkResult =
+                enchant.limitations.checkAvailable(CheckType.USE, this, entity, slot, ignoreSlot, cachedEnchants)
 
             if (checkResult.isFailure) {
                 sendDebug("----- DefaultAiyatsbusEventExecutor -----")

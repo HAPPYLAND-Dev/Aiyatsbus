@@ -38,6 +38,7 @@ class KetherScriptHandler : ScriptHandler {
 
     override fun invoke(
         source: String,
+        id: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
     ): Any? {
@@ -51,7 +52,7 @@ class KetherScriptHandler : ScriptHandler {
         }
     }
 
-    override fun preheat(source: String) {
+    override fun preheat(source: String, id: String) {
         val s = if (source.startsWith("def ")) source else "def main = { $source }"
         KetherShell.mainCache.scriptMap[s] = s.parseKetherScript(listOf("aiyatsbus"))
     }

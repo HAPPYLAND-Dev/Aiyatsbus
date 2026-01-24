@@ -16,6 +16,7 @@ targets:
   - 剑
   - 斧
   - 重锤
+  - 矛
 
 limitations:
   - "CONFLICT_GROUP:原版增伤类附魔"

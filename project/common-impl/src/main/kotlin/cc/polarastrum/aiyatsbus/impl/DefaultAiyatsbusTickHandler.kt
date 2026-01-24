@@ -106,7 +106,7 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
 
                             // 缓存附魔数据，避免重复获取 ItemMeta
                             val cachedEnchants = item.fixedEnchants
-                            val level = cachedEnchants[ench] ?: -1
+                            val level = cachedEnchants[ench.enchantment as AiyatsbusEnchantment] ?: -1
 
                             if (level > 0) {
                                 val checkResult = ench.limitations.checkAvailable(CheckType.USE, item, player, slot, cachedEnchants = cachedEnchants)
@@ -131,15 +131,15 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
 
                                 if (!record.contains(id)) {
                                     record += id
-                                    ticker.execute(ticker.preHandle, player, vars)
+                                    ticker.executePreHandle(player, vars)
                                 }
 
-                                ticker.execute(ticker.handle, player, vars)
+                                ticker.executeHandle(player, vars)
                             }
                         }
                         if (!flag && record.contains(id)) {
                             record -= id
-                            ticker.execute(ticker.postHandle, player, variables)
+                            ticker.executePostHandle(player, variables)
                         }
                     }
                 }

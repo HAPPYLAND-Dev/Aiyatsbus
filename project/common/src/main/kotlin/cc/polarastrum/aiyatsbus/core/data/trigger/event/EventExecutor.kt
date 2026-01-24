@@ -23,7 +23,6 @@ import cc.polarastrum.aiyatsbus.core.script.ScriptType
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
-import taboolib.library.kether.LocalizedException
 
 /**
  * 事件执行器类
@@ -49,11 +48,14 @@ data class EventExecutor @JvmOverloads constructor(
     val priority: Int = root.getInt("priority", 0)
 ) {
 
+    private val internalId: String =
+        "Enchantment_" + enchant.basicData.id + "_Listener_" + root.name.replace("-", "_")
+
     init {
         if (AiyatsbusSettings.enableKetherPreheat) {
             try {
-                Aiyatsbus.api().getScriptHandler().getScriptHandler(scriptType).preheat(handle)
-            } catch (ex: LocalizedException) {
+                Aiyatsbus.api().getScriptHandler().getScriptHandler(scriptType).preheat(handle, internalId)
+            } catch (ex: Throwable) {
                 warning("Unable to preheat the event executor ${root.name} of enchantment ${enchant.id}: $ex")
             }
         }
@@ -73,7 +75,6 @@ data class EventExecutor @JvmOverloads constructor(
      * ```
      */
     fun execute(sender: CommandSender, vars: Map<String, Any?>) {
-        Aiyatsbus.api().getScriptHandler().getScriptHandler(scriptType)
-            .invoke(handle, sender, vars)
+        Aiyatsbus.api().getScriptHandler().getScriptHandler(scriptType).invoke(handle, internalId, sender, vars)
     }
 }

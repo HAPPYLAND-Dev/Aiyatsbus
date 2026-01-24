@@ -18,7 +18,6 @@ package cc.polarastrum.aiyatsbus.core.data
 
 import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.LimitType.*
-import cc.polarastrum.aiyatsbus.core.util.coerceBoolean
 import cc.polarastrum.aiyatsbus.core.util.reloadable
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -31,8 +30,6 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.registerLifeCycleTask
-import taboolib.module.kether.compileToJexl
-import taboolib.platform.compat.replacePlaceholder
 
 /**
  * 附魔限制管理类
@@ -196,7 +193,9 @@ data class Limitations(
     private fun checkPapiExpression(expression: String, creature: LivingEntity?): Boolean {
         if (creature !is Player) return true
         return try {
-            expression.replacePlaceholder(creature).compileToJexl().eval().coerceBoolean()
+            // TODO
+            true
+            // expression.replacePlaceholder(creature).compileToJexl().eval().coerceBoolean()
         } catch (e: Exception) {
             false
         }
