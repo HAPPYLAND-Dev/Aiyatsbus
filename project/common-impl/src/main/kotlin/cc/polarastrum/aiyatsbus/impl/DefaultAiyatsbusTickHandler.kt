@@ -104,12 +104,10 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
                             }
                             if (item.isNull) return@slot
 
-                            // 缓存附魔数据，避免重复获取 ItemMeta
-                            val cachedEnchants = item.fixedEnchants
-                            val level = cachedEnchants[ench.enchantment as AiyatsbusEnchantment] ?: -1
+                            val level = item.etLevel(ench)
 
                             if (level > 0) {
-                                val checkResult = ench.limitations.checkAvailable(CheckType.USE, item, player, slot, cachedEnchants = cachedEnchants)
+                                val checkResult = ench.limitations.checkAvailable(CheckType.USE, item, player, slot)
                                 if (checkResult.isFailure) {
                                     sendDebug("----- DefaultAiyatsbusTickHandler -----")
                                     sendDebug("附魔: " + ench.basicData.name)

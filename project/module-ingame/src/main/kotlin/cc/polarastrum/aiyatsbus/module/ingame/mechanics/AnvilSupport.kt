@@ -239,10 +239,7 @@ object AnvilSupport {
         val tempLeftItem = left.clone()
         val leftEnchants = left.fixedEnchants
         val rightEnchants = right.fixedEnchants
-        // 预分配大小避免扩容
-        val outEnchants = HashMap<AiyatsbusEnchantment, Int>(leftEnchants.size + rightEnchants.size).apply {
-            putAll(leftEnchants)
-        }
+        val outEnchants = leftEnchants.toMutableMap()
 
         for ((rightEnchant, level) in rightEnchants) {
             val maxLevel = rightEnchant.basicData.maxLevel
