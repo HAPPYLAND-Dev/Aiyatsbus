@@ -34,14 +34,14 @@ mechanisms:
       type: "fluxon"
       listen: "entity-damage"
       handle: |-
-        fallDistance = &event::entity()::fallDistance()
+        fallDistance = &event::entity::fallDistance()
         height = &fallDistance / 2.0
 
         if string(&event::cause()) == FALL then {
             if &fallDistance <= &最大高度 then {
                 // 这个公式不建议修改, 已调整至最平衡
                 y = 0.1804 * &height - 0.0044 * &height + 0.00004 * pow(&height, 3)
-                &event::entity()::setVelocity(vector(0, &y, 0))
+                &event::entity::setVelocity(vector(0, &y, 0))
 
                 delta = &event::damage() - &减少伤害
                 // 受到伤害小于 0 时取消伤害

@@ -39,7 +39,7 @@ mechanisms:
       listen: "entity-damage-other"
       handle: |-
         total = int(variables::modifiable(&enchant, &item, "当前累计"))
-        damage = &event :: damage()
+        damage = &event::damage()
         
         if &total >= &击杀累计 then {
             variables::setModifiable(&enchant, &item, "当前累计", 0)

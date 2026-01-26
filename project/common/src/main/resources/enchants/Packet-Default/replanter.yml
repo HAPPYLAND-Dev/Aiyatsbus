@@ -30,11 +30,11 @@ mechanisms:
       listen: "player-interact"
       handle: |-
         if string(&event::action()) == PHYSICAL then {
-            if string(&event::clickedBlock()::type()) == FARMLAND then {
-                loc = &event::clickedBlock()::location()::clone()
+            if string(&event::clickedBlock::type()) == FARMLAND then {
+                loc = &event::clickedBlock::location::clone()
                 &loc::setY(&loc::y() + 1)
-                if &loc::block()::blockData() is org.bukkit.block.data.Ageable then {
-                    age = &loc::block()::blockData()::age()
+                if &loc::block::blockData() is org.bukkit.block.data.Ageable then {
+                    age = &loc::block::blockData::age()
                     if &age >= 2 then {
                         &event::setCancelled(true)
                         newBlockData = &loc::block::blockData()
