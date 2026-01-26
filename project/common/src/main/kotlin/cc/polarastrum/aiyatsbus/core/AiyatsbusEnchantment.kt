@@ -181,4 +181,6 @@ interface AiyatsbusEnchantment {
             ?: "") else if (basicData.maxLevel == 1) "" else level
         return if (basicData.nameHasColor) name else rarity.displayName(name)
     }
+
+    fun updateEnchantment()
 }

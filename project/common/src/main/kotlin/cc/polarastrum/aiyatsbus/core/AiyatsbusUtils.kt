@@ -46,6 +46,10 @@ import taboolib.platform.util.modifyMeta
  * @since 2024/2/17 22:12
  */
 
+fun ItemStack.fast(): AiyatsbusItemStack {
+    return Aiyatsbus.api().getMinecraftAPI().getItemOperator().createAiyatsbusItemStack(this)
+}
+
 /**
  * 使用 AiyatsbusLanguage 发送语言文件
  *
@@ -264,6 +268,7 @@ fun Rarity.drawEt(): AiyatsbusEnchantment? = RandomList(*aiyatsbusEts(this).asso
  * 获取物品上的所有附魔，并自动转换为 AiyatsbusEnchantment 格式。
  * 支持附魔书和普通物品。
  */
+@Deprecated("Use AiyatsbusItemStack#getEnchants() instead")
 var ItemMeta.fixedEnchants: Map<AiyatsbusEnchantment, Int>
     get() = (if (this is EnchantmentStorageMeta) storedEnchants else enchants).map { (enchant, level) -> enchant.aiyatsbusEt to level }.toMap()
     set(value) {
@@ -277,6 +282,7 @@ var ItemMeta.fixedEnchants: Map<AiyatsbusEnchantment, Int>
  *
  * 获取物品上的所有附魔，并自动转换为 AiyatsbusEnchantment 格式。
  */
+@Deprecated("Use AiyatsbusItemStack#getEnchants() instead")
 var ItemStack?.fixedEnchants: Map<AiyatsbusEnchantment, Int>
     get() = this?.itemMeta?.fixedEnchants ?: emptyMap()
     set(value) { this?.modifyMeta<ItemMeta> { fixedEnchants = value } }
@@ -287,6 +293,7 @@ var ItemStack?.fixedEnchants: Map<AiyatsbusEnchantment, Int>
  * @param enchant 要查询的附魔
  * @return 附魔等级，如果不存在则返回 -1
  */
+@Deprecated("Use AiyatsbusItemStack#getEnchants() instead")
 fun ItemMeta.etLevel(enchant: AiyatsbusEnchantment): Int {
     return fixedEnchants[enchant.enchantment as AiyatsbusEnchantment] ?: -1
 }
@@ -297,7 +304,7 @@ fun ItemMeta.etLevel(enchant: AiyatsbusEnchantment): Int {
  * @param enchant 要查询的附魔
  * @return 附魔等级，如果不存在则返回 -1
  */
-fun ItemStack.etLevel(enchant: AiyatsbusEnchantment) = itemMeta.etLevel(enchant)
+fun ItemStack.etLevel(enchant: AiyatsbusEnchantment) = fast().getEnchants()[enchant] ?: -1
 
 /**
  * 添加附魔

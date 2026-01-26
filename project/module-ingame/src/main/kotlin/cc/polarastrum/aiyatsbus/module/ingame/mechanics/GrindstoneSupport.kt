@@ -98,7 +98,7 @@ object GrindstoneSupport {
 
         result.clearEts()
         doGrind(player, upper)?.let { (item, refund) ->
-            item.fixedEnchants.forEach { (enchant, level) ->
+            item.fast().getEnchants().forEach { (enchant, level) ->
                 // 有无法祛除的附魔就要变更类型, 防止返回一本带有诅咒附魔的普通书本或是带有非 Storage 附魔的假附魔书
                 if (result.type == Material.BOOK) {
                     result.type = Material.ENCHANTED_BOOK
@@ -108,7 +108,7 @@ object GrindstoneSupport {
             exp += refund
         }
         doGrind(player, lower)?.let { (item, refund) ->
-            item.fixedEnchants.forEach { (enchant, level) ->
+            item.fast().getEnchants().forEach { (enchant, level) ->
                 // 有无法祛除的附魔就要变更类型, 防止返回一本带有诅咒附魔的普通书本或是带有非 Storage 附魔的假附魔书
                 if (result.type == Material.BOOK) {
                     result.type = Material.ENCHANTED_BOOK
@@ -155,7 +155,7 @@ object GrindstoneSupport {
         var total = 0.0
         val result = item?.clone() ?: return null
         result.clearEts()
-        item.fixedEnchants.forEach { (enchant, level) ->
+        item.fast().getEnchants().forEach { (enchant, level) ->
             val maxLevel = enchant.basicData.maxLevel
             // 如果附魔不可被驱散, 就要添加回去
             if (enchant.enchantment.isInGroup(blacklist) || !enchant.alternativeData.grindstoneable) {

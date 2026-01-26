@@ -44,7 +44,7 @@ object FnCooldown {
     @Export
     fun isReady(player: Player, key: String, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
         val (isReady, remainingTime) = player.checkCd(key, seconds)
-        if (broadcast.coerceBoolean(true)) {
+        if (!isReady && broadcast.coerceBoolean(true)) {
             val message = player.asLang("messages-misc-cool_down", remainingTime to "second").component().buildColored()
             if (broadcastInActionBar.coerceBoolean(AiyatsbusSettings.coolDownInActionBar)) {
                 player.sendRawActionBar(message.toRawMessage())

@@ -198,10 +198,6 @@ data class Limitations(
      * @return 检查结果
      */
     private fun checkDisableWorld(creature: LivingEntity?): Boolean {
-        sendDebug("正在为用户 ${creature?.name ?: creature?.uniqueId ?: creature} 检查附魔 ${belonging.basicData.name}(${belonging.basicData.id}) 的禁用世界")
-        sendDebug("要检查的世界: ${creature?.world}")
-        sendDebug("配置: ${belonging.basicData.disableWorlds}")
-        sendDebug("返回值: ${creature?.world?.name !in belonging.basicData.disableWorlds}")
         return creature?.world?.name !in belonging.basicData.disableWorlds
     }
 
@@ -229,7 +225,7 @@ data class Limitations(
         ignoreSlot: Boolean
     ): Boolean {
         val itemType = item.type
-        val enchants = item.fixedEnchants
+        val enchants = item.fast().getEnchants()
         
         return when (type) {
             SLOT -> checkSlot(itemType, slot, ignoreSlot)

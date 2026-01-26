@@ -16,6 +16,7 @@
  */
 package cc.polarastrum.aiyatsbus.impl.nmsj21
 
+import cc.polarastrum.aiyatsbus.core.AiyatsbusItemStack
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -38,6 +39,8 @@ abstract class NMSJ21 {
     abstract fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player)
 
     abstract fun hurtAndBreak(nmsItem: Any, amount: Int, entity: LivingEntity)
+
+    abstract fun createAiyatsbusItemStack(item: ItemStack): AiyatsbusItemStack
 
     companion object {
 

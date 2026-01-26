@@ -129,7 +129,7 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
             entityResolver = { event, playerReference ->
                 // 攻击者和受害者有任何一方是 NPC 就都不应触发此事件
                 if (event.damager.checkIfIsNPC() || event.entity.checkIfIsNPC()) {
-                    null to false
+                    null to1 false
                 }
                 when (playerReference) {
                     "damager", null -> when (event.damager) {
@@ -265,7 +265,7 @@ class DefaultAiyatsbusEventExecutor : AiyatsbusEventExecutor {
 
     private fun ItemStack.triggerEts(listen: String, event: Event, entity: LivingEntity, slot: EquipmentSlot?, ignoreSlot: Boolean = false) {
 
-        val enchants = fixedEnchants.entries
+        val enchants = fast().getEnchants().entries
             .filter { it.key.trigger != null }
             .sortedBy { it.key.trigger!!.listenerPriority }
 
