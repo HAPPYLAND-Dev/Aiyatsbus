@@ -42,8 +42,9 @@ object FnCooldown {
     }
 
     @Export
-    fun isReady(player: Player, key: String, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
-        val (isReady, remainingTime) = player.checkCd(key, seconds)
+//    fun isReady(player: Player, key: String, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
+    fun isReady(player: Player, enchant: AiyatsbusEnchantment, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
+        val (isReady, remainingTime) = player.checkCd(enchant.basicData.id, seconds)
         if (!isReady && broadcast.coerceBoolean(true)) {
             val message = player.asLang("messages-misc-cool_down", remainingTime to "second").component().buildColored()
             if (broadcastInActionBar.coerceBoolean(AiyatsbusSettings.coolDownInActionBar)) {
@@ -55,30 +56,32 @@ object FnCooldown {
         return isReady
     }
 
-    @Export
-    fun isReady(player: Player, enchant: AiyatsbusEnchantment, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
-        return isReady(player, enchant.basicData.id, seconds, broadcast, broadcastInActionBar)
-    }
+//    @Export
+//    fun isReady(player: Player, enchant: AiyatsbusEnchantment, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
+//        return isReady(player, enchant.basicData.id, seconds, broadcast, broadcastInActionBar)
+//    }
 
     @Export
-    fun addCooldown(player: Player, key: String) {
-        player.addCd(key)
-    }
-
-    @Export
+//    fun addCooldown(player: Player, key: String) {
     fun addCooldown(player: Player, enchant: AiyatsbusEnchantment) {
-        addCooldown(player, enchant.basicData.id)
+        player.addCd(enchant.basicData.id)
     }
 
-    @Export
-    fun removeCooldown(player: Player, key: String) {
-        player.removeCd(key)
-    }
+//    @Export
+//    fun addCooldown(player: Player, enchant: AiyatsbusEnchantment) {
+//        addCooldown(player, enchant.basicData.id)
+//    }
 
     @Export
+//    fun removeCooldown(player: Player, key: String) {
     fun removeCooldown(player: Player, enchant: AiyatsbusEnchantment) {
-        removeCooldown(player, enchant.basicData.id)
+        player.removeCd(enchant.basicData.id)
     }
+
+//    @Export
+//    fun removeCooldown(player: Player, enchant: AiyatsbusEnchantment) {
+//        removeCooldown(player, enchant.basicData.id)
+//    }
 
     @Export
     fun clearCooldown(player: Player) {

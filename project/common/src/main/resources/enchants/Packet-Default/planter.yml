@@ -4,6 +4,7 @@
 
 
 basic:
+  enable: false
   id: planter
   name: "播种机"
   max_level: 3

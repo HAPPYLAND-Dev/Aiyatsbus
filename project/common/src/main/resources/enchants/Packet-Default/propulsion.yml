@@ -17,20 +17,24 @@ limitations:
 
 display:
   description:
-    general: "在空中下蹲可触发二段跳 (冷却:&a6秒&7)"
+    general: "在空中下蹲可触发二段跳 (冷却:&a{冷却}&7)"
+
+variables:
+  leveled:
+    冷却: "秒:6"
 
 mechanisms:
   listeners:
     on-sneak:
+      type: fluxon
       listen: "player-toggle-sneak"
       handle: |-
-        if all [ check &event[player.isOnGround] is false not &event[isSneaking] ] then {
-          set cd to a-cd check &enchant &player 6 true
-          if &cd then {
-            set eye-loc to &event[player.eye-loc]
-            set velocity to &eye-loc[direction.normalize]
-            set &velocity[y] to 0.5
-            set &event[player.velocity] to &velocity
-            a-cd add &enchant &player
-          }
+        if !&player::isOnGround() && &player::isSneaking() then {
+            if cooldown::isReady(&player, &enchant, &冷却) then {
+                velocity = &event::player::eyeLocation::direction::normalize() :: {
+                    setY(0.5)
+                }
+                &player::setVelocity(&velocity)
+                cooldown::addCooldown(&player, &enchant)
+            }
         }
