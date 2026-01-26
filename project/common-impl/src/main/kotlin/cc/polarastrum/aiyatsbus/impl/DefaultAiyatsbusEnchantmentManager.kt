@@ -123,9 +123,7 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
         
         // 加载所有附魔文件
         enchantsFolder.listFiles { file, _ -> file.isDirectory }?.toList()?.let { directories ->
-            directories
-                .map { it.deepRead("yml") }
-                .flatten()
+            directories.flatMap { it.deepRead("yml") }
                 .forEach { file -> loadFromFile(file) }
         }
 
@@ -145,6 +143,7 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
         if (!enchant.dependencies.checkAvailable()) return
 
         register(enchant)
+        enchant.trigger.init()
         setupFileWatcher(file, relativePath, key, id)
     }
 
@@ -220,6 +219,7 @@ class DefaultAiyatsbusEnchantmentManager : AiyatsbusEnchantmentManager {
         if (!newEnchant.dependencies.checkAvailable()) return
         
         register(newEnchant)
+        getEnchant(key)!!.trigger?.init()
         onlinePlayers.forEach(Player::updateInventory)
         
         console().sendLang("enchantment-reload", id, System.currentTimeMillis() - startTime)
