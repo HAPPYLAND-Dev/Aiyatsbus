@@ -47,12 +47,17 @@ data class Trigger(
     /** 监听器优先级，默认为 0 */
     val listenerPriority: Int = (section?.getString("listenerPriority")
         ?: section?.getString("listener-priority")).coerceInt(0),
+    /** 技能优先级，默认为 0 */
+    /** 按道理来说一个物品上应该只能有一个技能附魔 */
+    val skillProperty: Int = section?.getString("skill-property").coerceInt(0)
 ) {
 
     /** 事件监听器映射表 */
     val listeners: ConcurrentHashMap<String, EventExecutor> = ConcurrentHashMap()
     /** 定时器映射表 */
     val tickers: ConcurrentHashMap<String, Ticker> = ConcurrentHashMap()
+    /** 技能映射表 */
+    val skills: ConcurrentHashMap<String, Skill> = ConcurrentHashMap()
 
     lateinit var craftEnchantment: AiyatsbusEnchantment
 
@@ -73,6 +78,11 @@ data class Trigger(
                             Aiyatsbus.api().getTickHandler().getRoutine().put(craftEnchantment, id, ticker.interval)
                         }
                     }
+            }
+            // 初始化技能
+            section?.getConfigurationSection("skills")?.let { skillSection ->
+                skills += skillSection.getKeys(false)
+                    .associateWith { Skill(skillSection.getConfigurationSection(it)!!, craftEnchantment) }
             }
         } catch (ex: Throwable) {
             if (TabooLib.getCurrentLifeCycle() != LifeCycle.ACTIVE) {

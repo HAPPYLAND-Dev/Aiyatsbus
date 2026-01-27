@@ -1,13 +1,12 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function.game
 
 import cc.polarastrum.aiyatsbus.core.AiyatsbusEnchantment
-import cc.polarastrum.aiyatsbus.core.AiyatsbusSettings
-import cc.polarastrum.aiyatsbus.core.asLang
 import cc.polarastrum.aiyatsbus.core.util.addCd
 import cc.polarastrum.aiyatsbus.core.util.checkCd
 import cc.polarastrum.aiyatsbus.core.util.clearCd
 import cc.polarastrum.aiyatsbus.core.util.coerceBoolean
 import cc.polarastrum.aiyatsbus.core.util.removeCd
+import cc.polarastrum.aiyatsbus.core.util.sendCooldownTip
 import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.entity.Player
@@ -17,9 +16,6 @@ import org.tabooproject.fluxon.runtime.java.Optional
 import taboolib.common.LifeCycle
 import taboolib.common.Requires
 import taboolib.common.platform.Awake
-import taboolib.common.platform.function.adaptPlayer
-import taboolib.module.chat.component
-import taboolib.module.nms.sendRawActionBar
 
 /**
  * Aiyatsbus
@@ -46,12 +42,7 @@ object FnCooldown {
     fun isReady(player: Player, enchant: AiyatsbusEnchantment, seconds: Double, @Optional broadcast: Boolean?, @Optional broadcastInActionBar: Boolean?): Boolean {
         val (isReady, remainingTime) = player.checkCd(enchant.basicData.id, seconds)
         if (!isReady && broadcast.coerceBoolean(true)) {
-            val message = player.asLang("messages-misc-cool_down", remainingTime to "second").component().buildColored()
-            if (broadcastInActionBar.coerceBoolean(AiyatsbusSettings.coolDownInActionBar)) {
-                player.sendRawActionBar(message.toRawMessage())
-            } else {
-                message.sendTo(adaptPlayer(player))
-            }
+            player.sendCooldownTip(remainingTime, broadcastInActionBar)
         }
         return isReady
     }

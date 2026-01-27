@@ -26,7 +26,7 @@ taboolib {
         bukkitApi("1.17")
     }
 
-    relocate("ink.ptms.um", "cc.polarastrum.aiyatsbus.module.compat.library.um")
+//    relocate("ink.ptms.um", "cc.polarastrum.aiyatsbus.module.compat.library.um")
     relocate("redempt", "cc.polarastrum.aiyatsbus.library")
     relocate("org.tabooproject.fluxon", "cc.polarastrum.aiyatsbus.module.script.fluxon.core")
 }
