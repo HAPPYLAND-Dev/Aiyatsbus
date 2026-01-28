@@ -84,7 +84,7 @@ object ItemCheckUI {
             elements {
                 when (mode) {
                     FIND -> item?.etsAvailable(CheckType.ANVIL, player)?.map { it to it.basicData.maxLevel } ?: emptyList()
-                    LOAD -> item.fixedEnchants.toList()
+                    LOAD -> item?.fast()?.getEnchants()?.toList() ?: emptyList()
                 }
             }
 

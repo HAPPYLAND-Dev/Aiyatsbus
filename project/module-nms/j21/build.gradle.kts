@@ -8,6 +8,7 @@ dependencies {
     compileOnly("paper:v12004:12004:core")
     compileOnly("ink.ptms.core:v12105:12105:mapped")
     compileOnly(project(":project:module-nms"))
+    compileOnly(project(":project:module-nms:12111"))
     compileOnly(project(":project:common"))
     compileOnly("com.mojang:brigadier:1.2.9")
 }

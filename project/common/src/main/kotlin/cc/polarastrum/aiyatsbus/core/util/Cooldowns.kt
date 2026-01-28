@@ -16,9 +16,14 @@
  */
 package cc.polarastrum.aiyatsbus.core.util
 
+import cc.polarastrum.aiyatsbus.core.AiyatsbusSettings
+import cc.polarastrum.aiyatsbus.core.asLang
 import cc.polarastrum.aiyatsbus.core.cooldown
 import org.bukkit.entity.Player
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.format
+import taboolib.module.chat.component
+import taboolib.module.nms.sendRawActionBar
 
 /**
  * 冷却工具类
@@ -109,4 +114,13 @@ fun Player.checkCd(key: String, cd: Double): Pair<Boolean, Double> {
         return true to 0.0
     val tmp = (cd - (System.currentTimeMillis() - cooldown[key]!!) / 1000.0).format(1)
     return if (tmp <= 0.0) true to -1.0 else false to maxOf(tmp, 0.0)
+}
+
+fun Player.sendCooldownTip(remainingTime: Double, broadcastInActionBar: Boolean? = null) {
+    val message = asLang("messages-misc-cool_down", remainingTime to "second").component().buildColored()
+    if (broadcastInActionBar.coerceBoolean(AiyatsbusSettings.coolDownInActionBar)) {
+        sendRawActionBar(message.toRawMessage())
+    } else {
+        message.sendTo(adaptPlayer(this))
+    }
 }

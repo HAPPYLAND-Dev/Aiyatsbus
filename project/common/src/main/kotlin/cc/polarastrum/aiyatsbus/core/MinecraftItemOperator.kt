@@ -80,4 +80,6 @@ interface MinecraftItemOperator {
      * @param player 玩家
      */
     fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player)
+
+    fun createAiyatsbusItemStack(item: ItemStack): AiyatsbusItemStack
 }

@@ -17,6 +17,7 @@
 package cc.polarastrum.aiyatsbus.impl.nms
 
 import cc.polarastrum.aiyatsbus.core.Aiyatsbus
+import cc.polarastrum.aiyatsbus.core.AiyatsbusItemStack
 import cc.polarastrum.aiyatsbus.core.MinecraftItemOperator
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
@@ -35,6 +36,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.setProperty
+import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.MinecraftVersion.versionId
 import taboolib.module.nms.NMSItemTag
 import java.io.IOException
@@ -157,6 +159,14 @@ class DefaultMinecraftItemOperator : MinecraftItemOperator {
             nmsStack.hurtAndBreak(amount, (entity as CraftLivingEntity).handle) { entityLiving ->
                 (enumItemSlot as? EnumItemSlot)?.let { entityLiving.broadcastBreakEvent(it) }
             }
+        }
+    }
+
+    override fun createAiyatsbusItemStack(item: ItemStack): AiyatsbusItemStack {
+        return if (MinecraftVersion.versionId >= 12005) {
+            NMSJ21.instance.createAiyatsbusItemStack(item)
+        } else {
+            AiyatsbusItemStackImpl(item)
         }
     }
 }

@@ -53,6 +53,8 @@ class DefaultAiyatsbusAPI : AiyatsbusAPI {
         proxy<AiyatsbusMinecraftAPI>("cc.polarastrum.aiyatsbus.impl.DefaultAiyatsbusMinecraftAPI")
     }
 
+    private val skillHandler = PlatformFactory.getAPI<AiyatsbusSkillHandler>()
+
     private val tickHandler = PlatformFactory.getAPI<AiyatsbusTickHandler>()
 
     override fun getEnchantmentFilter(): AiyatsbusEnchantmentFilter {
@@ -92,6 +94,10 @@ class DefaultAiyatsbusAPI : AiyatsbusAPI {
 
     override fun getScriptHandler(): AiyatsbusScriptHandler {
         return scriptHandler
+    }
+
+    override fun getSkillHandler(): AiyatsbusSkillHandler {
+        return skillHandler
     }
 
     override fun getTickHandler(): AiyatsbusTickHandler {

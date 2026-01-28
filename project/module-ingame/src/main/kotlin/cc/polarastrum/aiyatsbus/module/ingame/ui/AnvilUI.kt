@@ -19,7 +19,7 @@ package cc.polarastrum.aiyatsbus.module.ingame.ui
 import cc.polarastrum.aiyatsbus.core.asLang
 import cc.polarastrum.aiyatsbus.core.asLangList
 import cc.polarastrum.aiyatsbus.core.data.CheckType
-import cc.polarastrum.aiyatsbus.core.fixedEnchants
+import cc.polarastrum.aiyatsbus.core.fast
 import cc.polarastrum.aiyatsbus.core.sendLang
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.MenuComponent
@@ -90,7 +90,7 @@ object AnvilUI {
                     info["level"] = player.asLang("ui-anvil-info-level", cost to "cost")
                     info["reasons"] = player.asLangList("ui-anvil-info-reasons-empty").joinToString("[](br)")
                 } else {
-                    val bugs = b.fixedEnchants.mapNotNull { (enchant, _) ->
+                    val bugs = b.fast().getEnchants().mapNotNull { (enchant, _) ->
                         val check = enchant.limitations.checkAvailable(CheckType.ANVIL, a, player)
                         if (check.isFailure) check.reason
                         else null

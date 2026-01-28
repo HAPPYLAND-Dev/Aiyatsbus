@@ -103,6 +103,7 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
                         if (item.isNull) return@slot
 
                         val level = item.etLevel(ench)
+
                         if (level > 0) {
                             val checkResult = ench.limitations.checkAvailable(CheckType.USE, item, player, slot)
                             if (checkResult.isFailure) {
@@ -126,15 +127,15 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
 
                             if (!record.contains(id)) {
                                 record += id
-                                ticker.execute(ticker.preHandle, player, vars)
+                                ticker.executePreHandle(player, vars)
                             }
 
-                            ticker.execute(ticker.handle, player, vars)
+                            ticker.executeHandle(player, vars)
                         }
-                    }
-                    if (!flag && record.contains(id)) {
-                        record -= id
-                        ticker.execute(ticker.postHandle, player, variables)
+                        if (!flag && record.contains(id)) {
+                            record -= id
+                            ticker.executePostHandle(player, variables)
+                        }
                     }
                 }
             }

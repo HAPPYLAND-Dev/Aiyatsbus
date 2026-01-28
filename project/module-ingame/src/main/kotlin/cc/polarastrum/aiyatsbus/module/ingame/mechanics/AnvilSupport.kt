@@ -237,12 +237,9 @@ object AnvilSupport {
         // 剩下的情况就是两边物品一样, 等待合并的情况, 或者右面是附魔书的情况, 或者是不同材质合并的情况了, 这些情况可以集中统一处理
         // 这里需要向左面的物品的克隆中添加附魔, 来检测附魔冲突
         val tempLeftItem = left.clone()
-        val leftEnchants = left.fixedEnchants
-        val rightEnchants = right.fixedEnchants
-        // 预分配大小避免扩容
-        val outEnchants = HashMap<AiyatsbusEnchantment, Int>(leftEnchants.size + rightEnchants.size).apply {
-            putAll(leftEnchants)
-        }
+        val leftEnchants = left.fast().getEnchants()
+        val rightEnchants = right.fast().getEnchants()
+        val outEnchants = leftEnchants.toMutableMap()
 
         for ((rightEnchant, level) in rightEnchants) {
             val maxLevel = rightEnchant.basicData.maxLevel

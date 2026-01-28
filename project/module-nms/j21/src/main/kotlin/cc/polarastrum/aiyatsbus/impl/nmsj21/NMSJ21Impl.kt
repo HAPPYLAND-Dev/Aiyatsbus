@@ -16,8 +16,10 @@
  */
 package cc.polarastrum.aiyatsbus.impl.nmsj21
 
+import cc.polarastrum.aiyatsbus.core.AiyatsbusItemStack
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
+import cc.polarastrum.aiyatsbus.impl.nms12111.AiyatsbusItemStack12111Impl
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.trading.MerchantOffers
 import org.bukkit.craftbukkit.entity.CraftLivingEntity
@@ -26,6 +28,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.library.reflex.Reflex.Companion.setProperty
+import taboolib.module.nms.MinecraftVersion
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
@@ -68,6 +71,14 @@ class NMSJ21Impl : NMSJ21() {
 
     override fun hurtAndBreak(nmsItem: Any, amount: Int, entity: LivingEntity) {
         return (nmsItem as NMSItemStack).hurtAndBreak(amount, (entity as CraftLivingEntity).handle, null)
+    }
+
+    override fun createAiyatsbusItemStack(item: ItemStack): AiyatsbusItemStack {
+        return if (MinecraftVersion.versionId >= 12111) {
+            AiyatsbusItemStack12111Impl(item)
+        } else {
+            AiyatsbusItemStackJ21Impl(item)
+        }
     }
 }
 

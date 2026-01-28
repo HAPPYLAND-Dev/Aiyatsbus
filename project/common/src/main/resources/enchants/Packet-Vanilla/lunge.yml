@@ -21,8 +21,8 @@ targets:
 display:
   description:
     general: "戳刺攻击时向前推进"
-    specific: "&7获得&a{速度}&7米/秒的加速"
+    specific: "&7获得&a{速度}&7的加速"
 
 variables:
   leveled:
-    速度: "%:9.16*{level}"
+    速度: "米/秒:9.16*{level}"

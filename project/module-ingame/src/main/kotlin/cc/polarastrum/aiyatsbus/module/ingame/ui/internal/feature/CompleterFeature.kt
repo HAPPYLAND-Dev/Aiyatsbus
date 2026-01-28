@@ -28,10 +28,8 @@ import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.MenuFeature
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.data.ActionContext
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.function.*
 import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.registry.VariableProviders
-import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
-import taboolib.module.kether.KetherShell
 import taboolib.platform.util.nextChat
 
 @Suppress("unused")
@@ -66,16 +64,16 @@ object CompleterFeature : MenuFeature() {
                         .forEach(user::performCommand)
                 }
 
-                Mode.KETHER -> KetherShell.eval(contexts, sender = adaptPlayer(user)) {
-                    set("input", input)
-                    set("args", context.args)
-                }
+//                Mode.KETHER -> KetherShell.eval(contexts, sender = adaptPlayer(user)) {
+//                    set("input", input)
+//                    set("args", context.args)
+//                }
             }
         }
     }
 
     enum class Mode {
-        COMMAND, KETHER;
+        COMMAND//, KETHER;
     }
 
 }

@@ -51,9 +51,11 @@ abstract class AiyatsbusEnchantmentBase(
 
     override lateinit var enchantment: Enchantment
 
+    /** 手动缓存, 节约性能 */
+    private var _rarity: Rarity? = null
     override val rarity: Rarity
-        get() = aiyatsbusRarity(config["rarity"].toString())
-            ?: aiyatsbusRarity(AiyatsbusSettings.defaultRarity) ?: error("Enchantment $id has an unknown rarity")
+        get() = _rarity ?: (aiyatsbusRarity(config["rarity"].toString())
+            ?: aiyatsbusRarity(AiyatsbusSettings.defaultRarity) ?: error("Enchantment $id has an unknown rarity")).also { _rarity = it }
 
     override val variables: Variables = Variables(config.getConfigurationSection("variables"))
 
@@ -65,4 +67,9 @@ abstract class AiyatsbusEnchantmentBase(
     override val displayer: Displayer = Displayer(config.getConfigurationSection("display")!!, this)
 
     override val limitations: Limitations = Limitations(this, config.getStringList("limitations"))
+
+    override fun updateEnchantment() {
+        _rarity = null
+        _targets = null
+    }
 }

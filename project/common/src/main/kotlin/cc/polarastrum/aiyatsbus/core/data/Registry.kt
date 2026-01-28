@@ -18,9 +18,11 @@
 
 package cc.polarastrum.aiyatsbus.core.data
 
+import cc.polarastrum.aiyatsbus.core.Aiyatsbus
 import cc.polarastrum.aiyatsbus.core.StandardPriorities
 import cc.polarastrum.aiyatsbus.core.sendLang
 import cc.polarastrum.aiyatsbus.core.util.reloadable
+import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.TabooLib
 import taboolib.common.platform.function.console
@@ -29,6 +31,7 @@ import taboolib.common.platform.function.severe
 import taboolib.common.util.t
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
+import taboolib.platform.util.onlinePlayers
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 import kotlin.system.measureTimeMillis
@@ -92,7 +95,11 @@ abstract class Registry<T : RegistryItem>(
                     // 监听配置文件重载事件
                     if (!isLoaded) {
                         config.onReload {
-                            measureTimeMillis { loadItem() }.let { console().sendLang("configuration-reload", config.file!!.name, it) }
+                            measureTimeMillis {
+                                loadItem()
+                                Aiyatsbus.api().getEnchantmentManager().getEnchants().forEach { (_, enchantment) -> enchantment.updateEnchantment() }
+                                onlinePlayers.forEach(Player::updateInventory)
+                            }.let { console().sendLang("configuration-reload", config.file!!.name, it) }
                         }
                         isLoaded = true
                     }

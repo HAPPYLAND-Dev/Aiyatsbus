@@ -1,6 +1,5 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.handler
 
-import cc.polarastrum.aiyatsbus.core.util.coerceInt
 import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
 import org.bukkit.command.CommandSender
@@ -14,10 +13,13 @@ import org.tabooproject.fluxon.runtime.error.FluxonRuntimeError
 import org.tabooproject.fluxon.util.exceptFluxonCompletableFutureError
 import org.tabooproject.fluxon.util.printError
 import taboolib.common.Requires
+import taboolib.common.io.newFile
+import taboolib.common.io.newFolder
+import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.warning
 import taboolib.platform.BukkitPlugin
+import java.nio.file.Files
 import java.text.ParseException
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -31,19 +33,19 @@ import java.util.concurrent.ConcurrentHashMap
 object Fluxon : FluxonHandler {
 
     // 服了脚本
-    private val compiledScripts = ConcurrentHashMap<UUID, RuntimeScriptBase>()
+    private val compiledScripts = ConcurrentHashMap<String, RuntimeScriptBase>()
     private val classLoader = FluxonClassLoader(BukkitPlugin::class.java.classLoader)
     private val environment = FluxonRuntime.getInstance().newEnvironment()
 
     override fun invoke(
         source: String,
+        id: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
     ): Any? {
-        val uuid = UUID.nameUUIDFromBytes(source.toByteArray())
-        if (!compiledScripts.containsKey(uuid)) preheat(source)
+        if (!compiledScripts.containsKey(id)) preheat(source, id)
 
-        val scriptBase = compiledScripts[uuid] ?: return null
+        val scriptBase = compiledScripts[id] ?: return null
 
         val environment = FluxonRuntime.getInstance().newEnvironment()
         variables.forEach { (key, value) -> environment.defineRootVariable(key, value) }
@@ -63,28 +65,16 @@ object Fluxon : FluxonHandler {
         }
     }
 
-    override fun preheat(source: String) {
-        // 生成一个唯一的标识
-        // 脚本无变动, 则无需重复预热
-        val uuid = UUID.nameUUIDFromBytes(source.toByteArray())
-        if (compiledScripts.containsKey(uuid)) return
-
-        var className = uuid.toString().replace("-", "")
-        // 生成唯一的类名
-        // 如果开头是数字的话, 就要加一个字母以防无效类名
-        // 我喜欢 T
-        if (className[0].coerceInt(-1) >= 0) {
-            className = "T$className"
-        }
-
+    override fun preheat(source: String, id: String) {
         try {
             val result = Fluxon.compile(
                 environment,
                 CompilationContext(source).apply { packageAutoImport += FluxonScriptHandler.DEFAULT_PACKAGE_AUTO_IMPORT },
-                className,
+                id + System.currentTimeMillis(), // 这里要加一个时间，因为不能加载一样名称的类
                 classLoader
             )
-            compiledScripts[uuid] = result.createInstance(classLoader) as RuntimeScriptBase
+            compiledScripts[id] = result.createInstance(classLoader) as RuntimeScriptBase
+            Files.write(newFile(newFolder(getDataFolder(), "classes"), "${id}.class").toPath(), result.mainClass)
         } catch (ex: ParseException) {
             warning("编译脚本 $source 时发生错误:")
             ex.printStackTrace()

@@ -18,13 +18,13 @@ package cc.polarastrum.aiyatsbus.module.ingame.command.subcommand
 
 import cc.polarastrum.aiyatsbus.core.*
 import cc.polarastrum.aiyatsbus.core.data.registry.Rarity
+import cc.polarastrum.aiyatsbus.core.util.isInt
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestPlayers
 import taboolib.common.util.random
-import taboolib.module.kether.isInt
 import taboolib.platform.util.giveItem
 
 /**

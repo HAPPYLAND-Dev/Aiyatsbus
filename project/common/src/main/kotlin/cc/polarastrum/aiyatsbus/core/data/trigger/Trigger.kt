@@ -40,36 +40,49 @@ data class Trigger(
     /** 配置节点 */
     private val section: ConfigurationSection?,
     /** 所属附魔 */
-    private val enchant: AiyatsbusEnchantment,
+    private var enchant: AiyatsbusEnchantment,
     /** 定时器优先级，默认为 0 */
     val tickerPriority: Int = (section?.getString("tickerPriority")
         ?: section?.getString("ticker-priority")).coerceInt(0),
     /** 监听器优先级，默认为 0 */
     val listenerPriority: Int = (section?.getString("listenerPriority")
         ?: section?.getString("listener-priority")).coerceInt(0),
+    /** 技能优先级，默认为 0 */
+    /** 按道理来说一个物品上应该只能有一个技能附魔 */
+    val skillProperty: Int = section?.getString("skill-property").coerceInt(0)
 ) {
 
     /** 事件监听器映射表 */
     val listeners: ConcurrentHashMap<String, EventExecutor> = ConcurrentHashMap()
     /** 定时器映射表 */
     val tickers: ConcurrentHashMap<String, Ticker> = ConcurrentHashMap()
+    /** 技能映射表 */
+    val skills: ConcurrentHashMap<String, Skill> = ConcurrentHashMap()
 
-    init {
+    lateinit var craftEnchantment: AiyatsbusEnchantment
+
+    fun init() {
+        craftEnchantment = Aiyatsbus.api().getEnchantmentManager().getEnchant(enchant.enchantmentKey)!!
         try {
             // 初始化事件监听器
             section?.getConfigurationSection("listeners")?.let { listenersSection ->
                 listeners += listenersSection.getKeys(false)
-                    .associateWith { EventExecutor(listenersSection.getConfigurationSection(it)!!, enchant) }
+                    .associateWith { EventExecutor(listenersSection.getConfigurationSection(it)!!, craftEnchantment) }
             }
             // 初始化定时器
             section?.getConfigurationSection("tickers")?.let { tickersSection ->
                 tickers += tickersSection.getKeys(false)
-                    .associateWith { Ticker(tickersSection.getConfigurationSection(it)!!, enchant) }
-                    .mapKeys { "${enchant.basicData.id}.$it" }.also {
+                    .associateWith { Ticker(tickersSection.getConfigurationSection(it)!!, craftEnchantment) }
+                    .mapKeys { "${craftEnchantment.basicData.id}.${it.key}" }.also {
                         it.entries.forEach { (id, ticker) ->
-                            Aiyatsbus.api().getTickHandler().getRoutine().put(enchant, id, ticker.interval)
+                            Aiyatsbus.api().getTickHandler().getRoutine().put(craftEnchantment, id, ticker.interval)
                         }
                     }
+            }
+            // 初始化技能
+            section?.getConfigurationSection("skills")?.let { skillSection ->
+                skills += skillSection.getKeys(false)
+                    .associateWith { Skill(skillSection.getConfigurationSection(it)!!, craftEnchantment) }
             }
         } catch (ex: Throwable) {
             if (TabooLib.getCurrentLifeCycle() != LifeCycle.ACTIVE) {
@@ -96,7 +109,7 @@ data class Trigger(
      */
     fun onDisable() {
         listeners.clear()
-        tickers.keys.forEach { Aiyatsbus.api().getTickHandler().getRoutine().remove(enchant, it) }
+        tickers.keys.forEach { Aiyatsbus.api().getTickHandler().getRoutine().remove(craftEnchantment, it) }
         tickers.clear()
     }
 }

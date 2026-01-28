@@ -112,6 +112,8 @@ interface AiyatsbusAPI {
      */
     fun getScriptHandler(): AiyatsbusScriptHandler
 
+    fun getSkillHandler(): AiyatsbusSkillHandler
+
     /**
      * 获取附魔调度器
      *

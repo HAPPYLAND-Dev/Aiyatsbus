@@ -31,14 +31,15 @@ class FluxonScriptHandler : ScriptHandler {
 
     override fun invoke(
         source: String,
+        id: String,
         sender: CommandSender?,
         variables: Map<String, Any?>
     ): Any? {
-        return fluxonHandler.invoke(source, sender, variables)
+        return fluxonHandler.invoke(source, id, sender, variables)
     }
 
-    override fun preheat(source: String) {
-        return fluxonHandler.preheat(source)
+    override fun preheat(source: String, id: String) {
+        return fluxonHandler.preheat(source, id)
     }
 
     companion object {

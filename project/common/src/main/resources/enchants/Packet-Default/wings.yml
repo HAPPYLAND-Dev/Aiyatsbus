@@ -27,45 +27,44 @@ variables:
 mechanisms:
   listeners:
     on-fall:
-      listen: 'entity-damage'
+      type: fluxon
+      listen: "entity-damage"
       handle: |-
-        if all [ check &event[cause] is FALL has-mark fall-protect on &player ] then {
-          unmark fall-protect on &player
-          set &event[isCancelled] to true
+        if &event::cause() == FALL && &player::hasMeta("fall-protect") then {
+            &player::removeMeta("fall-protect")
+            &event::setCancelled(true)
         }
   tickers:
     durability:
+      type: fluxon
       interval: 40
       pre-handle: |-
-        set damage to check math div [ type double &item[dura] &item[max-dura] ] <= 0.1
-        if all [ any [ check player gamemode is SURVIVAL check player gamemode is ADVENTURE ] not &damage ] then {
-          player allow flight to true
+        damage = (&item::type::maxDurability() - &item::durability()) / &item::type::maxDurability() <= 0.1
+        if (&player::gameMode() == SURVIVAL || &player::gameMode() == ADVENTURE) && !&damage then {
+            print(1)
+            &player::setAllowFlight(true)
         }
       handle: |-
-        set damage to check math div [ type double &item[dura] &item[max-dura] ] <= 0.1
-        if any [ check player gamemode is SURVIVAL check player gamemode is ADVENTURE ] then {
-          if all [ player on ground has-mark fall-protect on &player ] then {
-            unmark fall-protect on &player
+        damage = (&item::type::maxDurability() - &item::durability()) / &item::type::maxDurability() <= 0.1
+        if &player::gameMode() == SURVIVAL || &player::gameMode() == ADVENTURE then {
+          if &player::isOnGround() && &player::hasMeta("fall-protect") then {
+              &player::removeMeta("fall-protect")
           }
-          if all [ not player allow flight not &damage ] then {
-            player allow flight to true
+          if !&player::allowFlight() && !&damage then {
+              &player::setAllowFlight(true)
           }
-          if all [
-            &damage
-            player flying
-          ] then {
-            player flying to false
-            player allow flight to false
-            mark fall-protect on &player
-            exit
+          if &damage && &player::isFlying() then {
+              &player::setFlying(false)
+              &player::setAllowFlight(false)
+              &player::setMeta("fall-protect", 1)
+              return
           }
-          if player flying then {
-            set dura to type int &消耗耐久
-            item damage &item &dura by &player
+          if &player::isFlying() then {
+              &item::setDurability(&item::durability() + &消耗耐久)
           }
         }
       post-handle: |-
-        if any [ check player gamemode is SURVIVAL check player gamemode is ADVENTURE ] then {
-          player allow flight to false
-          player flying to false
+        if &player::gameMode() == SURVIVAL || &player::gameMode() == ADVENTURE then {
+            &player::setFlying(false)
+            &player::setAllowFlight(false)
         }

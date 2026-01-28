@@ -1,7 +1,9 @@
 package cc.polarastrum.aiyatsbus.module.script.fluxon.function.game
 
+import cc.polarastrum.aiyatsbus.core.util.BlockUtils
 import cc.polarastrum.aiyatsbus.module.script.fluxon.FluxonScriptHandler
 import cc.polarastrum.aiyatsbus.module.script.fluxon.relocate.FluxonRelocate
+import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
@@ -35,5 +37,10 @@ object FnBlock {
     @Export
     fun getDrops(block: Block?, @Optional item: ItemStack?, @Optional entity: Entity?): Collection<ItemStack> {
         return block?.getDrops(item, entity) ?: emptyList()
+    }
+
+    @Export
+    fun getVein(block: Block, @Optional amount: Int?): List<Location> {
+        return BlockUtils.getVein(block, amount ?: -1)
     }
 }
