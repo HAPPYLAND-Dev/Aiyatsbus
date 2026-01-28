@@ -16,10 +16,8 @@ include(
     "project:module-language",
     // NMS 实现
     "project:module-nms",
-    /**
     // 1.20.5 NMS 实现
     "project:module-nms:j21",
-    **/
     // 1.21.11 NMS 实现
     "project:module-nms:12111",
     /**
