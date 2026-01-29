@@ -39,27 +39,30 @@ mechanisms:
       type: fluxon
       interval: 40
       pre-handle: |-
+        unbreakable = item::isUnbreakable(&item)
         damage = (&item::type::maxDurability() - &item::durability()) / &item::type::maxDurability() <= 0.1
-        if (&player::gameMode() == SURVIVAL || &player::gameMode() == ADVENTURE) && !&damage then {
-            print(1)
+        canDamage = !&damage || &unbreakable
+        if (&player::gameMode() == SURVIVAL || &player::gameMode() == ADVENTURE) && &canDamage then {
             &player::setAllowFlight(true)
         }
       handle: |-
+        unbreakable = item::isUnbreakable(&item)
         damage = (&item::type::maxDurability() - &item::durability()) / &item::type::maxDurability() <= 0.1
+        canDamage = !&damage || &unbreakable
         if &player::gameMode() == SURVIVAL || &player::gameMode() == ADVENTURE then {
           if &player::isOnGround() && &player::hasMeta("fall-protect") then {
               &player::removeMeta("fall-protect")
           }
-          if !&player::allowFlight() && !&damage then {
+          if !&player::allowFlight() && &canDamage then {
               &player::setAllowFlight(true)
           }
-          if &damage && &player::isFlying() then {
+          if !&canDamage && &player::isFlying() then {
               &player::setFlying(false)
               &player::setAllowFlight(false)
               &player::setMeta("fall-protect", 1)
               return
           }
-          if &player::isFlying() then {
+          if !&unbreakable && &player::isFlying() then {
               &item::setDurability(&item::durability() + &消耗耐久)
           }
         }

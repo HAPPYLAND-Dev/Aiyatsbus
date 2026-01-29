@@ -50,4 +50,8 @@ class AiyatsbusItemStackImpl(item: ItemStack): AiyatsbusItemStack {
 
         return loreTag.indices.map { Components.parseRaw(loreTag.getString(it)).toLegacyText() }
     }
+
+    override fun isUnbreakable(): Boolean {
+        return handle.tag?.getBoolean("Unbreakable") == true
+    }
 }
