@@ -35,4 +35,8 @@ class AiyatsbusItemStack12111Impl(item: ItemStack) : AiyatsbusItemStack {
     override fun getLore(): List<String>? {
         return handle.get(DataComponents.LORE)?.lines?.map { LEGACY_COMPONENT_SERIALIZER.serialize(PaperAdventure.asAdventure(it)) }
     }
+
+    override fun isUnbreakable(): Boolean {
+        return handle.get(DataComponents.UNBREAKABLE) != null
+    }
 }
