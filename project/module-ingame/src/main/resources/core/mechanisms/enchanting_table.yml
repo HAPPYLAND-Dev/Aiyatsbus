@@ -30,7 +30,7 @@ more_enchant_chance:
 # 则 max_level 为该限制值, 否则才是该附魔的最大等级
 # 不是特别想改，就请勿改动
 # 因为你永远也不知道自己调出来的公式是什么妖魔鬼怪
-level_formula: "{max_level}*{button}/3.0*({bonus}+1.0)/17.0-rand(1)"
+level_formula: "{max_level}*{button}/3.0*({bonus}+1.0)/17.0-{random}"
 # 全局附魔出货项最大等级设定
 # -1 则为无限制 (但最高到该附魔的最高等级)
 max_level_limit: -1

@@ -25,6 +25,7 @@ import cc.polarastrum.aiyatsbus.core.util.MathUtils.selectByWeight
 import cc.polarastrum.aiyatsbus.core.util.calcToDouble
 import cc.polarastrum.aiyatsbus.core.util.calcToInt
 import cc.polarastrum.aiyatsbus.core.util.serialized
+import cc.polarastrum.aiyatsbus.module.ingame.ui.internal.function.round
 import com.google.common.collect.HashBasedTable
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -50,6 +51,7 @@ import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketSendEvent
 import taboolib.module.ui.InventoryViewProxy
 import taboolib.platform.util.onlinePlayers
+import taboolib.platform.util.sendMessage
 import taboolib.platform.util.serializeToByteArray
 import java.util.UUID
 import kotlin.random.Random
@@ -313,7 +315,8 @@ object EnchantingTableSupport {
                 val level = if (player.hasPermission(fullLevelPrivilege)) maxLevel else levelFormula.calcToInt(
                     "bonus" to bonus,
                     "max_level" to limit,
-                    "button" to i + 1
+                    "button" to i + 1,
+                    "random" to random.nextDouble().round(3)
                 ).coerceIn(1, limit)
 
 //                if (result.values.any { it.first == enchant && it.second == level }) {
