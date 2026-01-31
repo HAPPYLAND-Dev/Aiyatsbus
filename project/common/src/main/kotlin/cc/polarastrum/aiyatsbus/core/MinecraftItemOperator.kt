@@ -16,6 +16,7 @@
  */
 package cc.polarastrum.aiyatsbus.core
 
+import com.google.gson.JsonObject
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -82,4 +83,8 @@ interface MinecraftItemOperator {
     fun adaptMerchantRecipe(merchantRecipeList: Any, player: Player)
 
     fun createAiyatsbusItemStack(item: ItemStack): AiyatsbusItemStack
+
+    fun deserializeItemFromJson(json: JsonObject): ItemStack
+
+    fun serializeItemAsJson(item: ItemStack): JsonObject
 }
