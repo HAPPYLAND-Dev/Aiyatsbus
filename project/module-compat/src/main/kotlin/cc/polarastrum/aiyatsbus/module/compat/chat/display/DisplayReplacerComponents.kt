@@ -42,12 +42,8 @@ object DisplayReplacerComponents : DisplayReplacer {
     private val gson = GsonComponentSerializer.gson()
 
     @Suppress("DEPRECATION")
-    override fun apply(component: Any, player: Player): Any {
-        var json = when (component) {
-            is Component -> gson.serialize(component) // Adventure Component
-            is String -> component // Json
-            else -> Aiyatsbus.api().getMinecraftAPI().getHelper().componentToJson(component) // 大胆假设是 IChatBaseComponent
-        }
+    override fun apply(component: Component, player: Player): Component {
+        var json = gson.serialize(component)
         if (!json.isValidJson()) { return component }
         if (!json.contains("hover_event") || !json.contains("show_item")) { return component }
 
@@ -63,11 +59,7 @@ object DisplayReplacerComponents : DisplayReplacer {
             json = json.replace(source, it.toString())
         }
 
-        return when (component) {
-            is Component -> gson.deserialize(json)
-            is String -> json
-            else -> Aiyatsbus.api().getMinecraftAPI().getHelper().componentFromJson(json)
-        }
+        return gson.deserialize(json)
     }
 
     /**
