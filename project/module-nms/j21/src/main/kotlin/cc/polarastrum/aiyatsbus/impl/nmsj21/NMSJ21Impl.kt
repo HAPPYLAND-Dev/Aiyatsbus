@@ -19,7 +19,9 @@ package cc.polarastrum.aiyatsbus.impl.nmsj21
 import cc.polarastrum.aiyatsbus.core.AiyatsbusItemStack
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
+import cc.polarastrum.aiyatsbus.impl.nms12111.AiyatsbusBukkit12111Unsafe
 import cc.polarastrum.aiyatsbus.impl.nms12111.AiyatsbusItemStack12111Impl
+import com.google.gson.JsonObject
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.trading.MerchantOffers
 import org.bukkit.craftbukkit.entity.CraftLivingEntity
@@ -79,6 +81,20 @@ class NMSJ21Impl : NMSJ21() {
         } else {
             AiyatsbusItemStackJ21Impl(item)
         }
+    }
+
+    override fun deserializeItemFromJson(json: JsonObject): ItemStack {
+        if (MinecraftVersion.versionId < 12111) {
+            throw UnsupportedOperationException("Serialize item as JSON is not supported in version ${MinecraftVersion.versionId}")
+        }
+        return AiyatsbusBukkit12111Unsafe.deserializeItemFromJson(json)
+    }
+
+    override fun serializeItemAsJson(item: ItemStack): JsonObject {
+        if (MinecraftVersion.versionId < 12111) {
+            throw UnsupportedOperationException("Serialize item as JSON is not supported in version ${MinecraftVersion.versionId}")
+        }
+        return AiyatsbusBukkit12111Unsafe.serializeItemAsJson(item)
     }
 }
 

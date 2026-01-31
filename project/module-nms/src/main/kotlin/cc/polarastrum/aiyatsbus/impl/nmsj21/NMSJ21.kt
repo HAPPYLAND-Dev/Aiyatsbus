@@ -17,6 +17,7 @@
 package cc.polarastrum.aiyatsbus.impl.nmsj21
 
 import cc.polarastrum.aiyatsbus.core.AiyatsbusItemStack
+import com.google.gson.JsonObject
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -41,6 +42,10 @@ abstract class NMSJ21 {
     abstract fun hurtAndBreak(nmsItem: Any, amount: Int, entity: LivingEntity)
 
     abstract fun createAiyatsbusItemStack(item: ItemStack): AiyatsbusItemStack
+
+    abstract fun deserializeItemFromJson(json: JsonObject): ItemStack
+
+    abstract fun serializeItemAsJson(item: ItemStack): JsonObject
 
     companion object {
 

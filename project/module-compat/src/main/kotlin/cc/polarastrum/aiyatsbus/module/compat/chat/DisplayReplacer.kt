@@ -16,6 +16,7 @@
  */
 package cc.polarastrum.aiyatsbus.module.compat.chat
 
+import cc.polarastrum.aiyatsbus.module.compat.chat.display.DisplayReplacerComponents
 import cc.polarastrum.aiyatsbus.module.compat.chat.display.DisplayReplacerDataComponents
 import cc.polarastrum.aiyatsbus.module.compat.chat.display.DisplayReplacerNBT
 import org.bukkit.entity.Player
@@ -38,7 +39,9 @@ interface DisplayReplacer {
     companion object {
 
         val inst by unsafeLazy {
-            if (MinecraftVersion.versionId >= 12005) {
+            if (MinecraftVersion.versionId >= 12111) {
+                DisplayReplacerComponents
+            } else if (MinecraftVersion.versionId >= 12005) {
                 DisplayReplacerDataComponents
             } else {
                 DisplayReplacerNBT
