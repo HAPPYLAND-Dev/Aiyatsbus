@@ -132,10 +132,11 @@ class DefaultAiyatsbusTickHandler : AiyatsbusTickHandler {
 
                             ticker.executeHandle(player, vars)
                         }
-                        if (!flag && record.contains(id)) {
-                            record -= id
-                            ticker.executePostHandle(player, variables)
-                        }
+                    }
+
+                    if (!flag && record.contains(id)) {
+                        record -= id
+                        ticker.executePostHandle(player, variables)
                     }
                 }
             }
