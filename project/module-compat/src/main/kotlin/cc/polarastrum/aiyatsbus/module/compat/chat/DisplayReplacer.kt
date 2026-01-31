@@ -39,7 +39,7 @@ interface DisplayReplacer {
     companion object {
 
         val inst by unsafeLazy {
-            if (MinecraftVersion.versionId >= 12111) {
+            if (MinecraftVersion.versionId >= 12105) {
                 DisplayReplacerComponents
             } else if (MinecraftVersion.versionId >= 12005) {
                 DisplayReplacerDataComponents

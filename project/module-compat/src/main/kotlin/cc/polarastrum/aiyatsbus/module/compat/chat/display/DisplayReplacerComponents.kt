@@ -17,7 +17,6 @@
 package cc.polarastrum.aiyatsbus.module.compat.chat.display
 
 import cc.polarastrum.aiyatsbus.core.Aiyatsbus
-import cc.polarastrum.aiyatsbus.core.AiyatsbusItemStack
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isValidJson
 import cc.polarastrum.aiyatsbus.module.compat.chat.DisplayReplacer
@@ -56,8 +55,8 @@ object DisplayReplacerComponents : DisplayReplacer {
         source.forEach {
             val source = it.toString()
             it.addProperty("DataVersion", Bukkit.getUnsafe().dataVersion)
-            val item = Aiyatsbus.api().getMinecraftAPI().getItemOperator().deserializeItemFromJson(it)
-            val displayed = Aiyatsbus.api().getMinecraftAPI().getItemOperator().serializeItemAsJson(item.toDisplayMode(player))
+            val item = Bukkit.getUnsafe().deserializeItemFromJson(it)
+            val displayed = Bukkit.getUnsafe().serializeItemAsJson(item.toDisplayMode(player))
             it.remove("DataVersion")
             it.add("components", displayed["components"])
             json = json.replace(source, it.toString())

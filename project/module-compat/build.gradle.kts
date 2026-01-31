@@ -16,6 +16,9 @@ repositories {
 }
 
 dependencies {
+    // 服务端
+    compileOnly("paper:v12104:12104:api")
+
     // 引入 API
     compileOnly(project(":project:common"))
     compileOnly("world.bentobox:bentobox:2.1.0-SNAPSHOT")                         // BentoBox

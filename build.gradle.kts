@@ -53,7 +53,7 @@ subprojects {
     // 依赖
     dependencies {
         compileOnly(kotlin("stdlib"))
-        compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+
     }
 
     // 编译配置
