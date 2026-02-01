@@ -60,7 +60,7 @@ subprojects {
     // 依赖
     dependencies {
         compileOnly(kotlin("stdlib"))
-        compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+        compileOnly("me.xiaozhangup.octopus:octopus-api:1.21.11-R0.1-SNAPSHOT")
         compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
         compileOnly("me.xiaozhangup:WhaleMechanism:1.0.1")
     }

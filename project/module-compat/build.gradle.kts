@@ -20,7 +20,9 @@ dependencies {
     // 引入 API
     compileOnly(project(":project:common"))
     compileOnly("world.bentobox:bentobox:2.1.0-SNAPSHOT")                         // BentoBox
-    compileOnly("net.essentialsx:EssentialsX:2.19.7")                             // EssentialsX
+    compileOnly("net.essentialsx:EssentialsX:2.19.7") {                           // EssentialsX
+        exclude(group = "org.spigotmc", module = "spigot-api")
+    }
     compileOnly("public:QuickShop-Hikari:6.2.0.6")                                // QuickShop-Hikari
     compileOnly("public:QuickShop-Reremake:5.1.2.5")                              // QuickShop-Reremake
     compileOnly("public:CitizensAPI:2.0.35")                                      // Citizens

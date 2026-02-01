@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("me.xiaozhangup.octopus:octopus-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("paper:v12111:12111:core")
     compileOnly(project(":project:common"))
 }

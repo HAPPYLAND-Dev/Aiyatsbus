@@ -1,7 +1,7 @@
 dependencies {
     // 引入 API
     compileOnly(project(":project:common"))
-    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+    compileOnly("me.xiaozhangup.octopus:octopus-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly(fileTree("libs"))
 }
 
