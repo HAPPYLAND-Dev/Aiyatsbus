@@ -46,8 +46,12 @@ object Plant {
         "POTATO" to "POTATOES"
     )
 
+    val netherSeedsMap = linkedMapOf(
+        "NETHER_WART" to "NETHER_WART"
+    )
+
     fun getSeed(player: Player, seeds: String?): Material? {
-        if (seeds == "ALL") return player.inventory.contents.find { seedsMap.containsKey(it?.type?.name) }?.type
+        if (seeds == "ALL") return player.inventory.contents.find { seedsMap.containsKey(it?.type?.name) || netherSeedsMap.containsKey(it?.type?.name) }?.type
         try {
             val type = seeds?.let { Material.valueOf(it) } ?: return null
             if (player.inventory.containsAtLeast(ItemStack(type), 1)) return type
@@ -73,14 +77,19 @@ object Plant {
         for (x in down until up + 1) {
             for (z in down until up + 1) {
                 val current = loc.clone().add(x.toDouble(), 0.0, z.toDouble())
-                if (current.block.type != Material.FARMLAND) continue
+                val seed = when (current.block.type) {
+                    Material.FARMLAND -> seedsMap[type.name]
+                    Material.SOUL_SAND -> netherSeedsMap[type.name]
+                    else -> null
+                } ?: continue
+//                if (current.block.type != Material.FARMLAND) continue
                 val planted = current.clone().add(0.0, 1.0, 0.0).block
                 if (!AntiGriefChecker.canBreak(player, planted.location))
                     continue
                 if (planted.type != Material.AIR) continue // 防止左右手打架
                 if (!player.inventory.hasItem(1) { it.type == type }) continue
                 if (player.placeBlock(planted, ItemStack(type, 1))) {
-                    planted.type = Material.valueOf(seedsMap[type.name]!!)
+                    planted.type = Material.valueOf(seed)
                     val data = planted.blockData as Ageable
                     data.age = 0
                     planted.blockData = data

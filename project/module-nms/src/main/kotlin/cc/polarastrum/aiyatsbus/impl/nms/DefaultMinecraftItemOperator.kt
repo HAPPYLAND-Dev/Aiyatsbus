@@ -22,7 +22,6 @@ import cc.polarastrum.aiyatsbus.core.MinecraftItemOperator
 import cc.polarastrum.aiyatsbus.core.toDisplayMode
 import cc.polarastrum.aiyatsbus.core.util.isNull
 import cc.polarastrum.aiyatsbus.impl.nmsj21.NMSJ21
-import com.google.gson.JsonObject
 import io.papermc.paper.adventure.PaperAdventure
 import net.kyori.adventure.util.Codec
 import net.minecraft.nbt.NBTTagCompound
@@ -37,7 +36,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.setProperty
-import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.MinecraftVersion.versionId
 import taboolib.module.nms.NMSItemTag
 import java.io.IOException
@@ -169,20 +167,6 @@ class DefaultMinecraftItemOperator : MinecraftItemOperator {
         } else {
             AiyatsbusItemStackImpl(item)
         }
-    }
-
-    override fun deserializeItemFromJson(json: JsonObject): ItemStack {
-        if (versionId >= 12111) {
-            return NMSJ21.instance.deserializeItemFromJson(json)
-        }
-        throw UnsupportedOperationException("Serialize item as JSON is not supported in version $versionId")
-    }
-
-    override fun serializeItemAsJson(item: ItemStack): JsonObject {
-        if (versionId >= 12111) {
-            return NMSJ21.instance.serializeItemAsJson(item)
-        }
-        throw UnsupportedOperationException("Serialize item as JSON is not supported in version $versionId")
     }
 }
 
