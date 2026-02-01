@@ -62,10 +62,14 @@ object DisplayReplacerComponents : DisplayReplacer {
             json = json.replace(source, it.toString())
         }
 
-        return when (component) {
-            is Component -> gson.deserialize(json)
-            is String -> json
-            else -> Aiyatsbus.api().getMinecraftAPI().getHelper().componentFromJson(json)
+        return try {
+            when (component) {
+                is Component -> gson.deserialize(json)
+                is String -> json
+                else -> Aiyatsbus.api().getMinecraftAPI().getHelper().componentFromJson(json)
+            }
+        } catch (_: Throwable) {
+            return component
         }
     }
 
