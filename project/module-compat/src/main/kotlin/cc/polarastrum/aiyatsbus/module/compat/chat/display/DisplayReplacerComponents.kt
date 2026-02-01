@@ -53,6 +53,7 @@ object DisplayReplacerComponents : DisplayReplacer {
         val source = extractShowItemHoverEvents(json)
         if (source.isEmpty()) { return component }
         source.forEach {
+            if (!it.has("components")) return@forEach
             val source = it.toString()
             it.addProperty("DataVersion", Bukkit.getUnsafe().dataVersion)
             val item = Bukkit.getUnsafe().deserializeItemFromJson(it)
